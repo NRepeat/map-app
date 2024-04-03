@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "prettier": "3.2.5"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "format": "prettier --write .",
+    "check-format": "prettier --check .",
+    "test-all": "npm run check-format "
+  }
+}

@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+
+echo '✅✅✅✅ You win this time... I am committing this now. ✅✅✅✅'
