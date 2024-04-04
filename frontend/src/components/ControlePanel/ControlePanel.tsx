@@ -17,7 +17,7 @@ import { MarkersType } from "../../types/types";
 type ControlPanelProps = {
   markers: MarkersType[] | undefined;
 };
-
+//To do. On marker field click navigate to marker with useMap(), onDelete marker, delete route 
 function ControlPanel({ markers }: ControlPanelProps) {
   const { setMark } = useSetMarkers();
   const { handleDeleteMark } = useDeleteMarker();

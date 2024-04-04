@@ -22,20 +22,15 @@ const MapInstance = () => {
         {/* <OptimizedRouteSource /> */}
         {state.route &&
           state.route.length > 0 &&
-          state.route.map((route) => (
+          state.route.map((route, i) => (
             <RouteSource
+              index={i}
               key={route.id}
               coords={route.coordinates}
               id={route.id}
             />
           ))}
-        {state.route && (
-          <RouteSource
-            key={state.route[0].id}
-            coords={state.route[0].coordinates}
-            id={state.route[0].id}
-          />
-        )}
+
         <Markers markers={state.markers} />
         <GeolocateControl />
         <NavigationControl />
