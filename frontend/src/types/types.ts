@@ -13,6 +13,8 @@ export type MapStateContextType = {
   markers?: MarkersType[];
   mapCenter?: mapboxgl.LngLat;
   marker?: MarkersType;
+  mapLoading?: boolean;
+
   route?: { coordinates: CoordsType[]; properties: {}; id: string }[];
 };
 export interface MapReducerType extends MapStateContextType {
@@ -26,7 +28,8 @@ export type ActionType =
   | "UPDATE_MARKERS_CORDS"
   | "SET_MARKERS"
   | "DELETE_MARKER"
-  | "SET_OPEN_ROUTE_ROUTE";
+  | "SET_OPEN_ROUTE_ROUTE"
+  | "SET_MAP_LOADING";
 
 export type MapContextType = {
   state: MapStateContextType;
