@@ -25,4 +25,13 @@ export class OpenRouteController {
       return res.status(500).json({ error: "Internal server error" });
     }
   }
+  @Get("optimized-route")
+  async getOptimizedRoute(
+    @Res() res: Response,
+    @Query() query: { coordinates: string }
+  ) {
+    try {
+      const { coordinates } = query;
+    } catch (error) {}
+  }
 }

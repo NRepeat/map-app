@@ -32,4 +32,5 @@ export class OpenrouteService {
       throw new Response("Error", { status: 500 });
     }
   }
+  async fetchOptimizedRoute() {}
 }

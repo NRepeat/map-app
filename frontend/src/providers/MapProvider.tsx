@@ -29,7 +29,7 @@ const MapProvider: FC<MapProviderProps> = ({ children }) => {
       if (!state.mapLoading) {
         fetchData();
       }
-    }, 5000);
+    }, 1000);
     return () => clearInterval(interval);
   }, [state.mapLoading]);
 
