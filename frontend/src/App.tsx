@@ -1,6 +1,8 @@
 import { Modal, ModalContent, Spinner } from "@nextui-org/react";
 import MapInstance from "./components/Map/Map";
 import useMapContext from "./hooks/useMapContext";
+import "./styles/IdeClone.css";
+import "./styles/SampleSplitter.css";
 export function App() {
   const { state } = useMapContext()
   // const [optimizedCoords, setOptimizedCoords] = useState([]);

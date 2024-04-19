@@ -14,7 +14,10 @@ export type MapStateContextType = {
   mapCenter?: mapboxgl.LngLat;
   marker?: MarkersType;
   mapLoading?: boolean;
-
+  routeInstructions?: {
+    steps: [];
+    totalDistance: { distance: number; duration: number };
+  };
   route?: { coordinates: CoordsType[]; properties: {}; id: string }[];
 };
 export interface MapReducerType extends MapStateContextType {
@@ -29,7 +32,8 @@ export type ActionType =
   | "SET_MARKERS"
   | "DELETE_MARKER"
   | "SET_OPEN_ROUTE_ROUTE"
-  | "SET_MAP_LOADING";
+  | "SET_MAP_LOADING"
+  | "SET_ROUTE_INSTRUCTIONS";
 
 export type MapContextType = {
   state: MapStateContextType;

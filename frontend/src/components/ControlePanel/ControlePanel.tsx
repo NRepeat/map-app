@@ -1,101 +1,147 @@
 import {
+  Accordion,
+  AccordionItem,
   Button,
-  ButtonGroup,
   Card,
   CardBody,
   CardHeader,
-  Input,
+  Divider
 } from "@nextui-org/react";
-import { TiDelete } from "react-icons/ti";
-import { v4 as uuidv4 } from "uuid";
-import { getOpenRouteRoute } from "../../api/openroute";
-import useDeleteMarker from "../../hooks/useDeleteMarker";
+import { Variants, motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { SlArrowRight } from "react-icons/sl";
+import { useResizable } from "react-resizable-layout";
 import useMapContext from "../../hooks/useMapContext";
-import useSetMarkers from "../../hooks/useSetMarkers";
-import { MarkersType } from "../../types/types";
-
-type ControlPanelProps = {
-  markers: MarkersType[] | undefined;
-};
+import CordList from "../Menu/CordList/CordList";
+import NavbarMenu from "../Menu/NavBar/Navbar";
+import RouteButtonsMenu from "../Menu/RouteButtonsMenu/RouteButtonsMenu";
+import { RouteInstruction, TotalRouteInformation } from "../RouteInstruction/RouteInstruction";
+import SampleSplitter from "../SampleSplitter/SampleSplitter";
+// type ControlPanelProps = {
+//   markers: MarkersType[] | undefined;
+// };
 //To do. On marker field click navigate to marker with useMap(), onDelete marker, delete route 
-function ControlPanel({ markers }: ControlPanelProps) {
-  const { setMark } = useSetMarkers();
-  const { handleDeleteMark } = useDeleteMarker();
-  const { dispatch } = useMapContext();
-  const coordsOpenRoute = markers?.map((marker) => marker.coords);
 
-  const coordsOpenRouteJSON = JSON.stringify(coordsOpenRoute);
 
-  const handleGetOpenRouteRoute = async () => {
-    const data = await getOpenRouteRoute(coordsOpenRouteJSON);
-    const routeCordsArr = data.coords.map((coord: any) => ({
-      coordinates: coord.geometry.coordinates,
-      properties: coord.properties,
-      id: uuidv4(),
-    }));
-    dispatch({ type: "SET_OPEN_ROUTE_ROUTE", route: routeCordsArr });
+function ControlPanel() {
+  const { state } = useMapContext();
+  const [toggleMenu, setToggleMenu] = useState<boolean>(true)
+
+  const ref = useRef(null)
+  const {
+    isDragging: isTerminalDragging,
+    position: terminalH,
+    separatorProps: terminalDragBarProps
+  } = useResizable({
+    containerRef: ref,
+    axis: "y",
+    reverse: false,
+  });
+
+  const itemVariants: Variants = {
+    open: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: "spring",
+        damping: 19,
+        bounce: 0,
+        duration: 0.4,
+      },
+      display: 'block'
+    },
+    closed: {
+      opacity: 1,
+      x: -500,
+      transition: {
+        type: "spring",
+        duration: 0.5,
+        bounce: 0,
+      },
+      transitionEnd: {
+        display: "none"
+      }
+    }
   };
+  const buttonVariants: Variants = {
+    open: {
+      opacity: 1,
+      x: 395,
+      y: 0,
+      transition: {
+        type: "spring",
+        damping: 19,
+        bounce: 0,
+        duration: 0.4,
+      }
+    },
+    closed: {
+      opacity: 1,
+      y: 0,
+      x: 0,
+      transition: {
+        type: "spring",
+        duration: 0.5,
+      },
 
+    }
+  };
   return (
-    <Card className="absolute left-10 top-10  flex flex-col  min-w-[300px]">
-      <CardHeader>
-        <ButtonGroup fullWidth>
-          {/* <Button onClick={handleGetOptimizationRoute}>
-						Get optimization
-					</Button> */}
-          <Button color="primary" onClick={setMark}>
-            Add point to trip
-          </Button>
-          {/* <Button onClick={() => handleGetOpenRouteRoute()}>Get route</Button> */}
-          {markers && markers.length >= 2 ? (
-            <Button
-              variant={"solid"}
-              color={"success"}
-              radius="md"
-              onClick={handleGetOpenRouteRoute}
-            >
-              Get route
-            </Button>
-          ) : (
-            <Button
-              disabled={true}
-              disableAnimation={true}
-              variant={"bordered"}
-              color={"default"}
-              radius="md"
-            >
-              Get route
-            </Button>
-          )}
-        </ButtonGroup>
-      </CardHeader>
-      <CardBody>
-        <div className="flex flex-col gap-[1rem]">
-          {markers &&
-            markers.map((marker, i) => (
-              <div
-                key={marker.id}
-                className="inline-flex items-center justify-between w-full gap-4"
-              >
-                <Input
-                  disabled
-                  value={`${marker.coords[0].toFixed(3)};${marker.coords[1].toFixed(3)}`}
-                />
-                {i !== 0 && i !== markers.length - 1 && (
-                  <Button
-                    color="secondary"
-                    onClick={() => handleDeleteMark(marker.id)}
-                    isIconOnly
-                  >
-                    <TiDelete />
-                  </Button>
-                )}
+    <>
+      <motion.div variants={buttonVariants} animate={toggleMenu ? "open" : "closed"} className="absolute z-10  left-0 top-0 ">
+        <Button radius="none" className="min-h-20 rounded-r-sm bg-emerald-400" isIconOnly onClick={() => setToggleMenu(prev => !prev)}>
+          <motion.div animate={{ x: 3, rotate: toggleMenu ? 180 : 0 }} >
+            <SlArrowRight />
+          </motion.div>
+
+        </Button>
+      </motion.div>
+      <motion.div
+        className={`z-20 absolute  max-w-[410px] max-h-screen min-h-screen left-0 top-0`}
+        animate={{ overflowY: "hidden", scrollBehavior: "auto", scrollbarWidth: "thin" }}
+        transition={{ duration: 5 }}
+      >
+        <motion.div className="min-h-[500px] rounded-br-sm overflow-y-auto
+          max-h-screen" variants={itemVariants} animate={toggleMenu ? "open" : "closed"}>
+          <Card radius="none" className=" min-h-full flex-col  shadow-md shadow-emerald-400   flex-grow">
+            <CardHeader className=" flex-col gap-4">
+              <NavbarMenu />
+              <RouteButtonsMenu />
+            </CardHeader>
+            <CardBody className=" gap-4">
+              <div style={{ height: terminalH ? terminalH / 2 : "100%" }} className="overflow-y-auto pr-4">
+                <CordList />
               </div>
-            ))}
-        </div>
-      </CardBody>
-    </Card>
+              {state.routeInstructions &&
+                <>
+                  <SampleSplitter
+                    ref={ref}
+                    dir={"horizontal"}
+                    isDragging={isTerminalDragging}
+                    {...terminalDragBarProps}
+                  />
+                  <Accordion variant="splitted"  >
+                    <AccordionItem subtitle={
+                      <TotalRouteInformation steps={state.routeInstructions} />
+                    } aria-label="Route instruction" title={`Route instruction. `} >
+                      <RouteInstruction steps={state.routeInstructions} />
+                      <Divider />
+                    </AccordionItem>
+                  </Accordion>
+                </>
+              }
+
+            </CardBody>
+          </Card>
+        </motion.div>
+      </motion.div>
+    </>
   );
 }
 
 export default ControlPanel;
+
+
+
+
+

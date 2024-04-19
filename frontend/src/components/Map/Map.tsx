@@ -17,9 +17,10 @@ const MapInstance = () => {
           zoom: import.meta.env.ZOOM || 12,
         }}
         style={{ width: "100%", height: "100%" }}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
+        mapStyle="mapbox://styles/mapbox/navigation-night-v1"
       >
         {/* <OptimizedRouteSource /> */}
+        {/* <HillshadeSource /> */}
         {state.route &&
           state.route.length > 0 &&
           state.route.map((route, i) => (
@@ -35,7 +36,7 @@ const MapInstance = () => {
         <GeolocateControl />
         <NavigationControl />
       </Map>
-      <ControlPanel markers={state.markers} />
+      <ControlPanel />
     </div>
   );
 };

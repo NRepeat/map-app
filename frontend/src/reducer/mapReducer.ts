@@ -38,6 +38,11 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         draft.mapLoading = action.mapLoading;
       }
       break;
+    case "SET_ROUTE_INSTRUCTIONS":
+      {
+        draft.routeInstructions = action.routeInstructions;
+      }
+      break;
     default:
       return draft;
   }
