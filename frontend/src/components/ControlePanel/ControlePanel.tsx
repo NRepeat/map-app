@@ -97,11 +97,11 @@ function ControlPanel() {
         </Button>
       </motion.div>
       <motion.div
-        className={`z-20 absolute  max-w-[410px] max-h-screen min-h-screen left-0 top-0`}
+        className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900 min-w-[410px]  max-w-[410px] left-0 top-0`}
         animate={{ overflowY: "hidden", scrollBehavior: "auto", scrollbarWidth: "thin" }}
         transition={{ duration: 5 }}
       >
-        <motion.div className="min-h-[500px] rounded-br-sm overflow-y-auto
+        <motion.div className="rounded-br-sm  scrollbar-thin overflow-y-auto
           max-h-screen" variants={itemVariants} animate={toggleMenu ? "open" : "closed"}>
           <Card radius="none" className=" min-h-full flex-col  shadow-md shadow-emerald-400   flex-grow">
             <CardHeader className=" flex-col gap-4">
@@ -109,7 +109,7 @@ function ControlPanel() {
               <RouteButtonsMenu />
             </CardHeader>
             <CardBody className=" gap-4">
-              <div style={{ height: terminalH ? terminalH / 2 : "100%" }} className="overflow-y-auto pr-4">
+              <div style={{ height: terminalH ? terminalH / 2 : "100%" }} className="overflow-y-auto pr-4 scrollbar-thin">
                 <CordList />
               </div>
               {state.routeInstructions &&

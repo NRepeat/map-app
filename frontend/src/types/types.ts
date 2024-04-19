@@ -16,9 +16,28 @@ export type MapStateContextType = {
   mapLoading?: boolean;
   routeInstructions?: {
     steps: [];
+    waypoints: [number, number][];
     totalDistance: { distance: number; duration: number };
   };
-  route?: { coordinates: CoordsType[]; properties: {}; id: string }[];
+  waypointsCoords: [number, number][];
+  route?: {
+    coordinates: CoordsType[];
+    properties: {
+      segments: {
+        distance: number;
+        duration: number;
+        steps: {
+          distance: number;
+          duration: number;
+          type: number;
+          instruction: string;
+          name: string;
+          way_points: [number, number];
+        }[];
+      }[];
+    };
+    id: string;
+  }[];
 };
 export interface MapReducerType extends MapStateContextType {
   type: ActionType;
@@ -33,7 +52,8 @@ export type ActionType =
   | "DELETE_MARKER"
   | "SET_OPEN_ROUTE_ROUTE"
   | "SET_MAP_LOADING"
-  | "SET_ROUTE_INSTRUCTIONS";
+  | "SET_ROUTE_INSTRUCTIONS"
+  | "SET_ROUTE_WAYPOINTS_COORDS";
 
 export type MapContextType = {
   state: MapStateContextType;

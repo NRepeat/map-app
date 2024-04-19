@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { CoordsType, MarkersType } from "../types/types";
+import { findWaypoints } from "../utils/findWaypoints";
 
 export const updateMarkers = (
   markers?: MarkersType[],
@@ -47,24 +48,32 @@ export const deleteMarker = (markers: MarkersType[], id: string) => {
   const indexToDelete = markers.findIndex((marker) => marker.id === id);
 
   if (indexToDelete !== markers.length - 1 && indexToDelete !== -1) {
-    // Delete the marker by filtering out the marker with the specified id
     const updatedMarkers = markers.filter((marker) => marker.id !== id);
     return updatedMarkers;
   } else if (indexToDelete !== -1 && markers.length > 1) {
-    // Check if the marker exists and there is more than one marker
-    // Get the second to last marker
     const prevMarker = markers[markers.length - 2];
-    // Update the color of the second to last marker
+
     const updatedPrevMarker = { ...prevMarker, color: "#c21120" };
     markers[markers.length - 2] = updatedPrevMarker;
-    // Remove the last marker from the array
+
     markers.pop();
     return markers;
   } else if (indexToDelete !== -1 && markers.length === 1) {
-    // Check if there is only one marker
-    // If there is only one marker, simply remove it
     markers.pop();
   }
 
   return markers;
+};
+
+export const getWaypointsCoords = (
+  waypoints: [number, number][],
+  coords: [number, number][],
+  dispatch: any
+) => {
+  const waypointsData = findWaypoints(waypoints, coords);
+  dispatch({
+    type: "SET_ROUTE_WAYPOINTS_COORDS",
+    waypointsCoords: waypointsData,
+  });
+  return waypointsData;
 };

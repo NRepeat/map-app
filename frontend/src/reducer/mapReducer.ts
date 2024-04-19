@@ -43,6 +43,11 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         draft.routeInstructions = action.routeInstructions;
       }
       break;
+    case "SET_ROUTE_WAYPOINTS_COORDS":
+      {
+        draft.waypointsCoords = action.waypointsCoords;
+      }
+      break;
     default:
       return draft;
   }

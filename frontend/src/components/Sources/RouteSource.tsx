@@ -64,11 +64,12 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index }) => {
         "line-cap": "round",
       },
       paint: {
-        "line-color": lineColor, // Використовуємо збережений колір
+        "line-color": lineColor,
         "line-opacity": 0.8,
         "line-width": 4,
       },
     };
+
     return (
       <Source id={id} type="geojson" data={geojson}>
         <Layer {...layerStyle} />

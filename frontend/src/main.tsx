@@ -13,7 +13,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <MapProvider>
           <main className="dark light text-foreground bg-background">
             <App />
-
           </main>
         </MapProvider>
       </ReactMapGLProvider>

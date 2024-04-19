@@ -3,15 +3,14 @@ import FilterTime from "../FilterTime/FilterTime"
 import RouteInstructionCard from "./Card/Card"
 
 export const RouteInstruction = ({ steps }: { steps: any }) => {
+
 	return (<>
 		<div className=" flex flex-col  ">
 			<div>
 				{steps && <div className="  p-4">
 					<div className="  flex flex-col gap-4">
 						{steps.steps.map((step: any) =>
-							<>
-								<RouteInstructionCard step={step} />
-							</>
+							<RouteInstructionCard step={step} />
 						)}
 					</div>
 				</div>}

@@ -75,6 +75,10 @@ export class OpenrouteService {
         }
       );
       const optimizedRoutesData = await responseOPEN_ROUTE_OPT.json();
+      console.log(
+        "🚀 ~ OpenrouteService ~ fetchOptimizedRoute ~ optimizedRoutesData:",
+        optimizedRoutesData
+      );
 
       const optimizedRoutesCords = optimizedRoutesData.routes[0].steps.map(
         (step: any) => step.location
@@ -83,6 +87,10 @@ export class OpenrouteService {
       const optimizedData = await this.fetchOpenRouteRoute({
         coordinates: optimizedRoutesCords,
       });
+      console.log(
+        "🚀 ~ OpenrouteService ~ fetchOptimizedRoute ~ optimizedData:",
+        optimizedData
+      );
 
       return optimizedData;
     } catch (error) {
