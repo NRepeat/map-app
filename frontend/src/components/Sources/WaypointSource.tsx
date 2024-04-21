@@ -16,7 +16,7 @@ const WaypointSource = () => {
 					type: "Feature",
 					geometry: {
 						type: "MultiPoint",
-						coordinates: state.waypointsCoords,
+						coordinates: state.waypointsCoords!,
 					},
 				},
 			],

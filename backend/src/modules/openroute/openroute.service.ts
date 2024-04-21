@@ -37,6 +37,7 @@ export class OpenrouteService {
       );
 
       const data = (await responseOpenRoute.json()) as any;
+      console.log("🚀 ~ OpenrouteService ~ data :", data);
       const coordsOpenRouteData = data.features;
 
       return coordsOpenRouteData;

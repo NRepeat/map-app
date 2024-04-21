@@ -36,9 +36,11 @@ export class OpenRoute {
         properties: coord.properties,
         id: uuidv4(),
       }));
-      const steps = data.coords[0].properties.segments[1].steps;
-      const waypoints = steps.map((step: any) => step.way_points);
 
+      const steps = data.coords[0].properties.segments.flatMap(
+        (segment: any) => segment.steps
+      );
+      const waypoints = steps.map((step: any) => step.way_points);
       const totalDistance = {
         distance: data.coords[0].properties.summary.distance,
         duration: data.coords[0].properties.summary.duration,
