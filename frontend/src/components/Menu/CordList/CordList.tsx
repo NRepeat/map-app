@@ -31,14 +31,17 @@ const CordList = () => {
 						key={marker.id}
 						className="inline-flex items-center justify-between w-full gap-4"
 					>
-						<p>
-							{i === 0 && "Start"}
-							{i !== 0 && i !== state.markers!.length - 1 && i}
-							{state.markers!.length - 1 <= i && "Endpoint"}
-						</p>
+
 						<Input
 							onClick={(e) => handleFocusOnMarker(e, [marker.coords[0], marker.coords[1]])}
 							value={`${marker.coords[0].toFixed(3)};${marker.coords[1].toFixed(3)}`}
+							startContent={
+								<p>
+									{i === 0 && "Start"}
+									{i !== 0 && i !== state.markers!.length - 1 && i}
+									{state.markers!.length - 1 <= i && "Endpoint"}
+								</p>
+							}
 						/>
 						{i !== 0 && i !== state?.markers!.length - 1 && (
 							<Button
