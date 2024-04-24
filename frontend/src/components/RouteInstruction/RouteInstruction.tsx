@@ -9,8 +9,8 @@ export const RouteInstruction = ({ steps }: { steps: any }) => {
 			<div>
 				{steps && <div className="  p-4">
 					<div className="  flex flex-col gap-4">
-						{steps.steps.map((step: any) =>
-							<RouteInstructionCard step={step} />
+						{steps.steps.map((step: any, i: number) =>
+							<RouteInstructionCard key={i} step={step} />
 						)}
 					</div>
 				</div>}

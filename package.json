@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "husky": "^8.0.0",
     "prettier": "3.2.5"
   },
@@ -7,6 +8,7 @@
     "prepare": "husky install",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
-    "test-all": "npm run check-format "
+    "test-all": "npm run check-format ",
+    "start": "concurrently \"cd ./frontend && npm run dev\" \"cd ./backend && npm run start:dev \""
   }
 }

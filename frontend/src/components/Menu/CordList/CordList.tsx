@@ -1,30 +1,50 @@
 import { Button, Input } from '@nextui-org/react';
+import { IoChevronForwardCircle } from 'react-icons/io5';
 import { TiDelete } from 'react-icons/ti';
 import { useMap } from 'react-map-gl';
 import useDeleteMarker from '../../../hooks/useDeleteMarker';
 import useMapContext from '../../../hooks/useMapContext';
 import { CoordsType } from '../../../types/types';
+import { useState } from 'react';
 
 const CordList = () => {
+	const [startCoord,setStartCoord] = useState<[number,number]|null>(null)
 	const { handleDeleteMark } = useDeleteMarker();
 	const { state } = useMapContext();
 	const { current: map } = useMap()
-	const handleFocusOnMarker = (e: React.MouseEvent<HTMLInputElement, MouseEvent>, marker: CoordsType) => {
+	const handleFocusOnMarker = (e: React.MouseEvent<HTMLInputElement, MouseEvent>, marker: CoordsType | null) => {
 		e.stopPropagation()
-		if (!map) {
+		if (!map ) {
 			throw new Error("Map not found")
 		}
-		map.flyTo({
-			center: marker,
-			animate: true,
-			around: marker,
-			duration: 1000,
-			essential: true,
-			zoom: 16
-		})
+		if (marker){
+			map.flyTo({
+				center: marker,
+				animate: true,
+				around: marker,
+				duration: 1000,
+				essential: true,
+				zoom: 16
+			})
+		}
+
+	}
+	const handleStartInput = (e: React.ChangeEvent<HTMLInputElement>, marker: CoordsType) =>  {
+setStartCoord(e.target.value)
 	}
 	return (
 		<div className="flex flex-col gap-[1rem]">
+
+			<Input
+				onChange={(e) => handleStartInput(e, [state.markers ?  state.markers[0].coords[0].toFixed(3) : startCoord[0], marker.coords[1].toFixed(3)])}
+				onClick={(e) => startCoord &&  handleFocusOnMarker(e, [startCoord[0], startCoord[1]])}
+				value={`${marker.coords[0].toFixed(3)};${marker.coords[1].toFixed(3)}`}
+				startContent={
+					<p>
+						{ <IoChevronForwardCircle className='fill-emerald-400 min-h-6 min-w-6' />}
+						
+				}
+			/>
 			{state.markers &&
 				state.markers.map((marker, i) => (
 					<div
@@ -37,7 +57,7 @@ const CordList = () => {
 							value={`${marker.coords[0].toFixed(3)};${marker.coords[1].toFixed(3)}`}
 							startContent={
 								<p>
-									{i === 0 && "Start"}
+									{i === 0 && <IoChevronForwardCircle className='fill-emerald-400 min-h-6 min-w-6' />}
 									{i !== 0 && i !== state.markers!.length - 1 && i}
 									{state.markers!.length - 1 <= i && "Endpoint"}
 								</p>

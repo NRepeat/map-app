@@ -8,7 +8,7 @@ import {
   Divider
 } from "@nextui-org/react";
 import { Variants, motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { SlArrowRight } from "react-icons/sl";
 import { useResizable } from "react-resizable-layout";
 import useMapContext from "../../hooks/useMapContext";
@@ -27,13 +27,11 @@ function ControlPanel() {
   const { state } = useMapContext();
   const [toggleMenu, setToggleMenu] = useState<boolean>(true)
 
-  const ref = useRef(null)
   const {
     isDragging: isTerminalDragging,
     position: terminalH,
     separatorProps: terminalDragBarProps
   } = useResizable({
-    containerRef: ref,
     axis: "y",
     reverse: false,
   });
@@ -115,7 +113,6 @@ function ControlPanel() {
               {state.routeInstructions &&
                 <>
                   <SampleSplitter
-                    ref={ref}
                     dir={"horizontal"}
                     isDragging={isTerminalDragging}
                     {...terminalDragBarProps}
