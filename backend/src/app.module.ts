@@ -2,15 +2,11 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { ConfigsModule } from "./config/config.module";
+import { AuthModule } from "./modules/auth/auth.module";
 import { OpenrouteModule } from "./modules/openroute/openroute.module";
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: `${process.env.NODE_ENV}.env`,
-    }),
-    OpenrouteModule,
-  ],
+  imports: [ConfigsModule, OpenrouteModule, ConfigModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

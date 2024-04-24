@@ -1,23 +1,23 @@
 import { Button, Input } from '@nextui-org/react';
+import { useState } from 'react';
 import { IoChevronForwardCircle } from 'react-icons/io5';
 import { TiDelete } from 'react-icons/ti';
 import { useMap } from 'react-map-gl';
 import useDeleteMarker from '../../../hooks/useDeleteMarker';
 import useMapContext from '../../../hooks/useMapContext';
 import { CoordsType } from '../../../types/types';
-import { useState } from 'react';
 
 const CordList = () => {
-	const [startCoord,setStartCoord] = useState<[number,number]|null>(null)
+	const [startCoord, setStartCoord] = useState<string | null>(null)
 	const { handleDeleteMark } = useDeleteMarker();
 	const { state } = useMapContext();
 	const { current: map } = useMap()
 	const handleFocusOnMarker = (e: React.MouseEvent<HTMLInputElement, MouseEvent>, marker: CoordsType | null) => {
 		e.stopPropagation()
-		if (!map ) {
+		if (!map) {
 			throw new Error("Map not found")
 		}
-		if (marker){
+		if (marker) {
 			map.flyTo({
 				center: marker,
 				animate: true,
@@ -29,20 +29,43 @@ const CordList = () => {
 		}
 
 	}
-	const handleStartInput = (e: React.ChangeEvent<HTMLInputElement>, marker: CoordsType) =>  {
-setStartCoord(e.target.value)
+	const handleStartInput = (e: React.ChangeEvent<HTMLInputElement>, marker?: CoordsType) => {
+		setStartCoord(e.target.value)
 	}
+	const handleGeocodeRequest = async () => {
+
+		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=amoeba&location=37.76999%2C-122.44696&radius=500&types=establishment&key=AIzaSyDxe2634ayBpmgAkoWBrTyckcYtp-MK974`;
+		const headers = new Headers()
+		headers.append('Access-Control-Allow-Origin', '*')
+		headers.append('Access-Control-Allow-Credentials', "true")
+		headers.append('Access-Control-Allow-Methods', 'POST,GET')
+
+		try {
+			const response = await fetch(apiUrl, {
+				headers,
+			});
+			const data = await response.json();
+			// Process the data as needed
+			console.log(data);
+		} catch (error) {
+			console.error('Error fetching data:', error);
+		}
+	};
 	return (
 		<div className="flex flex-col gap-[1rem]">
+			<form>
 
+				<Button onClick={handleGeocodeRequest}>Submit</Button>
+			</form>
 			<Input
-				onChange={(e) => handleStartInput(e, [state.markers ?  state.markers[0].coords[0].toFixed(3) : startCoord[0], marker.coords[1].toFixed(3)])}
-				onClick={(e) => startCoord &&  handleFocusOnMarker(e, [startCoord[0], startCoord[1]])}
-				value={`${marker.coords[0].toFixed(3)};${marker.coords[1].toFixed(3)}`}
+				type='number'
+				onChange={(e) => handleStartInput(e)}
+				// onClick={(e) => startCoord && handleFocusOnMarker(e, [startCoord[0], startCoord[1]])}
+				value={`${startCoord}`}
 				startContent={
 					<p>
-						{ <IoChevronForwardCircle className='fill-emerald-400 min-h-6 min-w-6' />}
-						
+						{<IoChevronForwardCircle className='fill-emerald-400 min-h-6 min-w-6' />}
+					</p>
 				}
 			/>
 			{state.markers &&
