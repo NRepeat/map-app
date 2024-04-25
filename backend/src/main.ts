@@ -1,11 +1,31 @@
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import * as session from "express-session";
+import * as passport from "passport";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({ origin: "*" });
+  app.enableCors({
+    allowedHeaders: ["content-type"],
+    origin: "http://localhost:5173",
+    credentials: true,
+    optionsSuccessStatus: 200,
+  });
 
+  app.setGlobalPrefix("/api");
+  app.use(
+    session({
+      secret: "asdasdasdasd",
+      saveUninitialized: false,
+      resave: false,
+      cookie: {
+        maxAge: 60000,
+      },
+    })
+  );
+  app.use(passport.initialize());
+  app.use(passport.session());
   const config = new DocumentBuilder()
     .setTitle("NestJs API Documentation")
     .setDescription("Backend API for the NestJs application.")
@@ -14,6 +34,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);
+
   await app.listen(3000);
 }
 bootstrap();

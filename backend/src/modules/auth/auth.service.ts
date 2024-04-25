@@ -1,59 +1,87 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { InjectRepository } from "@nestjs/typeorm";
+import * as bcrypt from "bcrypt";
+import { User } from "src/typeorm/entities/User";
+import { UserDetails } from "src/utils/types";
+import { Repository } from "typeorm";
 // import { generateFromEmail } from "unique-username-generator";
 // import { User } from "../users/entities/user.entity";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService
-    // @InjectRepository(User) private userRepository: Repository<User>
+    private jwtService: JwtService,
+    @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
+  async validateGoogleUser(details: UserDetails) {
+    try {
+      const existUser = await this.findUser({ email: details.email });
+      if (existUser) {
+        return existUser;
+      }
 
-  generateJwt(payload) {
-    return this.jwtService.sign(payload);
+      return this.registerUser(details);
+    } catch (error) {
+      console.log("🚀 ~ AuthService ~ validateUser ~ error:", error);
+    }
   }
 
-  async signIn(user) {
-    if (!user) {
-      throw new BadRequestException("Unauthenticated");
+  async validateUser(details: UserDetails) {
+    try {
+      const existUser = await this.findUser({ email: details.email });
+      if (existUser) {
+        const isValidPassword = await this.checkPassword(
+          details.password,
+          existUser.password
+        );
+        if (!isValidPassword) {
+          throw new UnauthorizedException();
+        } else {
+          return this.signJWT(existUser);
+        }
+      } else {
+        const newUser = await this.registerUser(details);
+        return this.signJWT(newUser);
+      }
+    } catch (error) {
+      console.log("🚀 ~ AuthService ~ validateUser ~ error:", error);
     }
+  }
+  async registerUser(details: UserDetails) {
+    try {
+      const newUser = this.userRepository.create(details);
+      const savedUser = await this.userRepository.save(newUser);
+      delete savedUser.password;
 
-    // const userExists = await this.findUserByEmail(user.email);
+      return savedUser;
+    } catch (error) {
+      console.log("🚀 ~ AuthService ~ registerUser ~ error:", error);
+    }
+  }
 
-    // if (!userExists) {
-    //   return this.registerUser(user);
-    // }
-
-    return this.generateJwt({
-      sub: "asd",
-      email: "asd",
+  async findUser({ email, id }: { email: string; id?: number }) {
+    const user = await this.userRepository.findOne({
+      where: [{ email }, { id }],
+    });
+    delete user.password;
+    return user;
+  }
+  async signJWT(user: User) {
+    return this.jwtService.signAsync({
+      email: user.email,
+      name: user.displayName,
     });
   }
-
-  // async registerUser(user: RegisterUserDto) {
-  //   try {
-  //     const newUser = this.userRepository.create(user);
-  //     newUser.username = generateFromEmail(user.email, 5);
-
-  //     await this.userRepository.save(newUser);
-
-  //     return this.generateJwt({
-  //       sub: newUser.id,
-  //       email: newUser.email,
-  //     });
-  //   } catch {
-  //     throw new InternalServerErrorException();
-  //   }
-  // }
-
-  // async findUserByEmail(email) {
-  //   const user = await this.userRepository.findOne({ email });
-
-  //   if (!user) {
-  //     return null;
-  //   }
-
-  //   return user;
-  // }
+  async decryptJWT(access_token: string) {
+    return this.jwtService.decode(access_token);
+  }
+  async hashPassword(password: string) {
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
+  }
+  async checkPassword(password: string, hash: string) {
+    return bcrypt.compare(password, hash);
+  }
 }

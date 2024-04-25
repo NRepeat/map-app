@@ -1,8 +1,11 @@
 import { Modal, ModalContent, Spinner } from "@nextui-org/react";
+import { Outlet } from "react-router-dom";
 import MapInstance from "./components/Map/Map";
 import useMapContext from "./hooks/useMapContext";
 import "./styles/IdeClone.css";
 import "./styles/SampleSplitter.css";
+
+
 export function App() {
   const { state } = useMapContext()
   // const [optimizedCoords, setOptimizedCoords] = useState([]);
@@ -123,6 +126,6 @@ export function App() {
       </ModalContent>
     </Modal>
     {<MapInstance />}
-
+    <Outlet />
   </>);
 }

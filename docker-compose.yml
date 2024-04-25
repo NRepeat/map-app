@@ -18,3 +18,12 @@ services:
       - "80:80"
     depends_on:
       - nodeserver
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: map-app
+    ports:
+      - "5433:5432"
+    restart: always

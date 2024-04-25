@@ -1,8 +1,9 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { configurations } from "./config";
 
 @Module({
+  providers: [ConfigService],
   imports: [
     ConfigModule.forRoot({
       load: [configurations.google, configurations.jwt],

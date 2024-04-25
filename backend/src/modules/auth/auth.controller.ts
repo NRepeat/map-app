@@ -1,38 +1,36 @@
-import {
-  Controller,
-  Get,
-  HttpStatus,
-  Req,
-  Res,
-  UseGuards,
-} from "@nestjs/common";
-import { Response } from "express";
+import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
+import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
 import { GoogleOauthGuard } from "./guards/google-oauth.guard";
+import { JwtAuthGuard } from "./guards/jwt.guard";
 
 @Controller("auth")
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Get("google")
+  @Get("google/login")
   @UseGuards(GoogleOauthGuard)
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async auth() {}
+  async login() {
+    console.log("test");
+    return { msg: "success" };
+  }
 
   @Get("google/callback")
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req: any, @Res() res: Response) {
-    console.log("🚀 ~ AuthController ~ googleAuthCallback ~ req:", req);
-
-    const token = await this.authService.signIn(req.user);
-    console.log("🚀 ~ AuthController ~ googleAuthCallback ~ oke:", token);
+    const token = await this.authService.signJWT(req.user);
+    console.log("🚀 ~ AuthController ~ googleAuthCallback ~ token:", token);
 
     res.cookie("access_token", token, {
       maxAge: 2592000000,
       sameSite: true,
       secure: false,
     });
-
-    return res.status(HttpStatus.OK);
+    res.redirect("http://localhost:5173/");
+  }
+  @Get("status")
+  @UseGuards(JwtAuthGuard)
+  async status(@Req() req: Request) {
+    return req.user;
   }
 }

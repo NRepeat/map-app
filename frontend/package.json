@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@nextui-org/react": "^2.2.10",
+    "@nextui-org/dropdown": "^2.1.23",
+    "@nextui-org/react": "^2.3.6",
     "@turf/turf": "^6.5.0",
     "@types/mapbox-gl": "^3.1.0",
     "@types/react-resizable": "^3.0.7",
@@ -26,6 +27,7 @@
     "react-map-gl": "^7.1.7",
     "react-resizable": "^3.0.5",
     "react-resizable-layout": "^0.7.2",
+    "react-router-dom": "^6.23.0",
     "use-immer": "^0.9.0",
     "uuid": "^9.0.1"
   },

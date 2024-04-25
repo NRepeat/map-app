@@ -34,40 +34,25 @@ const CordList = () => {
 	}
 	const handleGeocodeRequest = async () => {
 
-		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=amoeba&location=37.76999%2C-122.44696&radius=500&types=establishment&key=AIzaSyDxe2634ayBpmgAkoWBrTyckcYtp-MK974`;
-		const headers = new Headers()
-		headers.append('Access-Control-Allow-Origin', '*')
-		headers.append('Access-Control-Allow-Credentials', "true")
-		headers.append('Access-Control-Allow-Methods', 'POST,GET')
 
-		try {
-			const response = await fetch(apiUrl, {
-				headers,
-			});
-			const data = await response.json();
-			// Process the data as needed
-			console.log(data);
-		} catch (error) {
-			console.error('Error fetching data:', error);
-		}
 	};
 	return (
-		<div className="flex flex-col gap-[1rem]">
+		<div className="flex flex-col gap-[1rem] ">
 			<form>
+				<Input
 
+					onChange={(e) => handleStartInput(e)}
+					// onClick={(e) => startCoord && handleFocusOnMarker(e, [startCoord[0], startCoord[1]])}
+					value={`${startCoord}`}
+					startContent={
+						<p>
+							{<IoChevronForwardCircle className='fill-emerald-400 min-h-6 min-w-6' />}
+						</p>
+					}
+				/>
 				<Button onClick={handleGeocodeRequest}>Submit</Button>
 			</form>
-			<Input
-				type='number'
-				onChange={(e) => handleStartInput(e)}
-				// onClick={(e) => startCoord && handleFocusOnMarker(e, [startCoord[0], startCoord[1]])}
-				value={`${startCoord}`}
-				startContent={
-					<p>
-						{<IoChevronForwardCircle className='fill-emerald-400 min-h-6 min-w-6' />}
-					</p>
-				}
-			/>
+
 			{state.markers &&
 				state.markers.map((marker, i) => (
 					<div

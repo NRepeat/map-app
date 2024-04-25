@@ -85,7 +85,7 @@ function ControlPanel() {
     }
   };
   return (
-    <>
+    <div>
       <motion.div variants={buttonVariants} animate={toggleMenu ? "open" : "closed"} className="absolute z-10  left-0 top-0 ">
         <Button radius="none" className="min-h-20 rounded-r-sm bg-emerald-400" isIconOnly onClick={() => setToggleMenu(prev => !prev)}>
           <motion.div animate={{ x: 3, rotate: toggleMenu ? 180 : 0 }} >
@@ -95,19 +95,20 @@ function ControlPanel() {
         </Button>
       </motion.div>
       <motion.div
-        className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900 min-w-[410px]  max-w-[410px] left-0 top-0`}
+        className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900 w-full sm:max-w-[500px] min-w-[300px]    left-0 top-0  `}
         animate={{ overflowY: "hidden", scrollBehavior: "auto", scrollbarWidth: "thin" }}
         transition={{ duration: 5 }}
       >
-        <motion.div className="rounded-br-sm  scrollbar-thin overflow-y-auto
-          max-h-screen" variants={itemVariants} animate={toggleMenu ? "open" : "closed"}>
-          <Card radius="none" className=" min-h-full flex-col  shadow-md shadow-emerald-400   flex-grow">
+        <motion.div className=" rounded-br-sm  overflow-auto  scrollbar-thin  
+          sm:max-h-screen" variants={itemVariants} animate={toggleMenu ? "open" : "closed"}>
+          <NavbarMenu />
+
+          <Card radius="none" className=" flex-col     flex-grow  overflow-auto ">
             <CardHeader className=" flex-col gap-4">
-              <NavbarMenu />
               <RouteButtonsMenu />
             </CardHeader>
-            <CardBody className=" gap-4">
-              <div style={{ height: terminalH ? terminalH / 2 : "100%" }} className="overflow-y-auto pr-4 scrollbar-thin">
+            <CardBody className=" gap-4  ">
+              <div style={{ height: terminalH ? terminalH / 2 : "100%" }} className="overflow-y-auto  pr-4 min-h-[200px] scrollbar-thin">
                 <CordList />
               </div>
               {state.routeInstructions &&
@@ -120,10 +121,11 @@ function ControlPanel() {
                   <Accordion variant="splitted"  >
                     <AccordionItem subtitle={
                       <TotalRouteInformation steps={state.routeInstructions} />
-                    } aria-label="Route instruction" title={`Route instruction. `} >
+                    } aria-label="Route instruction" title={`Route instruction. `} className="  max-h-[400px] overflow-y-auto sm:overflow-hidden scrollbar-thin     scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  scr">
                       <RouteInstruction steps={state.routeInstructions} />
                       <Divider />
                     </AccordionItem>
+
                   </Accordion>
                 </>
               }
@@ -132,7 +134,7 @@ function ControlPanel() {
           </Card>
         </motion.div>
       </motion.div>
-    </>
+    </div>
   );
 }
 
