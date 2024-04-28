@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { IoChevronForwardCircle } from 'react-icons/io5';
 import { TiDelete } from 'react-icons/ti';
 import { useMap } from 'react-map-gl';
+import { handelAutocomplete } from '../../../handlers/google';
 import useDeleteMarker from '../../../hooks/useDeleteMarker';
 import useMapContext from '../../../hooks/useMapContext';
 import { CoordsType } from '../../../types/types';
@@ -33,7 +34,7 @@ const CordList = () => {
 		setStartCoord(e.target.value)
 	}
 	const handleGeocodeRequest = async () => {
-
+		handelAutocomplete()
 
 	};
 	return (

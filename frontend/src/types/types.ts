@@ -19,6 +19,7 @@ export type MapStateContextType = {
     waypoints: [number, number][];
     totalDistance: { distance: number; duration: number };
   };
+  autocomplete?: {};
   waypointsCoords?: [number, number][];
   route?: {
     coordinates: CoordsType[];

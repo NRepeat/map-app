@@ -15,8 +15,13 @@ export class AuthService {
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
   async validateGoogleUser(details: UserDetails) {
+    console.log("🚀 ~ AuthService ~ validateGoogleUser ~ details:", details);
     try {
       const existUser = await this.findUser({ email: details.email });
+      console.log(
+        "🚀 ~ AuthService ~ validateGoogleUser ~ existUser:",
+        existUser
+      );
       if (existUser) {
         return existUser;
       }
@@ -28,8 +33,10 @@ export class AuthService {
   }
 
   async validateUser(details: UserDetails) {
+    console.log("🚀 ~ AuthService ~ validateUser ~ details:", details);
     try {
       const existUser = await this.findUser({ email: details.email });
+      console.log("🚀 ~ AuthService ~ validateUser ~ existUser:", existUser);
       if (existUser) {
         const isValidPassword = await this.checkPassword(
           details.password,
@@ -64,7 +71,9 @@ export class AuthService {
     const user = await this.userRepository.findOne({
       where: [{ email }, { id }],
     });
-    delete user.password;
+    if (user) {
+      delete user.password;
+    }
     return user;
   }
   async signJWT(user: User) {

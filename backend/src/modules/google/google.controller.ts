@@ -7,19 +7,24 @@ export class GoogleController {
   @UseGuards(JwtAuthGuard)
   async placeAutocomplete() {
     try {
-      // const auth = new google.auth.OAuth2(
-      //   "1070310261194-8dkpov8j5n6rp2tm1gjnb76nkaohhc3t.apps.googleusercontent.com",
-      //   "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",
-      //   "http://localhost:3000/api/auth/google/callback"
-      // );
-      // google.options({
-      //   auth: auth,
-      // });
-      const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=amoeba&location=37.76999%2C-122.44696&radius=500&types=establishment&key=AIzaSyDxe2634ayBpmgAkoWBrTyckcYtp-MK974`;
+      const apiKey = "AIzaSyDxe2634ayBpmgAkoWBrTyckcYtp-MK974";
 
-      const response = await fetch(apiUrl);
+      const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&input=Ukrain&inputtype=textquery&key=${apiKey}`;
+
+      // const requestBody = {
+      //   textQuery: "Spicy Vegetarian Food in Sydney, Australia",
+      // };
+
+      // const headers = {
+      //   "Content-Type": "application/json",
+      //   "X-Goog-Api-Key": apiKey,
+      //   "X-Goog-FieldMask": "places.displayName,places.formattedAddress",
+      // };
+
+      const response = await fetch(url);
 
       const data = await response.json();
+      console.log("🚀 ~ GoogleController ~ placeAutocomplete ~ data:", data);
       return data;
     } catch (error) {
       console.log("🚀 ~ GoogleController ~ placeAutocomplete ~ error:", error);
