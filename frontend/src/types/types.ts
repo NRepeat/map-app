@@ -8,10 +8,11 @@ export type MarkersType = {
   id: string;
   color?: string;
 };
+export type LatLng = { lat: number; lng: number };
 export type MapStateContextType = {
   coords?: CoordsType;
   markers?: MarkersType[];
-  mapCenter?: mapboxgl.LngLat;
+  mapCenter?: LatLng;
   marker?: MarkersType;
   mapLoading?: boolean;
   routeInstructions?: {
@@ -59,4 +60,22 @@ export type ActionType =
 export type MapContextType = {
   state: MapStateContextType;
   dispatch: React.Dispatch<MapReducerType>;
+};
+
+export type Place = {
+  formatted_address: string;
+  geometry: { location: { lat: number; lng: number } };
+  icon: string;
+  icon_background_color: string;
+  icon_mask_base_uri: string;
+  name: string;
+  photos: {
+    height: number;
+    width: number;
+    html_attributions: string[];
+    photo_reference: string;
+  }[];
+  place_id: string;
+  reference: string;
+  types: string[];
 };

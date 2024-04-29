@@ -1,16 +1,18 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt.guard";
 
 @Controller("google")
 export class GoogleController {
-  @Get("autocomplete")
+  @Post("autocomplete")
   @UseGuards(JwtAuthGuard)
-  async placeAutocomplete() {
+  async placeAutocomplete(@Body() body: { value: string }) {
     try {
+      console.log("🚀 ~ GoogleController ~ placeAutocomplete ~ body:", body);
+
       const apiKey = "AIzaSyDxe2634ayBpmgAkoWBrTyckcYtp-MK974";
 
-      const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&input=Ukrain&inputtype=textquery&key=${apiKey}`;
-
+      // const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&input=${body.value}&inputtype=textquery&key=${apiKey}`;
+      const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${body.value}&language=en,uk&key=${apiKey}`;
       // const requestBody = {
       //   textQuery: "Spicy Vegetarian Food in Sydney, Australia",
       // };
