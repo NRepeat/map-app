@@ -20,6 +20,7 @@ export type MapStateContextType = {
     waypoints: [number, number][];
     totalDistance: { distance: number; duration: number };
   };
+  places?: Place[];
   autocomplete?: {};
   waypointsCoords?: [number, number][];
   route?: {
@@ -55,7 +56,8 @@ export type ActionType =
   | "SET_OPEN_ROUTE_ROUTE"
   | "SET_MAP_LOADING"
   | "SET_ROUTE_INSTRUCTIONS"
-  | "SET_ROUTE_WAYPOINTS_COORDS";
+  | "SET_ROUTE_WAYPOINTS_COORDS"
+  | "SET_PLACES";
 
 export type MapContextType = {
   state: MapStateContextType;
@@ -78,4 +80,5 @@ export type Place = {
   place_id: string;
   reference: string;
   types: string[];
+  end?: boolean;
 };

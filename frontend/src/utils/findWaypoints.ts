@@ -13,7 +13,6 @@ export const findWaypoint = (
   coords: [number, number][],
   waypointIndex: [number]
 ) => {
-  console.log("🚀 ~ waypointIndex:", waypointIndex);
   const waypoint = coords[waypointIndex[0]];
 
   return waypoint;

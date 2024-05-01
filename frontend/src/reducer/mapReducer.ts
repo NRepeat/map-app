@@ -3,7 +3,11 @@ import { deleteMarker, updateMarkers, updateMarkersCoord } from "./actions";
 export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
   switch (action.type) {
     case "SET_MARKERS":
-      draft.markers = updateMarkers(draft.markers, action.mapCenter);
+      draft.markers = updateMarkers(
+        action.markerId,
+        draft.markers,
+        action.mapCenter
+      );
       break;
     case "UPDATE_MARKERS_CORDS":
       {
@@ -46,6 +50,11 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
     case "SET_ROUTE_WAYPOINTS_COORDS":
       {
         draft.waypointsCoords = action.waypointsCoords;
+      }
+      break;
+    case "SET_PLACES":
+      {
+        draft.places = action.places;
       }
       break;
     default:

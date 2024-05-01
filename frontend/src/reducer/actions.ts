@@ -1,8 +1,8 @@
-import { v4 as uuidv4 } from "uuid";
-import { CoordsType, MarkersType } from "../types/types";
+import { CoordsType, MarkersType, Place } from "../types/types";
 import { findWaypoints } from "../utils/findWaypoints";
 
 export const updateMarkers = (
+  id?: string,
   markers?: MarkersType[],
   center?: { lng: number; lat: number }
 ): MarkersType[] => {
@@ -10,20 +10,22 @@ export const updateMarkers = (
     const lastMarker = markers[markers.length - 1];
     const updatedMarkers = [
       ...markers.slice(0, markers.length - 1),
-      { coords: [center!.lng, center!.lat], id: uuidv4(), color: "#1500ff" },
+      { coords: [center!.lng, center!.lat], id, color: "#1500ff" },
       lastMarker,
     ] as MarkersType[];
     return [...updatedMarkers];
   } else if (!markers?.length) {
-    return [
-      { coords: [center!.lng, center!.lat], id: uuidv4(), color: "#11c22c" },
-    ];
-  } else {
+    return [{ coords: [center!.lng, center!.lat], id: id!, color: "#11c22c" }];
+  } else if (id === "end") {
     return [
       ...markers,
-      { coords: [center!.lng, center!.lat], id: uuidv4(), color: "#c21120" },
+      { coords: [center!.lng, center!.lat], id, color: "#c21120" },
     ] as MarkersType[];
   }
+  return [
+    ...markers,
+    { coords: [center!.lng, center!.lat], id, color: "#c21120" },
+  ] as MarkersType[];
 };
 
 export const updateMarkersCoord = (
@@ -76,4 +78,43 @@ export const getWaypointsCoords = (
     waypointsCoords: waypointsData,
   });
   return waypointsData;
+};
+
+export const setPlaces = (
+  places: Place[] | undefined,
+  place: Place,
+  dispatch: any,
+  start?: boolean,
+  end?: boolean
+) => {
+  if (start) {
+    if (places) {
+      return dispatch({ type: "SET_PLACES", places: [place, ...places] });
+    }
+    return dispatch({ type: "SET_PLACES", places: [place] });
+  }
+  if (end) {
+    place.end = true;
+
+    if (places) {
+      const newPlaces = [...places, place];
+      console.log("🚀 ~ places:", newPlaces);
+
+      dispatch({ type: "SET_PLACES", places: [...places, place] });
+    }
+
+    return dispatch({ type: "SET_PLACES", places: [place] });
+  }
+  if (!places) {
+    throw new Error("Places not found");
+  }
+  const lastIndexOfPlace = places.lastIndexOf(place);
+  if (lastIndexOfPlace !== -1) {
+    const updatedPlaces = [
+      ...places.slice(0, lastIndexOfPlace),
+      place,
+      ...places.slice(lastIndexOfPlace),
+    ];
+    dispatch({ type: "SET_PLACES", places: updatedPlaces });
+  }
 };
