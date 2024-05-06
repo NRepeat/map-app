@@ -44,6 +44,7 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 
 	const debouncedSave = debounce((newValue: string) => getSuggestions(newValue), 500);
 
+
 	useEffect(() => {
 		if (inputRef && inputRef.current && inputValue) {
 			inputRef.current.value = inputValue;
