@@ -1,6 +1,6 @@
 import { Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import debounce from 'lodash.debounce';
-import React, { FC, Key, useState } from 'react';
+import React, { FC, Key, useEffect, useRef, useState } from 'react';
 import { IoIosSearch } from 'react-icons/io';
 import { v4 as uuidv4 } from "uuid";
 import { handelAutocomplete } from '../../handlers/google';
@@ -20,14 +20,17 @@ type AutocompletePlaceInputType = {
 	startContent?: React.ReactNode
 }
 
-const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultValue, id, startContent, label }) => {
+const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultValue, id, startContent, label, start, end }) => {
 	const { handleFocusOnMarker } = useFlyToMarker()
 	const { dispatch, state } = useMapContext()
 	const [options, setOptions] = useState<Place[]>([]);
 	const [loading, setLoading] = useState(false);
+	const inputRef = useRef<HTMLInputElement | null>(null)
 	const [inputValue, setInputValue] = useState<string | undefined>(inputDefaultValue)
 	const [selectedPlace, setSelectedPLace] = useState<Place>()
 	const { setMark } = useSetMarkers()
+
+
 	const getSuggestions = async (word: string) => {
 		if (word) {
 			setLoading(true);
@@ -39,13 +42,21 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 		}
 	};
 
-	const debouncedSave = debounce((newValue: string) => getSuggestions(newValue), 1500);
+	const debouncedSave = debounce((newValue: string) => getSuggestions(newValue), 500);
 
-
+	useEffect(() => {
+		if (inputRef && inputRef.current && inputValue) {
+			inputRef.current.value = inputValue;
+			setTimeout(() => {
+				if (inputValue === inputRef.current?.value) {
+					debouncedSave(inputValue)
+				}
+			}, 1500);
+		}
+	}, [inputValue])
 
 	const updateValue = (newValue: string) => {
 		setInputValue(newValue)
-		debouncedSave(newValue);
 	};
 
 	const handelSelectionChange = (value: Key) => {
@@ -59,7 +70,7 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 		const result = value.substring(0, endIndex).trim();
 		const selectedPlace = options.find((option) => option.formatted_address === result);
 		if (selectedPlace) {
-			// setPlaces(state.places, selectedPlace, dispatch, start, end)
+			// setPlaces(state.places, selectedPlace, dispatch, start, end, id)
 			setSelectedPLace(selectedPlace)
 
 			const coord: CoordsType = [selectedPlace.geometry.location.lng, selectedPlace.geometry.location.lat];
@@ -91,14 +102,13 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 	}
 	return (
 		<Autocomplete
-			className='z-50'
+			ref={inputRef}
 			startContent={startContent}
 			color="default"
 			label={label}
 			fullWidth={true}
 			variant="bordered"
 			isLoading={loading}
-			shouldCloseOnBlur={true}
 			allowsCustomValue
 			defaultItems={[]}
 			items={options}
@@ -109,6 +119,7 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 			onSelectionChange={(e) => handelSelectionChange(e)}
 			onInputChange={(e) => updateValue(e)}
 			disableSelectorIconRotation
+			autoFocus
 			selectorIcon={<IoIosSearch />}
 		>
 			{((option) => (

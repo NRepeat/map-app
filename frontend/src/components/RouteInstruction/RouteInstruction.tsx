@@ -5,7 +5,7 @@ import RouteInstructionCard from "./Card/Card"
 export const RouteInstruction = ({ steps }: { steps: any }) => {
 
 	return (<>
-		<div className=" flex flex-col  ">
+		<div className=" flex flex-col  overflow-y-auto  max-h-[400px] ">
 			<div>
 				{steps && <div className="  p-4">
 					<div className="  flex flex-col gap-4">
@@ -22,7 +22,7 @@ export const RouteInstruction = ({ steps }: { steps: any }) => {
 export const TotalRouteInformation = ({ steps }: { steps: any }) => {
 
 
-	return (<div >
+	return (<div  >
 		<div className="inline-flex w-full flex-nowrap gap-1">
 			<strong><p>Total time:</p></strong>
 			<FilterTime time={steps.totalDistance.duration} />

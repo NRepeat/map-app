@@ -7,6 +7,7 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { GoogleStrategy } from "./strategies/google-oauth.strategy";
 import { JwtStrategy } from "./strategies/jwt.strategy";
+import { LocalStrategy } from "./strategies/local.strategy";
 import { SessionSerializer } from "./utils/serializer";
 
 @Module({
@@ -16,10 +17,16 @@ import { SessionSerializer } from "./utils/serializer";
     JwtModule.register({
       global: true,
       secret: "abc123",
-      signOptions: { expiresIn: "1h" },
+      signOptions: { expiresIn: "5h" },
     }),
   ],
-  providers: [GoogleStrategy, AuthService, SessionSerializer, JwtStrategy],
+  providers: [
+    GoogleStrategy,
+    AuthService,
+    SessionSerializer,
+    JwtStrategy,
+    LocalStrategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

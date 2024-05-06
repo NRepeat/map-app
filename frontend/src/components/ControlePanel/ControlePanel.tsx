@@ -64,8 +64,8 @@ function ControlPanel() {
   const buttonVariants: Variants = {
     open: {
       opacity: 1,
-      x: 395,
-      y: 0,
+      x: 495,
+      y: 1,
       transition: {
         type: "spring",
         damping: 19,
@@ -95,7 +95,7 @@ function ControlPanel() {
         </Button>
       </motion.div>
       <motion.div
-        className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900 w-full sm:max-w-[500px] min-w-[300px]    left-0 top-0  `}
+        className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  overflow-y-auto  w-full sm:max-w-[500px] min-w-[300px]    left-0 top-0  `}
         animate={{ overflowY: "hidden", scrollBehavior: "auto", scrollbarWidth: "thin" }}
         transition={{ duration: 5 }}
       >
@@ -103,7 +103,7 @@ function ControlPanel() {
           sm:max-h-screen" variants={itemVariants} animate={toggleMenu ? "open" : "closed"}>
           <NavbarMenu />
 
-          <Card radius="none" className=" flex-col     flex-grow  overflow-auto ">
+          <Card radius="none" className=" flex-col   overflow-y-auto    flex-grow  overflow-auto ">
             <CardHeader className=" flex-col gap-4">
               <RouteButtonsMenu />
             </CardHeader>
@@ -112,7 +112,7 @@ function ControlPanel() {
                 <CordList />
               </div>
               {state.routeInstructions &&
-                <>
+                <div className=" overflow-y-auto ">
                   <SampleSplitter
                     dir={"horizontal"}
                     isDragging={isTerminalDragging}
@@ -125,9 +125,8 @@ function ControlPanel() {
                       <RouteInstruction steps={state.routeInstructions} />
                       <Divider />
                     </AccordionItem>
-
                   </Accordion>
-                </>
+                </div>
               }
 
             </CardBody>

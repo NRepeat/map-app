@@ -85,36 +85,36 @@ export const setPlaces = (
   place: Place,
   dispatch: any,
   start?: boolean,
-  end?: boolean
+  end?: boolean,
+  id?: string
 ) => {
-  if (start) {
-    if (places) {
-      return dispatch({ type: "SET_PLACES", places: [place, ...places] });
+  if (places && places.length > 0) {
+    if (end) {
+      const updatedPlacesArr = [...places, place];
+
+      dispatch({ type: "SET_PLACES", places: updatedPlacesArr });
+    } else {
+      if (id) {
+        const index = parseInt(id);
+        console.log("🚀 ~ index:", index);
+        if (index + 1 === places.length - 1) {
+          console.log("🚀 ~ index:", index);
+          console.log(
+            "🚀 ~ index + 1 === places.length - 1:",
+            places[index + 1]
+          );
+          const existPlaces = (places[index + 1] = place);
+          dispatch({ type: "SET_PLACES", places: existPlaces });
+        }
+        const existPlaces = (places[index + 1] = place);
+        dispatch({ type: "SET_PLACES", places: existPlaces });
+      }
+      const index = places.length - 1;
+      const newPlacesArr = [...places];
+      newPlacesArr.splice(index, 0, place);
+      dispatch({ type: "SET_PLACES", places: newPlacesArr });
     }
-    return dispatch({ type: "SET_PLACES", places: [place] });
-  }
-  if (end) {
-    place.end = true;
-
-    if (places) {
-      const newPlaces = [...places, place];
-      console.log("🚀 ~ places:", newPlaces);
-
-      dispatch({ type: "SET_PLACES", places: [...places, place] });
-    }
-
-    return dispatch({ type: "SET_PLACES", places: [place] });
-  }
-  if (!places) {
-    throw new Error("Places not found");
-  }
-  const lastIndexOfPlace = places.lastIndexOf(place);
-  if (lastIndexOfPlace !== -1) {
-    const updatedPlaces = [
-      ...places.slice(0, lastIndexOfPlace),
-      place,
-      ...places.slice(lastIndexOfPlace),
-    ];
-    dispatch({ type: "SET_PLACES", places: updatedPlaces });
+  } else if (start) {
+    dispatch({ type: "SET_PLACES", places: [place] });
   }
 };

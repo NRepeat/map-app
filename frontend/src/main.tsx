@@ -13,13 +13,9 @@ import MapProvider from "./providers/MapProvider";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />
-    ,
+    element: <App />,
+
   },
-  {
-    path: "/test",
-    element: <>Hello world</>
-  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -29,7 +25,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <MapProvider>
           <main className="dark light text-foreground bg-background">
             <RouterProvider router={router} />
-
           </main>
         </MapProvider>
       </ReactMapGLProvider>

@@ -57,6 +57,11 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         draft.places = action.places;
       }
       break;
+    case "SET_USER":
+      {
+        draft.user = action.user;
+      }
+      break;
     default:
       return draft;
   }

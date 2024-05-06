@@ -1,8 +1,18 @@
-import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from "@nestjs/common";
 import { Request, Response } from "express";
+import { User } from "src/typeorm/entities/User";
 import { AuthService } from "./auth.service";
 import { GoogleOauthGuard } from "./guards/google-oauth.guard";
 import { JwtAuthGuard } from "./guards/jwt.guard";
+import { LocalAuthGuard } from "./guards/local.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -27,9 +37,25 @@ export class AuthController {
     });
     res.redirect("http://localhost:5173/");
   }
-  @Get("status")
+  @Get("jwt/login")
   @UseGuards(JwtAuthGuard)
-  async status(@Req() req: Request) {
+  async jwtLogin(@Req() req: Request) {
     return req.user;
+  }
+  @Post("jwt/registration")
+  @UseGuards(LocalAuthGuard)
+  async localRegistration(@Req() req: Request, @Body() body: { user: User }) {
+    try {
+      console.log("🚀 ~ AuthController ~ jwtRegistration ~ req:", req.body);
+      console.log("🚀 ~ AuthController ~ jwtRegistration ~ body:", body.user);
+
+      // const hash = await bcrypt.compare(body.user.password, "nna@gmail.com");
+      // bcrypt.compare("nna@gmail.com", body.user.password).then((res) => {
+      //   console.log("🚀 ~ AuthController ~ bcrypt.compare ~ res:", res);
+      //   if(res ){
+
+      //   }
+      // });
+    } catch (error) {}
   }
 }

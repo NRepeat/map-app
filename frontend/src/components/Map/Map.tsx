@@ -1,4 +1,4 @@
-import Map, { GeolocateControl, NavigationControl, useMap } from "react-map-gl";
+import Map, { GeolocateControl, NavigationControl } from "react-map-gl";
 import useMapContext from "../../hooks/useMapContext";
 import ControlPanel from "../ControlePanel/ControlePanel";
 import Markers from "../Markers/Markers";
@@ -6,8 +6,7 @@ import RouteSource from "../Sources/RouteSource";
 import WaypointSource from "../Sources/WaypointSource";
 const MapInstance = () => {
   const { state } = useMapContext();
-  const { current: map } = useMap();
-  console.log("🚀 ~ MapInstance ~  map:", map)
+  // const { current: map } = useMap();
   return (
     <div className="w-screen h-screen">
       <Map
@@ -21,11 +20,7 @@ const MapInstance = () => {
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/navigation-night-v1"
       >
-        {/* <OptimizedRouteSource /> */}
-        {/* <WeypointSource /> */}
-
         {state.route &&
-
           state.route.length > 0 &&
           state.route.map((route, i) => (
             <RouteSource
@@ -40,7 +35,6 @@ const MapInstance = () => {
         <GeolocateControl />
         <NavigationControl />
         <ControlPanel />
-
       </Map>
     </div>
   );

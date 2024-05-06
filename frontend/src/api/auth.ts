@@ -1,3 +1,5 @@
+import { User } from "../types/types";
+import API from "./clients";
 export const googleAuth = async () => {
   try {
     window.location.href =
@@ -9,4 +11,21 @@ export const googleAuth = async () => {
   } catch (error) {
     throw new Response("Bad request", { status: 500 });
   }
+};
+
+export const jwtAuthLogin = async (data: User) => {
+  try {
+    const response = await API.post("auth/jwt/login", {
+      data,
+    });
+  } catch (error) {}
+};
+
+export const jwtAuthRegistration = async (data: User) => {
+  try {
+    const response = await API.post("auth/jwt/registration", {
+      email: data.email,
+      password: data.password,
+    });
+  } catch (error) {}
 };
