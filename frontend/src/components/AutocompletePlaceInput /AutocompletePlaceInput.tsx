@@ -57,6 +57,8 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 	}, [inputValue])
 
 	const updateValue = (newValue: string) => {
+		console.log(newValue)
+
 		setInputValue(newValue)
 	};
 
@@ -113,6 +115,7 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 			allowsCustomValue
 			defaultItems={[]}
 			items={options}
+			aria-label='autocomplite'
 			inputValue={inputValue}
 			onClick={handelInputClick}
 			listboxProps={{ color: "secondary" }}

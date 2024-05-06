@@ -1,13 +1,11 @@
-import { Body, Controller, Post, UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "../auth/guards/jwt.guard";
+import { Body, Controller, Post } from "@nestjs/common";
 
 @Controller("google")
 export class GoogleController {
   @Post("autocomplete")
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async placeAutocomplete(@Body() body: { value: string }) {
     try {
-      console.log("🚀 ~ GoogleController ~ placeAutocomplete ~ body:", body);
 
       const apiKey = "AIzaSyDxe2634ayBpmgAkoWBrTyckcYtp-MK974";
 

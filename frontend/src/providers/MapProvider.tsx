@@ -1,9 +1,9 @@
+import Cookies from "js-cookie";
 import { createContext, FC, useEffect } from "react";
 import { useImmerReducer } from "use-immer";
 import { healthCheck } from "../api/health-check";
 import { reducer } from "../reducer/mapReducer";
 import { MapContextType, MapProviderProps } from "../types/types";
-
 const initialState: MapContextType = {
   state: {
     coords: [0, 0],
@@ -32,7 +32,15 @@ const MapProvider: FC<MapProviderProps> = ({ children }) => {
     }, 1000);
     return () => clearInterval(interval);
   }, [state.mapLoading]);
-
+  useEffect(() => {
+    const user = Cookies.get("user");
+    console.log("🚀 ~ useEffect ~ user:", user)
+    if (user) {
+      const parsedUser = JSON.parse(user)
+      console.log("🚀 ~ useEffect ~ parsedUser:", parsedUser)
+      dispatch({ type: "SET_USER", user: { email: parsedUser.email, name: parsedUser.displayName, avatar: parsedUser.img.value || '' } })
+    }
+  }, [])
   if (!state) {
     throw new Error("State not found");
   }

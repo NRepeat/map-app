@@ -9,6 +9,7 @@ import { configService } from "./config/config.service";
 import { AuthModule } from "./modules/auth/auth.module";
 import { GoogleModule } from "./modules/google/google.module";
 import { OpenrouteModule } from "./modules/openroute/openroute.module";
+import { UserModule } from "./modules/user/user.module";
 @Module({
   imports: [
     ConfigsModule,
@@ -19,6 +20,8 @@ import { OpenrouteModule } from "./modules/openroute/openroute.module";
     TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
 
     PassportModule.register({ session: true }),
+
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

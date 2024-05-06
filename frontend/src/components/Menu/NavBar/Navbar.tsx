@@ -1,10 +1,14 @@
-import { Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link, Navbar, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, useDisclosure } from '@nextui-org/react';
-import { useState } from 'react';
+import { Avatar, Button, Link, Navbar, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, Popover, PopoverContent, PopoverTrigger, useDisclosure } from '@nextui-org/react';
+import { useEffect, useState } from 'react';
+import { FaCamera } from 'react-icons/fa';
+import useMapContext from '../../../hooks/useMapContext';
 import Auth from '../../../pages/auth';
+import UserCard from '../../UserCard/UserCard';
 
 const NavbarMapMenu = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const [isLoginIn, setIsLoginIn] = useState(false);
+	const { state } = useMapContext()
+	const [isLoginIn, setIsLoginIn] = useState<boolean>(false);
 	const { isOpen, onOpenChange, onOpen } = useDisclosure();
 	const [authOpen, setAuthOpen] = useState<boolean>(false)
 	const menuItems = [
@@ -20,7 +24,11 @@ const NavbarMapMenu = () => {
 		"Log Out",
 	];
 
-
+	useEffect(() => {
+		if (state.user) {
+			setIsLoginIn(true)
+		}
+	}, [state.user])
 	return (
 		<>
 			{isOpen && <Auth isOpen={isOpen} onOpenChange={onOpenChange} />}
@@ -52,28 +60,28 @@ const NavbarMapMenu = () => {
 				<NavbarContent justify="end">
 
 
-					{isLoginIn ? <NavbarContent justify="end">
-						<Dropdown placement='bottom-end'>
-							<DropdownTrigger>
-								<Avatar
-									isBordered
-									as="button"
-									className="transition-transform"
-									color="secondary"
-									name="Jason Hughes"
-									size="sm"
-									src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-								/>
-							</DropdownTrigger>
-							<DropdownMenu aria-label="Static Actions" color='primary' >
-								<DropdownItem key="new">New file</DropdownItem>
-								<DropdownItem key="copy">Copy link</DropdownItem>
-								<DropdownItem key="edit">Edit file</DropdownItem>
-								<DropdownItem key="delete" className="text-danger" color="danger">
-									Delete file
-								</DropdownItem>
-							</DropdownMenu>
-						</Dropdown>
+					{isLoginIn && state.user ? <NavbarContent justify="end">
+						<Popover showArrow placement="bottom">
+							<PopoverTrigger>
+								{/* <User
+									name={state.user?.name?.slice(20)}
+									className='max-w-[120px]'
+									avatarProps={{
+										src: state.user?.avatar
+									}}
+								/> */}
+								<div className='inline-flex  items-center gap-1 flex-row-reverse'>
+									<Avatar className='object-cover cursor-pointer' showFallback fallback={<FaCamera />} src={state.user.avatar} />
+
+									{/* <p className='max-w-[90px] truncate  line-clamp-1'>{state.user?.name}</p> */}
+
+								</div>
+
+							</PopoverTrigger>
+							<PopoverContent  >
+								<UserCard />
+							</PopoverContent>
+						</Popover>
 					</NavbarContent> : <NavbarItem>
 						<Button onClick={() => onOpen()} className='bg-emerald-700' as={Link} href="#" variant="bordered">
 							Sign Up

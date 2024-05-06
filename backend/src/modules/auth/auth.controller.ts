@@ -7,21 +7,23 @@ import {
   Res,
   UseGuards,
 } from "@nestjs/common";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { User } from "src/typeorm/entities/User";
+import { UserService } from "../user/user.service";
 import { AuthService } from "./auth.service";
 import { GoogleOauthGuard } from "./guards/google-oauth.guard";
-import { JwtAuthGuard } from "./guards/jwt.guard";
 import { LocalAuthGuard } from "./guards/local.guard";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService
+  ) {}
 
   @Get("google/login")
   @UseGuards(GoogleOauthGuard)
   async login() {
-    console.log("test");
     return { msg: "success" };
   }
 
@@ -29,33 +31,67 @@ export class AuthController {
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req: any, @Res() res: Response) {
     const token = await this.authService.signJWT(req.user);
-
+    const user = req.user;
     res.cookie("access_token", token, {
+      maxAge: 2592000000,
+      sameSite: true,
+      secure: false,
+    });
+    res.cookie("user", JSON.stringify(user), {
       maxAge: 2592000000,
       sameSite: true,
       secure: false,
     });
     res.redirect("http://localhost:5173/");
   }
-  @Get("jwt/login")
-  @UseGuards(JwtAuthGuard)
-  async jwtLogin(@Req() req: Request) {
-    return req.user;
-  }
-  @Post("jwt/registration")
+  @Post("login")
   @UseGuards(LocalAuthGuard)
-  async localRegistration(@Req() req: Request, @Body() body: { user: User }) {
+  async localLogin(@Body() body: User, @Res() res: Response) {
     try {
-      console.log("🚀 ~ AuthController ~ jwtRegistration ~ req:", req.body);
-      console.log("🚀 ~ AuthController ~ jwtRegistration ~ body:", body.user);
+      const { password, ...user } = await this.userService.findUser(body);
 
-      // const hash = await bcrypt.compare(body.user.password, "nna@gmail.com");
-      // bcrypt.compare("nna@gmail.com", body.user.password).then((res) => {
-      //   console.log("🚀 ~ AuthController ~ bcrypt.compare ~ res:", res);
-      //   if(res ){
-
-      //   }
-      // });
+      const token = await this.authService.signJWT(user);
+      res.cookie("access_token", token, {
+        maxAge: 2592000000,
+        sameSite: true,
+        secure: false,
+      });
+      res.cookie("user", JSON.stringify(user), {
+        maxAge: 2592000000,
+        sameSite: true,
+        secure: false,
+      });
+      res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+      res.send({ user });
     } catch (error) {}
+  }
+  @Post("registration")
+  async localRegistration(@Body() body: User, @Res() res: Response) {
+    try {
+      if (body) {
+        const user = await this.userService.createUser(body);
+        if (user.email === body.email) {
+          res.send({ user: "User already exist" });
+        } else {
+          const token = await this.authService.signJWT(user);
+          res.cookie("access_token", token, {
+            maxAge: 2592000000,
+            sameSite: true,
+            secure: false,
+          });
+          res.cookie("user", JSON.stringify(user), {
+            maxAge: 2592000000,
+            sameSite: true,
+            secure: false,
+          });
+          res.send({ user });
+        }
+      } else {
+        res.status(500);
+      }
+    } catch (error) {
+      console.log("🚀 ~ AuthController ~ localRegistration ~ error:", error);
+      throw new Error("asd");
+    }
   }
 }

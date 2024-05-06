@@ -86,6 +86,9 @@ export type Place = {
 };
 
 export type User = {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
+  access_token?: string;
+  name?: string;
+  avatar?: string;
 };

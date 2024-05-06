@@ -13,19 +13,24 @@ export const googleAuth = async () => {
   }
 };
 
-export const jwtAuthLogin = async (data: User) => {
+export const jwtAuthRegistration = async (data: User) => {
   try {
-    const response = await API.post("auth/jwt/login", {
-      data,
+    const response = await API.post("auth/registration", {
+      email: data.email,
+      password: data.password,
     });
   } catch (error) {}
 };
 
-export const jwtAuthRegistration = async (data: User) => {
+export const jwtAuthLogin = async (data: User) => {
   try {
-    const response = await API.post("auth/jwt/registration", {
-      email: data.email,
-      password: data.password,
-    });
+    const response = await API.post(
+      "auth/login",
+      {
+        email: data.email,
+        password: data.password,
+      },
+      { withCredentials: true }
+    );
   } catch (error) {}
 };

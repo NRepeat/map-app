@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 import { User } from "src/typeorm/entities/User";
 import { UserDetails } from "src/utils/types";
 import { Repository } from "typeorm";
@@ -28,8 +28,12 @@ export class AuthService {
   }
 
   async validateUser(details: UserDetails) {
+    console.log("🚀 ~ AuthService ~ validateUser ~ details:", details);
     try {
-      const existUser = await this.findUser({ email: details.email });
+      const existUser = await this.userRepository.findOne({
+        where: { email: details.email },
+      });
+
       if (existUser) {
         const isValidPassword = await this.checkPassword(
           details.password,
@@ -69,7 +73,7 @@ export class AuthService {
     }
     return user;
   }
-  async signJWT(user: User) {
+  async signJWT(user: any) {
     return this.jwtService.signAsync({
       email: user.email,
       name: user.displayName,
@@ -80,11 +84,13 @@ export class AuthService {
   }
   async hashPassword(password: string) {
     const salt = "salt";
-    // await bcrypt.genSalt();
     const hash = await bcrypt.hash(password, salt);
     return hash;
   }
   async checkPassword(password: string, hash: string) {
-    return bcrypt.compare(password, hash);
+    const pass = await bcrypt.compare(password, hash).then(async (res) => {
+      return res;
+    });
+    return pass;
   }
 }
