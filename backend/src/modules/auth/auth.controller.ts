@@ -12,7 +12,6 @@ import { User } from "src/typeorm/entities/User";
 import { UserService } from "../user/user.service";
 import { AuthService } from "./auth.service";
 import { GoogleOauthGuard } from "./guards/google-oauth.guard";
-import { LocalAuthGuard } from "./guards/local.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -45,26 +44,20 @@ export class AuthController {
     res.redirect("http://localhost:5173/");
   }
   @Post("login")
-  @UseGuards(LocalAuthGuard)
   async localLogin(@Body() body: User, @Res() res: Response) {
     try {
-      const { password, ...user } = await this.userService.findUser(body);
-
+      const user = await this.userService.findUser(body);
       const token = await this.authService.signJWT(user);
       res.cookie("access_token", token, {
         maxAge: 2592000000,
         sameSite: true,
         secure: false,
       });
-      res.cookie("user", JSON.stringify(user), {
-        maxAge: 2592000000,
-        sameSite: true,
-        secure: false,
-      });
       res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-      res.send({ user });
+      res.send({ name: user.displayName, email: user.email });
     } catch (error) {}
   }
+
   @Post("registration")
   async localRegistration(@Body() body: User, @Res() res: Response) {
     try {

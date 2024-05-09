@@ -20,8 +20,8 @@ const Auth = ({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: () => v
 						<>
 							<ModalHeader className="flex flex-col gap-1">{isRegistration ? "Registration" : "Login"}</ModalHeader>
 							<ModalBody className="justify-center flex-col">
-								{isRegistration && <RegisterForm />}
-								{!isRegistration && <LoginForm />}
+								{isRegistration && <RegisterForm onOpenChange={onOpenChange} />}
+								{!isRegistration && <LoginForm onOpenChange={onOpenChange} />}
 							</ModalBody>
 							<ModalFooter className="justify-center flex-col">
 								{!isRegistration && <>

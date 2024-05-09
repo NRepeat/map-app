@@ -5,9 +5,9 @@ import RouteInstructionCard from "./Card/Card"
 export const RouteInstruction = ({ steps }: { steps: any }) => {
 
 	return (<>
-		<div className=" flex flex-col  overflow-y-auto  max-h-[400px] ">
+		<div className=" flex flex-col   overflow-auto ">
 			<div>
-				{steps && <div className="  p-4">
+				{steps && <div className=" ">
 					<div className="  flex flex-col gap-4">
 						{steps.steps.map((step: any, i: number) =>
 							<RouteInstructionCard key={i} step={step} />

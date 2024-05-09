@@ -4,17 +4,31 @@ import { FaUnlock } from "react-icons/fa";
 import { IoMdMail } from "react-icons/io";
 import * as yup from 'yup';
 import { userLoginHandler } from "../../handlers/auth";
+import useMapContext from "../../hooks/useMapContext";
 
 
 
 const FormSchema = yup.object().shape({
-	email: yup.string(),
+	email: yup.string().required().email('Invalid email address').matches(/[.]/),
 	pass: yup
-		.string()
+		.string().required()
 });
 
 
-const LoginForm = () => {
+const LoginForm = ({ onOpenChange }: { onOpenChange: () => void }) => {
+	const { dispatch } = useMapContext()
+	const handleSubmit = async (values: {
+		email: string;
+		pass: string;
+	}) => {
+		const user = await userLoginHandler({ email: values.email, password: values.pass })
+		console.log("🚀 ~ LoginForm ~ user:", user)
+		if (user) {
+			console.log("🚀 ~ LoginForm ~ user:", user)
+			dispatch({ type: "SET_USER", user: user })
+			onOpenChange()
+		}
+	}
 	const formik = useFormik({
 		initialValues: {
 			email: '',
@@ -22,11 +36,10 @@ const LoginForm = () => {
 		},
 
 		onSubmit: values => {
-			userLoginHandler({ email: values.email, password: values.pass })
+			handleSubmit(values)
 		},
 		validationSchema: FormSchema
 	});
-
 	return (
 		<form onSubmit={formik.handleSubmit}>
 			<div className="gap-2 flex flex-col">

@@ -10,13 +10,11 @@ import {
 import { Variants, motion } from "framer-motion";
 import { useState } from "react";
 import { SlArrowRight } from "react-icons/sl";
-import { useResizable } from "react-resizable-layout";
 import useMapContext from "../../hooks/useMapContext";
 import CordList from "../Menu/CordList/CordList";
 import NavbarMenu from "../Menu/NavBar/Navbar";
 import RouteButtonsMenu from "../Menu/RouteButtonsMenu/RouteButtonsMenu";
 import { RouteInstruction, TotalRouteInformation } from "../RouteInstruction/RouteInstruction";
-import SampleSplitter from "../SampleSplitter/SampleSplitter";
 // type ControlPanelProps = {
 //   markers: MarkersType[] | undefined;
 // };
@@ -27,14 +25,7 @@ function ControlPanel() {
   const { state } = useMapContext();
   const [toggleMenu, setToggleMenu] = useState<boolean>(true)
 
-  const {
-    isDragging: isTerminalDragging,
-    position: terminalH,
-    separatorProps: terminalDragBarProps
-  } = useResizable({
-    axis: "y",
-    reverse: false,
-  });
+
 
   const itemVariants: Variants = {
     open: {
@@ -91,44 +82,34 @@ function ControlPanel() {
           <motion.div animate={{ x: 3, rotate: toggleMenu ? 180 : 0 }} >
             <SlArrowRight />
           </motion.div>
-
         </Button>
       </motion.div>
       <motion.div
-        className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  overflow-y-auto  w-full sm:max-w-[500px] min-w-[300px]    left-0 top-0  `}
+        className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  min-h-screen   w-full sm:max-w-[500px] min-w-[300px]    left-0 top-0  `}
         animate={{ overflowY: "hidden", scrollBehavior: "auto", scrollbarWidth: "thin" }}
         transition={{ duration: 5 }}
       >
-        <motion.div className=" rounded-br-sm  overflow-auto  scrollbar-thin  
+        <motion.div className=" rounded-br-sm  overflow-y-auto scrollbar-thin  
           sm:max-h-screen" variants={itemVariants} animate={toggleMenu ? "open" : "closed"}>
           <NavbarMenu />
-
-          <Card radius="none" className=" flex-col   overflow-y-auto    flex-grow  overflow-auto ">
+          <Card radius="none" className=" flex-col   min-h-full  flex-grow  ">
             <CardHeader className=" flex-col gap-4">
               <RouteButtonsMenu />
             </CardHeader>
-            <CardBody className=" gap-4  ">
-              <div style={{ height: terminalH ? terminalH / 2 : "100%" }} className="overflow-y-auto  pr-4 min-h-[200px] scrollbar-thin">
+            <CardBody className=" gap-4   overflow-auto  ">
+              <div className="max-h-[400px]  scrollbar-thin">
                 <CordList />
               </div>
               {state.routeInstructions &&
-                <div className=" overflow-y-auto ">
-                  <SampleSplitter
-                    dir={"horizontal"}
-                    isDragging={isTerminalDragging}
-                    {...terminalDragBarProps}
-                  />
-                  <Accordion variant="splitted"  >
-                    <AccordionItem subtitle={
-                      <TotalRouteInformation steps={state.routeInstructions} />
-                    } aria-label="Route instruction" title={`Route instruction. `} className="  max-h-[400px] overflow-y-auto sm:overflow-hidden scrollbar-thin     scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  scr">
-                      <RouteInstruction steps={state.routeInstructions} />
-                      <Divider />
-                    </AccordionItem>
-                  </Accordion>
-                </div>
+                <Accordion variant="splitted"  >
+                  <AccordionItem subtitle={
+                    <TotalRouteInformation steps={state.routeInstructions} />
+                  } aria-label="Route instruction" title={`Route instruction. `} className="   scrollbar-thin     scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  ">
+                    <RouteInstruction steps={state.routeInstructions} />
+                    <Divider />
+                  </AccordionItem>
+                </Accordion>
               }
-
             </CardBody>
           </Card>
         </motion.div>

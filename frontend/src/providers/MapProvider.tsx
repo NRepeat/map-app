@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 import { createContext, FC, useEffect } from "react";
 import { useImmerReducer } from "use-immer";
 import { healthCheck } from "../api/health-check";
@@ -33,12 +34,12 @@ const MapProvider: FC<MapProviderProps> = ({ children }) => {
     return () => clearInterval(interval);
   }, [state.mapLoading]);
   useEffect(() => {
-    const user = Cookies.get("user");
-    console.log("🚀 ~ useEffect ~ user:", user)
+    const user = Cookies.get("access_token");
+
     if (user) {
-      const parsedUser = JSON.parse(user)
-      console.log("🚀 ~ useEffect ~ parsedUser:", parsedUser)
-      dispatch({ type: "SET_USER", user: { email: parsedUser.email, name: parsedUser.displayName, avatar: parsedUser.img.value || '' } })
+      const parsedUser = jwtDecode(user) as any
+
+      dispatch({ type: "SET_USER", user: { email: parsedUser.email, name: parsedUser.name, avatar: parsedUser.img ? parsedUser.img.value : '' } })
     }
   }, [])
   if (!state) {

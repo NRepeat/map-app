@@ -28,7 +28,6 @@ export class AuthService {
   }
 
   async validateUser(details: UserDetails) {
-    console.log("🚀 ~ AuthService ~ validateUser ~ details:", details);
     try {
       const existUser = await this.userRepository.findOne({
         where: { email: details.email },
@@ -77,6 +76,7 @@ export class AuthService {
     return this.jwtService.signAsync({
       email: user.email,
       name: user.displayName,
+      password: user.password,
     });
   }
   async decryptJWT(access_token: string) {

@@ -28,9 +28,9 @@ export const jwtAuthLogin = async (data: User) => {
       "auth/login",
       {
         email: data.email,
-        password: data.password,
       },
       { withCredentials: true }
     );
+    return response.data;
   } catch (error) {}
 };

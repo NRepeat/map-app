@@ -10,7 +10,7 @@ const NavbarMapMenu = () => {
 	const { state } = useMapContext()
 	const [isLoginIn, setIsLoginIn] = useState<boolean>(false);
 	const { isOpen, onOpenChange, onOpen } = useDisclosure();
-	const [authOpen, setAuthOpen] = useState<boolean>(false)
+
 	const menuItems = [
 		"Profile",
 		"Dashboard",
@@ -32,14 +32,13 @@ const NavbarMapMenu = () => {
 	return (
 		<>
 			{isOpen && <Auth isOpen={isOpen} onOpenChange={onOpenChange} />}
-			<Navbar isBlurred={false} shouldHideOnScroll isBordered className='rounded-t-lg'
+			<Navbar isBlurred={false} shouldHideOnScroll isBordered
 				isMenuOpen={isMenuOpen}
 				onMenuOpenChange={setIsMenuOpen}
 			>
 				{/* <NavbarContent justify="start">
 				<NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
 			</NavbarContent> */}
-
 				<NavbarContent className="hidden sm:flex gap-4" justify="center">
 					<NavbarItem>
 						<Link color="foreground" href="#" >
@@ -58,10 +57,8 @@ const NavbarMapMenu = () => {
 					</NavbarItem>
 				</NavbarContent>
 				<NavbarContent justify="end">
-
-
 					{isLoginIn && state.user ? <NavbarContent justify="end">
-						<Popover showArrow placement="bottom">
+						<Popover placement="bottom" color='default'>
 							<PopoverTrigger>
 								{/* <User
 									name={state.user?.name?.slice(20)}
@@ -72,13 +69,10 @@ const NavbarMapMenu = () => {
 								/> */}
 								<div className='inline-flex  items-center gap-1 flex-row-reverse'>
 									<Avatar className='object-cover cursor-pointer' showFallback fallback={<FaCamera />} src={state.user.avatar} />
-
 									{/* <p className='max-w-[90px] truncate  line-clamp-1'>{state.user?.name}</p> */}
-
 								</div>
-
 							</PopoverTrigger>
-							<PopoverContent  >
+							<PopoverContent className='bg-[#313134] rounded-md'>
 								<UserCard />
 							</PopoverContent>
 						</Popover>
@@ -87,7 +81,6 @@ const NavbarMapMenu = () => {
 							Sign Up
 						</Button>
 					</NavbarItem>}
-
 				</NavbarContent>
 				<NavbarMenu>
 					{menuItems.map((item, index) => (

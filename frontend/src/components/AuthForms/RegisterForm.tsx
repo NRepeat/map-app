@@ -19,7 +19,7 @@ const FormSchema = yup.object().shape({
 		.oneOf([yup.ref('pass')], 'Must match "password" field value'),
 });
 
-const RegisterForm = () => {
+const RegisterForm = ({ onOpenChange }: { onOpenChange: () => void }) => {
 
 	const formik = useFormik({
 		initialValues: {
