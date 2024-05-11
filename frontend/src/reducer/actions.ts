@@ -4,28 +4,56 @@ import { findWaypoints } from "../utils/findWaypoints";
 export const updateMarkers = (
   id?: string,
   markers?: MarkersType[],
-  center?: { lng: number; lat: number }
-): MarkersType[] => {
-  if (markers && markers.length >= 2) {
+  coords?: { lng: number; lat: number; end?: boolean; start?: boolean }
+) => {
+  console.log("🚀 ~ coords:", coords);
+  if (markers) {
+    const existMarker = markers.find((data) => data.id === id);
+    if (existMarker) {
+      return markers;
+    }
+    const marker: MarkersType = {
+      coords: [coords!.lng, coords!.lat],
+      id: id!,
+      start: coords?.start,
+      end: coords?.end,
+    };
+    if (coords?.start) {
+      const start = markers.find((data) => data.start === true);
+      console.log("🚀 ~ start:", start);
+      if (!start) {
+        return [marker, ...markers];
+      } else {
+        // markers.shift();
+        markers[0] = marker;
+        return markers;
+      }
+    } else if (coords!.end) {
+      const end = markers.find((data) => data.end === true);
+      console.log("🚀 ~ end:", end);
+      if (end) {
+        markers[markers.length - 1] = marker;
+        return markers;
+      } else if (markers.length >= 2) {
+        markers[markers.length - 1] = marker;
+        return markers;
+      }
+      return [...markers, marker];
+    }
+
     const lastMarker = markers[markers.length - 1];
-    const updatedMarkers = [
-      ...markers.slice(0, markers.length - 1),
-      { coords: [center!.lng, center!.lat], id, color: "#1500ff" },
-      lastMarker,
-    ] as MarkersType[];
-    return [...updatedMarkers];
-  } else if (!markers?.length) {
-    return [{ coords: [center!.lng, center!.lat], id: id!, color: "#11c22c" }];
-  } else if (id === "end") {
-    return [
-      ...markers,
-      { coords: [center!.lng, center!.lat], id, color: "#c21120" },
-    ] as MarkersType[];
+    markers[markers.length - 1] = marker;
+    markers.push(lastMarker);
+    return markers;
+  } else {
+    const marker: MarkersType = {
+      coords: [coords!.lng, coords!.lat],
+      id: id!,
+      start: coords?.start,
+      end: coords?.end,
+    };
+    return [marker];
   }
-  return [
-    ...markers,
-    { coords: [center!.lng, center!.lat], id, color: "#c21120" },
-  ] as MarkersType[];
 };
 
 export const updateMarkersCoord = (
@@ -80,41 +108,55 @@ export const getWaypointsCoords = (
   return waypointsData;
 };
 
-export const setPlaces = (
-  places: Place[] | undefined,
-  place: Place,
-  dispatch: any,
-  start?: boolean,
-  end?: boolean,
-  id?: string
-) => {
-  if (places && places.length > 0) {
-    if (end) {
-      const updatedPlacesArr = [...places, place];
-
-      dispatch({ type: "SET_PLACES", places: updatedPlacesArr });
-    } else {
-      if (id) {
-        const index = parseInt(id);
-        console.log("🚀 ~ index:", index);
-        if (index + 1 === places.length - 1) {
-          console.log("🚀 ~ index:", index);
-          console.log(
-            "🚀 ~ index + 1 === places.length - 1:",
-            places[index + 1]
-          );
-          const existPlaces = (places[index + 1] = place);
-          dispatch({ type: "SET_PLACES", places: existPlaces });
-        }
-        const existPlaces = (places[index + 1] = place);
-        dispatch({ type: "SET_PLACES", places: existPlaces });
-      }
-      const index = places.length - 1;
-      const newPlacesArr = [...places];
-      newPlacesArr.splice(index, 0, place);
-      dispatch({ type: "SET_PLACES", places: newPlacesArr });
-    }
-  } else if (start) {
-    dispatch({ type: "SET_PLACES", places: [place] });
+export const setPlaces = (places?: Place[], place?: Place) => {
+  console.log("🚀 ~ setPlaces ~ places:", places);
+  if (!places) {
+    throw new Error("Places not found");
   }
+  if (!place) {
+    throw new Error("Place not found");
+  }
+
+  const existPlace = places.find((nplace) => {
+    return nplace.id === place.id;
+  });
+  if (existPlace) {
+    return places;
+  }
+  if (place.instance) {
+    const lastPlace = places[places.length - 1];
+    places[places.length - 1] = place;
+    places.push(lastPlace);
+    return places;
+  }
+  if (place?.start) {
+    places[0] = place;
+    return places;
+  } else if (place?.end) {
+    places[places.length - 1] = place;
+    return places;
+  } else {
+    const instancePlace = places[places.length - 2];
+    if (instancePlace.instance) {
+      places[places.length - 2] = place;
+      return places;
+    }
+    const lastPlace = places[places.length - 1];
+    places[places.length - 1] = place;
+    places.push(lastPlace);
+    return places;
+  }
+};
+
+export const updatePlaces = (
+  place_id?: string | undefined,
+  newPlace?: Place | undefined,
+  places?: Place[] | undefined
+) => {
+  if (!places && place_id && newPlace) {
+    throw new Error("Places not found");
+  }
+  console.log("🚀 ~ newPlace:", newPlace);
+
+  return places;
 };

@@ -9,9 +9,9 @@ type MarkersProps = {
   markers: MarkersType[] | undefined;
 };
 const Markers: FC<MarkersProps> = ({ markers }) => {
-  const { dispatch } = useMapContext();
+  const { dispatch, state } = useMapContext();
 
-  const onMarkerDrag = useCallback(
+  const onMarkerDragEnd = useCallback(
     (event: MarkerDragEvent, index: number) => {
       const endCords = event.lngLat;
       const endPoint = Object.keys(endCords).map(
@@ -22,56 +22,38 @@ const Markers: FC<MarkersProps> = ({ markers }) => {
         markerEndPoint: endPoint,
         markerIndex: index,
       });
+      if (state.places) {
+
+        state.places[index] && dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: state.places[index], newCoords: [endPoint[1], endPoint[0]] } })
+      }
     },
+
     [markers]
   );
+
+
+
 
   return (
     <>
       {markers &&
         markers.map((marker, i) => {
-          if (i === 0) {
-            return (< Marker
-
+          const isFirstMarker = marker.start;
+          const isLastMarker = !marker.start;
+          const markerColor = isFirstMarker ? "fill-green-700" : isLastMarker ? "fill-red-600" : "fill-blue-600";
+          const markerIcon = isFirstMarker ? <FaMapMarkerAlt className={` sm:min-w-9  sm:min-h-9 min-h-6 min-w-6 ${markerColor}`} /> : <Badge content={`${i}`} color="secondary"><FaMapMarkerAlt className={` sm:min-w-9  sm:min-h-9 min-h-6 min-w-6 ${markerColor}`} /></Badge>;
+          return (
+            <Marker
               key={marker.id}
               anchor="bottom"
               draggable
               longitude={marker.coords[0]}
               latitude={marker.coords[1]}
-              onDrag={(e) => onMarkerDrag(e, i)}
+              onDragEnd={(e) => onMarkerDragEnd(e, i)}
             >
-              <FaMapMarkerAlt className="fill-green-700 sm:min-w-9 sm:min-h-9  min-h-6 min-w-6 " />
-
-            </ Marker>)
-          } else if (i >= markers.length - 1) {
-            return (< Marker
-
-              key={marker.id}
-              anchor="bottom"
-              draggable
-              longitude={marker.coords[0]}
-              latitude={marker.coords[1]}
-              onDrag={(e) => onMarkerDrag(e, i)}
-            >
-              <FaMapMarkerAlt className="fill-red-600 sm:min-w-9 sm:min-h-9  min-h-6 min-w-6 " />
-            </ Marker>)
-          } else {
-            return (
-              <Marker
-                color={marker.color ? marker.color : "#c21120"}
-                key={marker.id}
-                anchor="bottom"
-                draggable
-                longitude={marker.coords[0]}
-                latitude={marker.coords[1]}
-                onDrag={(e) => onMarkerDrag(e, i)}
-              >
-                <Badge content={`${i}`} color="secondary">
-                  <FaMapMarkerAlt className="fill-blue-600 sm:min-w-8 sm:min-h-8  min-h-4 min-w-4 " />
-                </Badge>
-              </Marker>
-            );
-          }
+              {isFirstMarker || isLastMarker ? markerIcon : <Badge content={`${i}`} color="secondary">{markerIcon}</Badge>}
+            </Marker>
+          );
         })}
     </>
   );

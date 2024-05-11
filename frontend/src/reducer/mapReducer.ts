@@ -1,5 +1,11 @@
 import { MapReducerType, MapStateContextType } from "../types/types";
-import { deleteMarker, updateMarkers, updateMarkersCoord } from "./actions";
+import {
+  deleteMarker,
+  setPlaces,
+  updateMarkers,
+  updateMarkersCoord,
+  updatePlaces,
+} from "./actions";
 export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
   switch (action.type) {
     case "SET_MARKERS":
@@ -54,12 +60,35 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
       break;
     case "SET_PLACES":
       {
-        draft.places = action.places;
+        draft.places = setPlaces(draft.places, action.newPlace);
+      }
+      break;
+
+    case "UPDATE_PLACES":
+      {
+        draft.places = updatePlaces(
+          draft.placeToUpdate?.place.id,
+          action.newPlace,
+          draft.places
+        );
+      }
+      break;
+    case "SET_PLACE_TO_UPDATE":
+      {
+        draft.placeToUpdate = action.placeToUpdate;
       }
       break;
     case "SET_USER":
       {
         draft.user = action.user;
+      }
+      break;
+    case "SET_PLACE_INSTANCE":
+      {
+        draft.places = draft.places = setPlaces(
+          draft.places,
+          action.placeInstance
+        );
       }
       break;
     default:

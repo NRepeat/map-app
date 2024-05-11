@@ -7,8 +7,15 @@ export type MarkersType = {
   coords: CoordsType;
   id: string;
   color?: string;
+  start?: boolean;
+  end?: boolean;
 };
-export type LatLng = { lat: number; lng: number };
+export type LatLng = {
+  lat: number;
+  lng: number;
+  start?: boolean;
+  end?: boolean;
+};
 export type MapStateContextType = {
   coords?: CoordsType;
   markers?: MarkersType[];
@@ -20,9 +27,12 @@ export type MapStateContextType = {
     waypoints: [number, number][];
     totalDistance: { distance: number; duration: number };
   };
+  placeToUpdate?: { place: Place; newCoords: CoordsType };
   user?: User;
+  placeInstance?: Place;
   places?: Place[];
   autocomplete?: {};
+  newPlace?: Place;
   waypointsCoords?: [number, number][];
   route?: {
     coordinates: CoordsType[];
@@ -59,7 +69,10 @@ export type ActionType =
   | "SET_ROUTE_INSTRUCTIONS"
   | "SET_ROUTE_WAYPOINTS_COORDS"
   | "SET_PLACES"
-  | "SET_USER";
+  | "SET_USER"
+  | "SET_PLACE_INSTANCE"
+  | "SET_PLACE_TO_UPDATE"
+  | "UPDATE_PLACES";
 
 export type MapContextType = {
   state: MapStateContextType;
@@ -67,22 +80,12 @@ export type MapContextType = {
 };
 
 export type Place = {
-  formatted_address: string;
-  geometry: { location: { lat: number; lng: number } };
-  icon: string;
-  icon_background_color: string;
-  icon_mask_base_uri: string;
-  name: string;
-  photos: {
-    height: number;
-    width: number;
-    html_attributions: string[];
-    photo_reference: string;
-  }[];
-  place_id: string;
-  reference: string;
-  types: string[];
+  id: string;
+  location: { latitude: number; longitude: number };
+  displayName: { text: string };
+  start?: boolean;
   end?: boolean;
+  instance?: boolean;
 };
 
 export type User = {
@@ -91,4 +94,10 @@ export type User = {
   access_token?: string;
   name?: string;
   avatar?: string;
+};
+
+export type PlacePrediction = {
+  place: string;
+  placeId: string;
+  text: string;
 };

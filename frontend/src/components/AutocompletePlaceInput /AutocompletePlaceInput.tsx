@@ -2,52 +2,70 @@ import { Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import debounce from 'lodash.debounce';
 import React, { FC, Key, useEffect, useRef, useState } from 'react';
 import { IoIosSearch } from 'react-icons/io';
-import { v4 as uuidv4 } from "uuid";
-import { handelAutocomplete } from '../../handlers/google';
+import { handelAutocomplete, handelGeocode, handelGetPlace } from '../../handlers/google';
 import useFlyToMarker from '../../hooks/useFlyToMarker';
 import useMapContext from '../../hooks/useMapContext';
 import useSetMarkers from '../../hooks/useSetMarkers';
-import { CoordsType, Place } from '../../types/types';
+import useSetPlace from '../../hooks/useSetPlace';
+import { CoordsType, Place, PlacePrediction } from '../../types/types';
 
 
 
 type AutocompletePlaceInputType = {
-	id: string,
-	inputDefaultValue?: string
 	start?: boolean,
 	end?: boolean
 	label?: string
 	startContent?: React.ReactNode,
 	place?: Place | undefined
-
 }
 
-const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultValue, id, startContent, label, place }) => {
+const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, label, place, start, end }) => {
 	const { handleFocusOnMarker } = useFlyToMarker()
 	const { dispatch, state } = useMapContext()
-	const [options, setOptions] = useState<Place[]>([]);
+	const [options, setOptions] = useState<PlacePrediction[]>([]);
 	const [loading, setLoading] = useState(false);
 	const inputRef = useRef<HTMLInputElement | null>(null)
-	const [inputValue, setInputValue] = useState<string | undefined>(inputDefaultValue)
+	const [inputValue, setInputValue] = useState<string | undefined>()
 	const [selectedPlace, setSelectedPLace] = useState<Place | undefined>(place)
-	console.log("🚀 ~ selectedPlace:", selectedPlace)
 	const { setMark } = useSetMarkers()
+	const { setPlace } = useSetPlace()
+	useEffect(() => {
+		async function updatePlace() {
+			if (state.placeToUpdate) {
+				if (state.placeToUpdate.place.id === selectedPlace?.id) {
+					setLoading(true);
+					const newPlace = await handelGeocode(state.placeToUpdate.newCoords);
+					dispatch({ type: "UPDATE_PLACES", newPlace });
+					setLoading(false);
+				}
+			}
+		}
 
+		updatePlace();
+	}, [state.placeToUpdate]);
 
+	useEffect(() => {
+		if (place) {
+			if (place.displayName.text === "Start") {
+				setInputValue('')
+			} else if (place.displayName.text === "Stop") {
+				setInputValue('')
+			} else {
+				setInputValue(place.displayName.text)
+			}
+		}
+	}, [place])
 	const getSuggestions = async (word: string) => {
 		if (word) {
 			setLoading(true);
-			let response = await handelAutocomplete(word);
-			setOptions(response.results);
+			const predictions = await handelAutocomplete(word);
+			setOptions(predictions);
 			setLoading(false);
 		} else {
 			setOptions([]);
 		}
 	};
-
 	const debouncedSave = debounce((newValue: string) => getSuggestions(newValue), 500);
-
-
 	useEffect(() => {
 		if (inputRef && inputRef.current && inputValue) {
 			inputRef.current.value = inputValue;
@@ -60,49 +78,46 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 	}, [inputValue])
 
 	const updateValue = (newValue: string) => {
-
 		setInputValue(newValue)
 	};
-
-	const handelSelectionChange = (value: Key) => {
+	const handelSelectionChange = async (value: Key) => {
 		if (!value) {
 			return null
 		}
-		const endSubstring = "id:";
-		//@ts-ignore
-		const endIndex = value.indexOf(endSubstring);
-		//@ts-ignore
-		const result = value.substring(0, endIndex).trim();
-		const selectedPlace = options.find((option) => option.formatted_address === result);
-		if (selectedPlace) {
-			// setPlaces(state.places, selectedPlace, dispatch, start, end, id)
-			setSelectedPLace(selectedPlace)
+		const place = await handelGetPlace(value as string)
+		dispatch({ type: "SET_MAP_LOADING", mapLoading: true })
+		if (place) {
+			setSelectedPLace(place)
 
-			const coord: CoordsType = [selectedPlace.geometry.location.lng, selectedPlace.geometry.location.lat];
-			const existCoordsIndex = state.markers?.findIndex(marker => marker.id === id);
+			// dispatch({ type: "SET_MAP_LOADING", mapLoading: false })
+			const coord: CoordsType = [place.location.longitude, place.location.latitude];
+			handleFocusOnMarker(coord);
 
-			if (existCoordsIndex !== undefined && existCoordsIndex !== -1) {
-				const existMarker = state.markers![existCoordsIndex];
-				const existCoords = Math.round(existMarker.coords[0]) === Math.round(coord[0]) && Math.round(existMarker.coords[1]) === Math.round(coord[1]);
-
-				if (existCoords) {
-					handleFocusOnMarker(coord);
-					dispatch({
-						type: "UPDATE_MARKERS_CORDS",
-						markerEndPoint: coord,
-						markerIndex: existCoordsIndex,
-					});
-				}
+			if (start) {
+				setPlace({ start: true, ...place })
+				return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude, start: true });
+			} else if (end) {
+				setPlace({ end: true, ...place })
+				return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude, end: true });
 			} else {
-				handleFocusOnMarker(coord);
-				setMark(id, { lat: selectedPlace.geometry.location.lat, lng: selectedPlace.geometry.location.lng });
+				const existPlace = state.places?.find(data => data.id === place.id)
+				if (existPlace) {
+					setInputValue("")
+					return console.log("Place exist")
+				}
+				setPlace(place)
+				return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude });
 			}
 		}
+
 	}
 	const handelInputClick = () => {
-		if (selectedPlace) {
-			const coord: CoordsType = [selectedPlace.geometry.location.lng, selectedPlace.geometry.location.lat]
-			handleFocusOnMarker(coord)
+		if (state.markers && selectedPlace) {
+			const start = selectedPlace.location.longitude === 0 && selectedPlace.location.latitude === 0
+			if (!start) {
+				const coord: CoordsType = [selectedPlace.location.longitude, selectedPlace.location.latitude]
+				handleFocusOnMarker(coord)
+			}
 		}
 	}
 	return (
@@ -117,7 +132,7 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 			allowsCustomValue
 			defaultItems={[]}
 			items={options}
-			aria-label='autocomplite'
+			aria-label='autocomplete'
 			inputValue={inputValue}
 			onClick={handelInputClick}
 			listboxProps={{ color: "secondary" }}
@@ -125,12 +140,12 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ inputDefaultVa
 			onSelectionChange={(e) => handelSelectionChange(e)}
 			onInputChange={(e) => updateValue(e)}
 			disableSelectorIconRotation
-			autoFocus
+			// autoFocus
 			selectorIcon={<IoIosSearch />}
 		>
 			{((option) => (
-				<AutocompleteItem variant="faded" color="default" key={option.formatted_address + `id:${uuidv4()}`}>
-					{option.formatted_address}
+				<AutocompleteItem variant="faded" color="default" key={option.placeId}>
+					{option.text}
 				</AutocompleteItem>
 			))}
 		</Autocomplete>
