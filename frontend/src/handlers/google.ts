@@ -23,7 +23,6 @@ export const handelAutocomplete = async (value: string) => {
 export const handelGeocode = async (value: [lat: number, lng: number]) => {
   try {
     const data = await geocode({ value });
-    console.log("🚀 ~ handelGeocode ~ data :", data);
     return data;
   } catch (error) {}
 };

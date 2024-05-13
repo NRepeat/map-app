@@ -16,26 +16,20 @@ type AutocompletePlaceInputType = {
 	end?: boolean
 	label?: string
 	startContent?: React.ReactNode,
-	place?: Place | undefined
+	place?: Place | undefined,
+	setLoading: (loading: boolean) => void
+	loading: boolean
 }
 
-const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, label, place, start, end }) => {
+const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, label, place, start, end, loading, setLoading }) => {
 	const { handleFocusOnMarker } = useFlyToMarker()
 	const { dispatch, state } = useMapContext()
 	const [options, setOptions] = useState<PlacePrediction[]>([]);
-	const [loading, setLoading] = useState(false);
 	const inputRef = useRef<HTMLInputElement | null>(null)
 	const [inputValue, setInputValue] = useState<string | undefined>()
 	const [selectedPlace, setSelectedPLace] = useState<Place | undefined>(place)
 	const { setMark } = useSetMarkers()
 	const { setPlace } = useSetPlace()
-	const requestInProgress = useRef(false);
-
-	useEffect(() => {
-
-
-		updatePlace();
-	}, [state.placeToUpdate]);
 
 	useEffect(() => {
 		if (place) {

@@ -16,22 +16,24 @@ export type LatLng = {
   start?: boolean;
   end?: boolean;
 };
+export type PlaceToUpdateType = {
+  place: Place;
+  newCoords: CoordsType;
+  fromHandlePutMarkerOnClick?: boolean;
+};
 export type MapStateContextType = {
   coords?: CoordsType;
   markers?: MarkersType[];
   mapCenter?: LatLng;
   marker?: MarkersType;
   mapLoading?: boolean;
+  isToUpdate?: boolean;
   routeInstructions?: {
     steps: [];
     waypoints: [number, number][];
     totalDistance: { distance: number; duration: number };
   };
-  placeToUpdate?: {
-    place: Place;
-    newCoords: CoordsType;
-    fromHandlePutMarkerOnClick?: boolean;
-  };
+  placeToUpdate?: PlaceToUpdateType;
   user?: User;
   placeInstance?: Place;
   places?: Place[];
@@ -77,7 +79,9 @@ export type ActionType =
   | "SET_PLACE_INSTANCE"
   | "SET_PLACE_TO_UPDATE"
   | "UPDATE_PLACES"
-  | "DELETE_PLACE";
+  | "DELETE_PLACE"
+  | "SET_IS_TO_UPDATE"
+  | "CLEAR_ROUTE_PLACE_DATA";
 
 export type MapContextType = {
   state: MapStateContextType;

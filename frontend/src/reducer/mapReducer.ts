@@ -94,6 +94,9 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         draft.places = deletePlace(draft.places!, action.markerId!);
       }
       break;
+    case "SET_IS_TO_UPDATE": {
+      draft.isToUpdate = action.isToUpdate;
+    }
     default:
       return draft;
   }

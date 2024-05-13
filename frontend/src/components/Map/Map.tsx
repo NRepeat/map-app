@@ -18,12 +18,14 @@ const MapInstance = () => {
         const end = state.places[1].id === "end-place" && state.places[1]
 
         if (start) {
+          dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: true })
           return dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: start, newCoords: [e.lngLat.lat, e.lngLat.lng], fromHandlePutMarkerOnClick: true } })
         } else if (end) {
-
+          dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: true })
           return dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: end, newCoords: [e.lngLat.lat, e.lngLat.lng], fromHandlePutMarkerOnClick: true } })
         } else {
           dispatch({ type: "SET_PLACE_INSTANCE", placeInstance: { displayName: { text: "" }, id: 'instance-place', location: { latitude: 0, longitude: 0 }, instance: true } })
+          dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: true })
           return dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: { displayName: { text: "" }, id: 'instance-place', location: { latitude: 0, longitude: 0 }, instance: true }, newCoords: [e.lngLat.lat, e.lngLat.lng], fromHandlePutMarkerOnClick: true } })
         }
       }

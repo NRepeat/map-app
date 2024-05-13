@@ -94,7 +94,6 @@ export const deleteMarker = (markers: MarkersType[], id: string) => {
 };
 export const deletePlace = (places: Place[], id: string) => {
   const indexToDelete = places.findIndex((place) => place.id === id);
-  console.log("🚀 ~ deletePlace ~ indexToDelete:", indexToDelete);
   if (indexToDelete !== -1) {
     const updatedPlaces = places.filter((place) => place.id !== id);
     return updatedPlaces;

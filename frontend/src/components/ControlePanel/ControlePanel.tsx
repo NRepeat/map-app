@@ -85,7 +85,7 @@ function ControlPanel() {
         </Button>
       </motion.div>
       <motion.div
-        className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900     w-full sm:max-w-[500px] min-w-[300px]    left-0 top-0  `}
+
         className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900    w-full sm:max-w-[500px] min-w-[300px]    left-0 top-0  `}
         animate={{ overflowY: "hidden", scrollBehavior: "auto", scrollbarWidth: "thin" }}
         transition={{ duration: 5 }}
