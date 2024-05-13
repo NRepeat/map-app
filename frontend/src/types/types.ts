@@ -27,7 +27,11 @@ export type MapStateContextType = {
     waypoints: [number, number][];
     totalDistance: { distance: number; duration: number };
   };
-  placeToUpdate?: { place: Place; newCoords: CoordsType };
+  placeToUpdate?: {
+    place: Place;
+    newCoords: CoordsType;
+    fromHandlePutMarkerOnClick?: boolean;
+  };
   user?: User;
   placeInstance?: Place;
   places?: Place[];
@@ -72,7 +76,8 @@ export type ActionType =
   | "SET_USER"
   | "SET_PLACE_INSTANCE"
   | "SET_PLACE_TO_UPDATE"
-  | "UPDATE_PLACES";
+  | "UPDATE_PLACES"
+  | "DELETE_PLACE";
 
 export type MapContextType = {
   state: MapStateContextType;

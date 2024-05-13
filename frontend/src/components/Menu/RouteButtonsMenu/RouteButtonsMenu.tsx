@@ -1,16 +1,13 @@
 import { Button, ButtonGroup, Tooltip } from '@nextui-org/react';
 import { OpenRoute } from '../../../handlers/openRoute';
 import useMapContext from '../../../hooks/useMapContext';
-import useSetMarkers from '../../../hooks/useSetMarkers';
 
 
 
 const RouteButtonsMenu = () => {
 
 
-	const { setMark } = useSetMarkers();
 	const { state, dispatch } = useMapContext();
-	console.log("🚀 ~ RouteButtonsMenu ~ state:", state)
 	const openRoute = new OpenRoute(dispatch);
 
 	return (

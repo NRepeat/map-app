@@ -24,7 +24,7 @@ const Markers: FC<MarkersProps> = ({ markers }) => {
       });
       if (state.places) {
 
-        state.places[index] && dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: state.places[index], newCoords: [endPoint[1], endPoint[0]] } })
+        dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: state.places[index], newCoords: [endPoint[1], endPoint[0]] } })
       }
     },
 
@@ -39,7 +39,7 @@ const Markers: FC<MarkersProps> = ({ markers }) => {
       {markers &&
         markers.map((marker, i) => {
           const isFirstMarker = marker.start;
-          const isLastMarker = !marker.start;
+          const isLastMarker = marker.end;
           const markerColor = isFirstMarker ? "fill-green-700" : isLastMarker ? "fill-red-600" : "fill-blue-600";
           const markerIcon = isFirstMarker ? <FaMapMarkerAlt className={` sm:min-w-9  sm:min-h-9 min-h-6 min-w-6 ${markerColor}`} /> : <Badge content={`${i}`} color="secondary"><FaMapMarkerAlt className={` sm:min-w-9  sm:min-h-9 min-h-6 min-w-6 ${markerColor}`} /></Badge>;
           return (

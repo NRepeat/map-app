@@ -1,15 +1,44 @@
-import Map, { GeolocateControl, NavigationControl } from "react-map-gl";
+import { useEffect } from "react";
+import Map, { FullscreenControl, GeolocateControl, NavigationControl } from "react-map-gl";
+import { OpenRoute } from "../../handlers/openRoute";
 import useMapContext from "../../hooks/useMapContext";
 import ControlPanel from "../ControlePanel/ControlePanel";
 import Markers from "../Markers/Markers";
 import RouteSource from "../Sources/RouteSource";
 import WaypointSource from "../Sources/WaypointSource";
 const MapInstance = () => {
-  const { state } = useMapContext();
-  // const { current: map } = useMap();
+  const { state, dispatch } = useMapContext();
+
+  const openRoute = new OpenRoute(dispatch);
+  const handlePutMarkerOnClick = (e: mapboxgl.MapLayerMouseEvent) => {
+
+    if (e.type === "click") {
+      if (state.places) {
+        const start = state.places[0].id === "start-place" && state.places[0]
+        const end = state.places[1].id === "end-place" && state.places[1]
+
+        if (start) {
+          return dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: start, newCoords: [e.lngLat.lat, e.lngLat.lng], fromHandlePutMarkerOnClick: true } })
+        } else if (end) {
+
+          return dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: end, newCoords: [e.lngLat.lat, e.lngLat.lng], fromHandlePutMarkerOnClick: true } })
+        } else {
+          dispatch({ type: "SET_PLACE_INSTANCE", placeInstance: { displayName: { text: "" }, id: 'instance-place', location: { latitude: 0, longitude: 0 }, instance: true } })
+          return dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: { displayName: { text: "" }, id: 'instance-place', location: { latitude: 0, longitude: 0 }, instance: true }, newCoords: [e.lngLat.lat, e.lngLat.lng], fromHandlePutMarkerOnClick: true } })
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (state.markers && state.markers.length >= 2) {
+      openRoute.getOptimizationRoute(state.markers)
+    }
+  }, [state.markers])
   return (
     <div className="w-screen h-screen">
       <Map
+        onClick={(e) => handlePutMarkerOnClick(e)}
         mapboxAccessToken={import.meta.env.VITE_ACCESS_TOKEN}
         mapLib={import("mapbox-gl")}
         initialViewState={{
@@ -35,6 +64,7 @@ const MapInstance = () => {
         <GeolocateControl />
         <NavigationControl />
         <ControlPanel />
+        <FullscreenControl />
       </Map>
     </div>
   );

@@ -6,7 +6,6 @@ export const updateMarkers = (
   markers?: MarkersType[],
   coords?: { lng: number; lat: number; end?: boolean; start?: boolean }
 ) => {
-  console.log("🚀 ~ coords:", coords);
   if (markers) {
     const existMarker = markers.find((data) => data.id === id);
     if (existMarker) {
@@ -20,7 +19,6 @@ export const updateMarkers = (
     };
     if (coords?.start) {
       const start = markers.find((data) => data.start === true);
-      console.log("🚀 ~ start:", start);
       if (!start) {
         return [marker, ...markers];
       } else {
@@ -29,8 +27,8 @@ export const updateMarkers = (
         return markers;
       }
     } else if (coords!.end) {
+      console.log("🚀 ~ coords:", coords);
       const end = markers.find((data) => data.end === true);
-      console.log("🚀 ~ end:", end);
       if (end) {
         markers[markers.length - 1] = marker;
         return markers;
@@ -40,7 +38,6 @@ export const updateMarkers = (
       }
       return [...markers, marker];
     }
-
     const lastMarker = markers[markers.length - 1];
     markers[markers.length - 1] = marker;
     markers.push(lastMarker);
@@ -76,6 +73,7 @@ export const updateMarkersCoord = (
 
 export const deleteMarker = (markers: MarkersType[], id: string) => {
   const indexToDelete = markers.findIndex((marker) => marker.id === id);
+  console.log("🚀 ~ deleteMarker ~ indexToDelete:", indexToDelete);
 
   if (indexToDelete !== markers.length - 1 && indexToDelete !== -1) {
     const updatedMarkers = markers.filter((marker) => marker.id !== id);
@@ -94,7 +92,16 @@ export const deleteMarker = (markers: MarkersType[], id: string) => {
 
   return markers;
 };
-
+export const deletePlace = (places: Place[], id: string) => {
+  const indexToDelete = places.findIndex((place) => place.id === id);
+  console.log("🚀 ~ deletePlace ~ indexToDelete:", indexToDelete);
+  if (indexToDelete !== -1) {
+    const updatedPlaces = places.filter((place) => place.id !== id);
+    return updatedPlaces;
+  } else {
+    return places;
+  }
+};
 export const getWaypointsCoords = (
   waypoints: [number, number][],
   coords: [number, number][],
@@ -109,7 +116,6 @@ export const getWaypointsCoords = (
 };
 
 export const setPlaces = (places?: Place[], place?: Place) => {
-  console.log("🚀 ~ setPlaces ~ places:", places);
   if (!places) {
     throw new Error("Places not found");
   }
@@ -153,10 +159,20 @@ export const updatePlaces = (
   newPlace?: Place | undefined,
   places?: Place[] | undefined
 ) => {
-  if (!places && place_id && newPlace) {
+  if (!places && !place_id && !newPlace) {
     throw new Error("Places not found");
   }
-  console.log("🚀 ~ newPlace:", newPlace);
 
-  return places;
+  if (!places) {
+    return places;
+  }
+
+  const updatedPlaces = places.map((data) => {
+    if (data.id === place_id) {
+      return newPlace!;
+    }
+    return data;
+  });
+
+  return updatedPlaces;
 };
