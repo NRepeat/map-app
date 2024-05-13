@@ -21,7 +21,7 @@ export class UserService {
           displayName: data.displayName ? data.displayName : data.email,
           password: data.password ? data.password : "",
         });
-        await this.userRepository.save(newUser);
+        return this.userRepository.save(newUser);
       } else {
         return existUser;
       }

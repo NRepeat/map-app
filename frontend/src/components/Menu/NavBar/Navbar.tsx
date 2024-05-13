@@ -8,9 +8,14 @@ import UserCard from '../../UserCard/UserCard';
 const NavbarMapMenu = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { state } = useMapContext()
+	console.log("🚀 ~ NavbarMapMenu ~ state :", state)
 	const [isLoginIn, setIsLoginIn] = useState<boolean>(false);
 	const { isOpen, onOpenChange, onOpen } = useDisclosure();
-
+	// if (state.user) {
+	// 	if (state.user.avatar) {
+	// 		fetch(state.user!.avatar!).then(data => data.json())
+	// 	}
+	// }
 	const menuItems = [
 		"Profile",
 		"Dashboard",

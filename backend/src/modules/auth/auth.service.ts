@@ -77,6 +77,7 @@ export class AuthService {
       email: user.email,
       name: user.displayName,
       password: user.password,
+      avatar: user.img ? user.img.value : "",
     });
   }
   async decryptJWT(access_token: string) {
