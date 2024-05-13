@@ -1,5 +1,6 @@
-import { Button, Input } from "@nextui-org/react";
+import { Button, Card, Input } from "@nextui-org/react";
 import { useFormik } from "formik";
+import { useState } from "react";
 import { FaUnlock } from "react-icons/fa";
 import { IoMdMail } from "react-icons/io";
 import * as yup from 'yup';
@@ -17,16 +18,18 @@ const FormSchema = yup.object().shape({
 
 const LoginForm = ({ onOpenChange }: { onOpenChange: () => void }) => {
 	const { dispatch } = useMapContext()
+	const [error, setError] = useState<string>()
 	const handleSubmit = async (values: {
 		email: string;
 		pass: string;
 	}) => {
 		const user = await userLoginHandler({ email: values.email, password: values.pass })
-		console.log("🚀 ~ LoginForm ~ user:", user)
+		console.log("🚀 ~ LoginForm ~ user :", user)
 		if (user) {
-			console.log("🚀 ~ LoginForm ~ user:", user)
 			dispatch({ type: "SET_USER", user: user })
 			onOpenChange()
+		} else {
+			setError("Email or password are incorrect")
 		}
 	}
 	const formik = useFormik({
@@ -43,6 +46,9 @@ const LoginForm = ({ onOpenChange }: { onOpenChange: () => void }) => {
 	return (
 		<form onSubmit={formik.handleSubmit}>
 			<div className="gap-2 flex flex-col">
+				{error &&
+					<Card className=' p-4 bg-[#f31212] text-white border-gray-500'>{error}</Card>
+				}
 				<Input autoFocus
 					label="Email"
 					name="email"
@@ -65,7 +71,7 @@ const LoginForm = ({ onOpenChange }: { onOpenChange: () => void }) => {
 					label="Password"
 					min={8}
 					isInvalid={!!formik.errors.pass}
-					errorMessage={formik.errors.pass}
+					errorMessage="Password required"
 					placeholder="Enter your password"
 					type="password"
 					variant="bordered" />

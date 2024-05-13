@@ -38,8 +38,9 @@ const MapProvider: FC<MapProviderProps> = ({ children }) => {
 
     if (user) {
       const parsedUser = jwtDecode(user) as any
+      console.log("🚀 ~ useEffect ~ parsedUser:", parsedUser)
 
-      dispatch({ type: "SET_USER", user: { email: parsedUser.email, name: parsedUser.name, avatar: parsedUser.img ? parsedUser.img.value : '' } })
+      dispatch({ type: "SET_USER", user: { email: parsedUser.email, name: parsedUser.name, avatar: parsedUser.avatar ? parsedUser.avatar : '' } })
     }
   }, [])
   if (!state) {

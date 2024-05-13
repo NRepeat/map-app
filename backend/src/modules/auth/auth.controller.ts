@@ -29,31 +29,37 @@ export class AuthController {
   @Get("google/callback")
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req: any, @Res() res: Response) {
+    console.log(
+      "🚀 ~ AuthController ~ googleAuthCallback ~ req.user:",
+      req.user
+    );
     const token = await this.authService.signJWT(req.user);
-    const user = req.user;
+
     res.cookie("access_token", token, {
       maxAge: 2592000000,
       sameSite: true,
       secure: false,
     });
-    res.cookie("user", JSON.stringify(user), {
-      maxAge: 2592000000,
-      sameSite: true,
-      secure: false,
-    });
+
     res.redirect("http://localhost:5173/");
   }
   @Post("login")
   async localLogin(@Body() body: User, @Res() res: Response) {
     try {
+      res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+
       const user = await this.userService.findUser(body);
+      console.log("🚀 ~ AuthController ~ localLogin ~ user:", user);
+
+      if (!user) {
+        res.send({ error: "Unauthorized" });
+      }
       const token = await this.authService.signJWT(user);
       res.cookie("access_token", token, {
         maxAge: 2592000000,
         sameSite: true,
         secure: false,
       });
-      res.header("Access-Control-Allow-Origin", "http://localhost:5173");
       res.send({ name: user.displayName, email: user.email });
     } catch (error) {}
   }
@@ -62,22 +68,20 @@ export class AuthController {
   async localRegistration(@Body() body: User, @Res() res: Response) {
     try {
       if (body) {
-        const user = await this.userService.createUser(body);
-        if (user.email === body.email) {
+        res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+        const exitUser = await this.userService.findUser(body);
+        if (exitUser) {
           res.send({ user: "User already exist" });
         } else {
+          const user = await this.userService.createUser(body);
           const token = await this.authService.signJWT(user);
           res.cookie("access_token", token, {
             maxAge: 2592000000,
             sameSite: true,
             secure: false,
           });
-          res.cookie("user", JSON.stringify(user), {
-            maxAge: 2592000000,
-            sameSite: true,
-            secure: false,
-          });
-          res.send({ user });
+
+          res.send({ name: user.displayName, email: user.email });
         }
       } else {
         res.status(500);

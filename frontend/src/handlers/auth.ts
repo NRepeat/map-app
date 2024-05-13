@@ -12,10 +12,23 @@ export const authHandler = async () => {
 
 export const userRegistrationHandler = async (data: User) => {
   try {
-    if (data.password)
-      bcrypt.hash(data.password, 8, function (err, hash) {
-        jwtAuthRegistration({ email: data.email, password: hash });
+    if (data.password) {
+      const hash = bcrypt.hashSync(data.password, 8);
+      const isRegistered = await jwtAuthRegistration({
+        email: data.email,
+        password: hash,
       });
+      const token = Cookies.get("access_token");
+      if (isRegistered && token) {
+        const user = jwtDecode(token) as any;
+        if (isRegistered.user === "User already exist") {
+          Cookies.remove("user");
+          Cookies.remove("access_token");
+          return false;
+        }
+        return user;
+      }
+    }
   } catch (error) {}
 };
 
@@ -34,6 +47,7 @@ export const userLoginHandler = async (data: User) => {
       const isLogin = bcrypt
         .compare(data.password, user.password)
         .then((res) => {
+          console.log("🚀 ~ .then ~ res:", res);
           if (res) {
             return user;
           } else {
