@@ -37,7 +37,6 @@ export class OpenrouteService {
       );
 
       const data = (await responseOpenRoute.json()) as any;
-      console.log("🚀 ~ OpenrouteService ~ data :", data);
       const coordsOpenRouteData = data.features;
 
       return coordsOpenRouteData;
@@ -48,12 +47,17 @@ export class OpenrouteService {
   async fetchOptimizedRoute({ coordinates }: { coordinates: string }) {
     try {
       const coordsOpenRoute = JSON.parse(coordinates);
+      console.log(
+        "🚀 ~ OpenrouteService ~ fetchOptimizedRoute ~ coordsOpenRoute :",
+        coordsOpenRoute
+      );
 
       const jobs = coordsOpenRoute.map((marker, i) => {
         return {
           id: i,
           location: marker,
           skills: [1],
+          description: "Endpoint",
         };
       });
       const vehicles = [
@@ -63,9 +67,11 @@ export class OpenrouteService {
           start: coordsOpenRoute[0],
           end: coordsOpenRoute[coordsOpenRoute.length - 1],
           capacity: [1],
-          skills: [1],
+          skills: [15],
         },
       ];
+      jobs[2].skills = [15];
+      console.log("🚀 ~ OpenrouteService ~ jobs:", jobs);
       const bodyOPEN_ROUTE_OPT = JSON.stringify({ jobs, vehicles });
       const responseOPEN_ROUTE_OPT = await fetch(
         "https://api.openrouteservice.org/optimization",
@@ -88,11 +94,6 @@ export class OpenrouteService {
       const optimizedData = await this.fetchOpenRouteRoute({
         coordinates: optimizedRoutesCords,
       });
-      console.log(
-        "🚀 ~ OpenrouteService ~ fetchOptimizedRoute ~ optimizedData:",
-        optimizedData
-      );
-
       return optimizedData;
     } catch (error) {
       throw new Response("Error", { status: 500 });

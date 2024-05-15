@@ -1,5 +1,5 @@
 import { Badge } from "@nextui-org/react";
-import { useCallback, type FC } from "react";
+import { useCallback, useEffect, type FC } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Marker, type MarkerDragEvent } from "react-map-gl";
 import useMapContext from "../../hooks/useMapContext";
@@ -30,7 +30,6 @@ const Markers: FC<MarkersProps> = ({ markers }) => {
 
     [markers]
   );
-
 
 
 

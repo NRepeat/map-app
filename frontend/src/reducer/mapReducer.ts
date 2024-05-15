@@ -9,12 +9,15 @@ import {
 } from "./actions";
 export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
   switch (action.type) {
-    case "SET_MARKERS":
+    case "SET_MARKER":
       draft.markers = updateMarkers(
         action.markerId,
         draft.markers,
         action.mapCenter
       );
+      break;
+    case "SET_MARKERS":
+      draft.markers = action.markers;
       break;
     case "UPDATE_MARKERS_CORDS":
       {
@@ -59,12 +62,16 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         draft.waypointsCoords = action.waypointsCoords;
       }
       break;
-    case "SET_PLACES":
+    case "SET_PLACE":
       {
         draft.places = setPlaces(draft.places, action.newPlace);
       }
       break;
-
+    case "SET_PLACES":
+      {
+        draft.places = action.places;
+      }
+      break;
     case "UPDATE_PLACES":
       {
         draft.places = updatePlaces(
@@ -94,9 +101,31 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         draft.places = deletePlace(draft.places!, action.markerId!);
       }
       break;
-    case "SET_IS_TO_UPDATE": {
-      draft.isToUpdate = action.isToUpdate;
-    }
+    case "SET_IS_TO_UPDATE":
+      {
+        draft.isToUpdate = action.isToUpdate;
+      }
+      break;
+    case "CLEAR_ROUTE_PLACE_DATA":
+      {
+        draft.routeInstructions = undefined;
+        draft.route = [];
+        draft.coords = [0, 0];
+        draft.markers = undefined;
+        draft.places = [
+          {
+            displayName: { text: "Start" },
+            id: "start-place",
+            location: { latitude: 0, longitude: 0 },
+          },
+          {
+            displayName: { text: "Stop" },
+            id: "end-place",
+            location: { latitude: 0, longitude: 0 },
+          },
+        ];
+      }
+      break;
     default:
       return draft;
   }

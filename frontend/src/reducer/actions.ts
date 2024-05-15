@@ -22,12 +22,10 @@ export const updateMarkers = (
       if (!start) {
         return [marker, ...markers];
       } else {
-        // markers.shift();
         markers[0] = marker;
         return markers;
       }
     } else if (coords!.end) {
-      console.log("🚀 ~ coords:", coords);
       const end = markers.find((data) => data.end === true);
       if (end) {
         markers[markers.length - 1] = marker;

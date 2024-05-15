@@ -27,7 +27,7 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 	const [options, setOptions] = useState<PlacePrediction[]>([]);
 	const inputRef = useRef<HTMLInputElement | null>(null)
 	const [inputValue, setInputValue] = useState<string | undefined>()
-	const [selectedPlace, setSelectedPLace] = useState<Place | undefined>(place)
+	const [selectedPlace, setSelectedPLace] = useState<Place | undefined>()
 	const { setMark } = useSetMarkers()
 	const { setPlace } = useSetPlace()
 
@@ -39,6 +39,8 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 				setInputValue('')
 			} else {
 				setInputValue(place.displayName.text)
+				// setPlaces(place)
+				// return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude, start, end });
 			}
 		}
 	}, [place])

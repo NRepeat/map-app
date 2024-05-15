@@ -9,8 +9,13 @@ const useSetPlace = () => {
 
 		dispatch({ type: "SET_PLACES", newPlace: place })
 	}
+	const setPlaces = (places: Place[]) => {
 
-	return { setPlace }
+
+		dispatch({ type: "SET_PLACES", places: places })
+	}
+
+	return { setPlace, setPlaces }
 }
 
 export default useSetPlace

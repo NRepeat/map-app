@@ -11,7 +11,7 @@ const useSetMarkers = () => {
       throw new Error("Map not found");
     }
     return dispatch({
-      type: "SET_MARKERS",
+      type: "SET_MARKER",
       mapCenter: coords,
       markerId: id,
     });

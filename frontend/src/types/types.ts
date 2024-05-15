@@ -39,6 +39,7 @@ export type MapStateContextType = {
   places?: Place[];
   autocomplete?: {};
   newPlace?: Place;
+  isLoadFromDB?: boolean;
   waypointsCoords?: [number, number][];
   route?: {
     coordinates: CoordsType[];
@@ -68,12 +69,14 @@ export interface MapReducerType extends MapStateContextType {
 
 export type ActionType =
   | "UPDATE_MARKERS_CORDS"
+  | "SET_MARKER"
   | "SET_MARKERS"
   | "DELETE_MARKER"
   | "SET_OPEN_ROUTE_ROUTE"
   | "SET_MAP_LOADING"
   | "SET_ROUTE_INSTRUCTIONS"
   | "SET_ROUTE_WAYPOINTS_COORDS"
+  | "SET_PLACE"
   | "SET_PLACES"
   | "SET_USER"
   | "SET_PLACE_INSTANCE"
@@ -81,7 +84,8 @@ export type ActionType =
   | "UPDATE_PLACES"
   | "DELETE_PLACE"
   | "SET_IS_TO_UPDATE"
-  | "CLEAR_ROUTE_PLACE_DATA";
+  | "CLEAR_ROUTE_PLACE_DATA"
+  | "SET_IS_LOAD_FROM_DB";
 
 export type MapContextType = {
   state: MapStateContextType;
