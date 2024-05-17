@@ -9,18 +9,23 @@ export interface SourceDataType {
   index: number
 }
 
-interface RouteSourceProps extends SourceDataType { }
+interface RouteSourceProps extends SourceDataType {
+  setSelectedRouteIds: React.Dispatch<React.SetStateAction<string[]>>
+  hoverInfo: string
+}
 
 const getRandomColor = (): string => {
   return '#' + Math.floor(Math.random() * 16777215).toString(16);
 }
 
-const RouteSource: FC<RouteSourceProps> = ({ coords, id, index }) => {
+const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRouteIds, hoverInfo }) => {
+  const roadId = `roadLine-${id}`
   const [lineColor, setLineColor] = useState<string>(
     index === 0 ? "#0000FF" : getRandomColor()
   );
 
   useEffect(() => {
+    setSelectedRouteIds(prev => [...prev, roadId])
     if (index !== 0) {
       setLineColor(getRandomColor());
     }
@@ -31,7 +36,7 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index }) => {
       type: "FeatureCollection",
       features: [
         {
-          properties: [],
+          properties: { id: roadId },
           type: "Feature",
           geometry: {
             type: "LineString",
@@ -69,11 +74,25 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index }) => {
         "line-width": 4,
       },
     };
+    const highlightLayer: LineLayer = {
+      id: `counties-highlighted-${id}`,
+      type: 'line',
+
+      paint: {
+        'line-color': '#7fff7f',
+        "line-opacity": 0.8,
+        "line-width": 4,
+      }
+    };
+    const filter = ['==', "id", hoverInfo]
+
 
     return (
       <Source id={id} type="geojson" data={geojson}>
-        <Layer {...layerStyle} />
+        <Layer    {...layerStyle} />
         <Layer {...layerRouteArrowStyle} />
+        <Layer {...highlightLayer} filter={filter} />
+
       </Source>
     );
   }

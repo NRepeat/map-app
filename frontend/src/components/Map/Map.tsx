@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { useCallback, useEffect, useState } from "react";
 import Map, { FullscreenControl, GeolocateControl, NavigationControl } from "react-map-gl";
 import { OpenRoute } from "../../handlers/openRoute";
 import useMapContext from "../../hooks/useMapContext";
@@ -6,6 +7,7 @@ import ControlPanel from "../ControlePanel/ControlePanel";
 import Markers from "../Markers/Markers";
 import RouteSource from "../Sources/RouteSource";
 import WaypointSource from "../Sources/WaypointSource";
+
 const MapInstance = () => {
   const { state, dispatch } = useMapContext();
 
@@ -31,7 +33,20 @@ const MapInstance = () => {
       }
     }
   }
+  const [hoverInfo, setHoverInfo] = useState<string>('');
+  const [selectedRouteIds, setSelectedRouteIds] = useState<string[]>([]);
+  // const filter = ['in', 'COUNTY', selectedRoute]
+  const onHover = useCallback((e: mapboxgl.MapLayerMouseEvent) => {
+    // e.preventDefault()
+    const segment = e.features && e.features[0];
+    if (segment)
+      setHoverInfo(segment.layer.id);
+  }, []);
+  let markersId = []
+  if (state.markers) {
+    markersId = state.markers?.map(marker => marker.id)
 
+  }
   useEffect(() => {
     if (state.markers && state.markers.length >= 2) {
       openRoute.getOptimizationRoute(state.markers)
@@ -48,6 +63,9 @@ const MapInstance = () => {
           latitude: import.meta.env.LATITUDE || 47.84785262713706,
           zoom: import.meta.env.ZOOM || 12,
         }}
+        interactiveLayerIds={selectedRouteIds}
+        // onMouseMove={onHover}
+        onMouseMove={(e) => onHover(e)}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/navigation-night-v1"
       >
@@ -55,12 +73,16 @@ const MapInstance = () => {
           state.route.length > 0 &&
           state.route.map((route, i) => (
             <RouteSource
+              hoverInfo={hoverInfo}
+              setSelectedRouteIds={setSelectedRouteIds}
               index={i}
               key={route.id}
               coords={route.coordinates}
               id={route.id}
             />
           ))}
+
+
         <WaypointSource />
         <Markers markers={state.markers} />
         <GeolocateControl />

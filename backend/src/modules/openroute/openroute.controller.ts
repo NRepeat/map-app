@@ -1,7 +1,6 @@
-import { Controller, Get, Query, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, Query, Res } from "@nestjs/common";
 
 import { Response } from "express";
-import { JwtAuthGuard } from "../auth/guards/jwt.guard";
 import { OpenrouteService } from "./openroute.service";
 
 @Controller("open-route")
@@ -26,7 +25,7 @@ export class OpenRouteController {
       return res.status(500).json({ error: "Internal server error" });
     }
   }
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get("optimized-route")
   async getOptimizedRoute(
     @Res() res: Response,
