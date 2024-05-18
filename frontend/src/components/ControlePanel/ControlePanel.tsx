@@ -1,13 +1,11 @@
 import {
-  Accordion,
-  AccordionItem,
   Button,
   Card,
   CardBody,
   CardHeader,
   Divider
 } from "@nextui-org/react";
-import { Variants, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { SlArrowRight } from "react-icons/sl";
 import useMapContext from "../../hooks/useMapContext";
@@ -15,6 +13,7 @@ import CordList from "../Menu/CordList/CordList";
 import NavbarMenu from "../Menu/NavBar/Navbar";
 import RouteButtonsMenu from "../Menu/RouteButtonsMenu/RouteButtonsMenu";
 import { RouteInstruction, TotalRouteInformation } from "../RouteInstruction/RouteInstruction";
+import { buttonVariants, itemVariants } from "./variants";
 // type ControlPanelProps = {
 //   markers: MarkersType[] | undefined;
 // };
@@ -26,55 +25,6 @@ function ControlPanel() {
   const [toggleMenu, setToggleMenu] = useState<boolean>(true)
 
 
-
-  const itemVariants: Variants = {
-    open: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        type: "spring",
-        damping: 19,
-        bounce: 0,
-        duration: 0.4,
-      },
-      display: 'block'
-    },
-    closed: {
-      opacity: 1,
-      x: -500,
-      transition: {
-        type: "spring",
-        duration: 0.5,
-        bounce: 0,
-      },
-      transitionEnd: {
-        display: "none"
-      }
-    }
-  };
-  const buttonVariants: Variants = {
-    open: {
-      opacity: 1,
-      x: 495,
-      y: 1,
-      transition: {
-        type: "spring",
-        damping: 19,
-        bounce: 0,
-        duration: 0.4,
-      }
-    },
-    closed: {
-      opacity: 1,
-      y: 0,
-      x: 0,
-      transition: {
-        type: "spring",
-        duration: 0.5,
-      },
-
-    }
-  };
   return (
     <div>
       <motion.div variants={buttonVariants} animate={toggleMenu ? "open" : "closed"} className="absolute z-10  left-0 top-0 ">
@@ -102,14 +52,20 @@ function ControlPanel() {
                 <CordList />
               </div>
               {state.routeInstructions &&
-                <Accordion variant="splitted"  >
-                  <AccordionItem subtitle={
-                    <TotalRouteInformation steps={state.routeInstructions} />
-                  } aria-label="Route instruction" title={`Route instruction. `} className="   scrollbar-thin     scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  ">
-                    <RouteInstruction steps={state.routeInstructions} />
-                    <Divider />
-                  </AccordionItem>
-                </Accordion>
+                <>
+                  {
+                    state.routeInstructions.map(instruction => <div
+                      aria-label="Route instruction" title={`Route  ${instruction.steps[0].name}`} key={instruction.id} className="   scrollbar-thin     scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  ">
+                      <TotalRouteInformation steps={instruction} />
+
+                      <RouteInstruction steps={instruction} />
+                      <Divider />
+                    </div>)
+
+                  }
+                </>
+
+
               }
             </CardBody>
           </Card>

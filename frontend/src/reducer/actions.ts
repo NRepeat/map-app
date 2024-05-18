@@ -71,7 +71,6 @@ export const updateMarkersCoord = (
 
 export const deleteMarker = (markers: MarkersType[], id: string) => {
   const indexToDelete = markers.findIndex((marker) => marker.id === id);
-  console.log("🚀 ~ deleteMarker ~ indexToDelete:", indexToDelete);
 
   if (indexToDelete !== markers.length - 1 && indexToDelete !== -1) {
     const updatedMarkers = markers.filter((marker) => marker.id !== id);

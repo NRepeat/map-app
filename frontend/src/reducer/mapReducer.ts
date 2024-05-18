@@ -57,11 +57,6 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         draft.routeInstructions = action.routeInstructions;
       }
       break;
-    case "SET_ROUTE_WAYPOINTS_COORDS":
-      {
-        draft.waypointsCoords = action.waypointsCoords;
-      }
-      break;
     case "SET_PLACE":
       {
         draft.places = setPlaces(draft.places, action.newPlace);
@@ -124,6 +119,21 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
             location: { latitude: 0, longitude: 0 },
           },
         ];
+      }
+      break;
+    case "SET_SELECTED_ROUTE":
+      {
+        draft.selectedRoute = action.selectedRoute;
+      }
+      break;
+    case "SET_SELECTED_ROUTE_ID":
+      {
+        draft.selectedRouteId = action.selectedRouteId;
+      }
+      break;
+    case "SET_SELECTED_WAYPOINT":
+      {
+        draft.selectedWaypoint = action.selectedWaypoint;
       }
       break;
     default:

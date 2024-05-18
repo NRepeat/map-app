@@ -21,6 +21,49 @@ export type PlaceToUpdateType = {
   newCoords: CoordsType;
   fromHandlePutMarkerOnClick?: boolean;
 };
+export type RouteType = {
+  coordinates: CoordsType[];
+  properties: {
+    segments: {
+      distance: number;
+      duration: number;
+      steps: {
+        distance: number;
+        duration: number;
+        type: number;
+        instruction: string;
+        name: string;
+        way_points: [number, number];
+      }[];
+    }[];
+  };
+  id: string;
+};
+
+export type InstructionTypes = [
+  "Left",
+  "Right",
+  "Sharp left",
+  "Sharp right",
+  "Slight left",
+  "Slight right",
+  "Straight",
+  "Enter roundabout",
+  "Exit roundabout",
+  "U-turn",
+  "Goal",
+  "Depart",
+  "Keep left",
+  "Keep right",
+];
+export type Instruction = {
+  name: string;
+  distance: string;
+  instruction: string;
+  duration: number;
+  way_points: CoordsType;
+  type: number;
+};
 export type MapStateContextType = {
   coords?: CoordsType;
   markers?: MarkersType[];
@@ -29,10 +72,12 @@ export type MapStateContextType = {
   mapLoading?: boolean;
   isToUpdate?: boolean;
   routeInstructions?: {
-    steps: [];
-    waypoints: [number, number][];
+    id: string;
+    steps: Instruction[];
+    waypoints: CoordsType[];
+    waypointCoords: CoordsType[];
     totalDistance: { distance: number; duration: number };
-  };
+  }[];
   placeToUpdate?: PlaceToUpdateType;
   user?: User;
   placeInstance?: Place;
@@ -40,25 +85,10 @@ export type MapStateContextType = {
   autocomplete?: {};
   newPlace?: Place;
   isLoadFromDB?: boolean;
-  waypointsCoords?: [number, number][];
-  route?: {
-    coordinates: CoordsType[];
-    properties: {
-      segments: {
-        distance: number;
-        duration: number;
-        steps: {
-          distance: number;
-          duration: number;
-          type: number;
-          instruction: string;
-          name: string;
-          way_points: [number, number];
-        }[];
-      }[];
-    };
-    id: string;
-  }[];
+  route?: RouteType[];
+  selectedRoute?: RouteType;
+  selectedRouteId?: string;
+  selectedWaypoint?: { coords: CoordsType; instruction: Instruction };
 };
 export interface MapReducerType extends MapStateContextType {
   type: ActionType;
@@ -85,7 +115,10 @@ export type ActionType =
   | "DELETE_PLACE"
   | "SET_IS_TO_UPDATE"
   | "CLEAR_ROUTE_PLACE_DATA"
-  | "SET_IS_LOAD_FROM_DB";
+  | "SET_IS_LOAD_FROM_DB"
+  | "SET_SELECTED_ROUTE"
+  | "SET_SELECTED_ROUTE_ID"
+  | "SET_SELECTED_WAYPOINT";
 
 export type MapContextType = {
   state: MapStateContextType;

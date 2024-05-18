@@ -66,15 +66,11 @@ const CordList = () => {
 
 	return (
 		<div className="flex flex-col gap-[1rem] ">
-			<Button onClick={() => handleClick()}>
-				Test
-			</Button>
+
 			<Button onClick={() => handleClearInputsState()}>
 				Delte
 			</Button>
-			<Button onClick={() => handleLoad()}>
-				Load
-			</Button>
+
 			{state.places && state.places.map((data, i) => {
 				if (state.places) {
 					const isStart = i === 0;

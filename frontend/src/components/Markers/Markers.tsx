@@ -1,5 +1,5 @@
 import { Badge } from "@nextui-org/react";
-import { useCallback, useEffect, type FC } from "react";
+import { useCallback, type FC } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Marker, type MarkerDragEvent } from "react-map-gl";
 import useMapContext from "../../hooks/useMapContext";
@@ -7,12 +7,14 @@ import { CoordsType, MarkersType } from "../../types/types";
 
 type MarkersProps = {
   markers: MarkersType[] | undefined;
+  setIsMarkerDrug: React.Dispatch<React.SetStateAction<boolean>>
 };
-const Markers: FC<MarkersProps> = ({ markers }) => {
+const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
   const { dispatch, state } = useMapContext();
 
   const onMarkerDragEnd = useCallback(
     (event: MarkerDragEvent, index: number) => {
+      setIsMarkerDrug(false)
       const endCords = event.lngLat;
       const endPoint = Object.keys(endCords).map(
         (coord) => (endCords as any)[coord]
@@ -48,6 +50,7 @@ const Markers: FC<MarkersProps> = ({ markers }) => {
               draggable
               longitude={marker.coords[0]}
               latitude={marker.coords[1]}
+              onDragStart={() => setIsMarkerDrug(true)}
               onDragEnd={(e) => onMarkerDragEnd(e, i)}
             >
               {isFirstMarker || isLastMarker ? markerIcon : <Badge content={`${i}`} color="secondary">{markerIcon}</Badge>}
