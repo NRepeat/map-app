@@ -47,7 +47,6 @@ export const userLoginHandler = async (data: User) => {
       const isLogin = bcrypt
         .compare(data.password, user.password)
         .then((res) => {
-          console.log("🚀 ~ .then ~ res:", res);
           if (res) {
             return user;
           } else {

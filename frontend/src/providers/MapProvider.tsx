@@ -35,7 +35,6 @@ const MapProvider: FC<MapProviderProps> = ({ children }) => {
     const user = Cookies.get("access_token");
     if (user) {
       const parsedUser = jwtDecode(user) as any
-      console.log("🚀 ~ useEffect ~ parsedUser:", parsedUser)
 
       dispatch({ type: "SET_USER", user: { email: parsedUser.email, name: parsedUser.name, avatar: parsedUser.avatar ? parsedUser.avatar : '' } })
     }

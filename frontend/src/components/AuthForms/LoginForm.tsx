@@ -24,7 +24,6 @@ const LoginForm = ({ onOpenChange }: { onOpenChange: () => void }) => {
 		pass: string;
 	}) => {
 		const user = await userLoginHandler({ email: values.email, password: values.pass })
-		console.log("🚀 ~ LoginForm ~ user :", user)
 		if (user) {
 			dispatch({ type: "SET_USER", user: user })
 			onOpenChange()

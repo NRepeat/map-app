@@ -30,7 +30,14 @@ export class OpenRoute {
       );
 
       const waypoints = steps.map((step: any) => step.way_points);
+      if (waypoints[0][0] === waypoints[1][0]) {
+        waypoints.pop();
+        steps.pop();
+        waypoints.shift();
+        steps.shift();
+      }
       const waypointCoords = findWaypoints(waypoints, route.coordinates);
+
       return { id: route.id, steps, waypoints, totalDistance, waypointCoords };
     });
     this.dispatch({

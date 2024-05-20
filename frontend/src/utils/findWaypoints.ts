@@ -2,9 +2,8 @@ export const findWaypoints = (
   waypoint_coords: [number, number][],
   coords: [number, number][]
 ) => {
-  const waypoints = waypoint_coords
-    .map((waypoint) => coords[waypoint[0]])
-    .filter((value, index, self) => self.indexOf(value) === index);
+  const waypoints = waypoint_coords.map((waypoint) => coords[waypoint[0]]);
+  // .filter((value, index, self) => self.indexOf(value) === index);
 
   return waypoints;
 };

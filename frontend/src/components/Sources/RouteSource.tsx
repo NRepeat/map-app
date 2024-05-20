@@ -1,6 +1,7 @@
 import { FeatureCollection } from "geojson";
 import { FC, useEffect, useState } from "react";
 import { Layer, LineLayer, Source, SymbolLayer } from "react-map-gl";
+import useMapContext from "../../hooks/useMapContext";
 import { CoordsType } from "../../types/types";
 import WaypointSource from "./WaypointSource";
 
@@ -23,6 +24,7 @@ const getRandomColor = (): string[] => {
 
 const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRouteIds, hoverInfo, waypoints, setWaypointsIds }) => {
   const roadId = `roadLine-${id}`
+  const { state } = useMapContext()
   const [lineColor, setLineColor] = useState<string>(
     index === 0 ? "#7fff7f" : getRandomColor()[index]
   );
@@ -30,6 +32,7 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
     setSelectedRouteIds(prev => [...prev, roadId])
 
   }, [id]);
+
 
   if (coords) {
     const geojson: FeatureCollection = {
@@ -48,6 +51,7 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
     const layerRouteArrowStyle: SymbolLayer = {
       id: `routeArrows-${id}`,
       type: "symbol",
+      source: id,
       layout: {
         "symbol-placement": "line",
         "text-field": "▶",
@@ -72,8 +76,7 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
       paint: {
         "line-color-transition": { delay: 1, duration: 3 },
         "line-color": lineColor,
-
-        "line-opacity": hoverInfo === roadId || index === 0 ? 1 : 0.2,
+        "line-opacity": hoverInfo === roadId || state.selectedRouteId === id ? 1 : 0.2,
         "line-width": 10,
       },
     };
@@ -98,11 +101,17 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
       <>
         <Source id={id} type="geojson" data={geojson} >
           <Layer    {...layerStyle} />
-          <Layer {...layerRouteArrowStyle} />
+          {state.selectedRoute?.id === id &&
+            <>
+              <Layer {...layerRouteArrowStyle} />
+              <WaypointSource waypoints={waypoints} id={id} setWaypointsIds={setWaypointsIds} />
+            </>
+
+          }
 
           {/* <Layer {...highlightLayer} /> */}
         </Source>
-        <WaypointSource waypoints={waypoints} id={id} setWaypointsIds={setWaypointsIds} />
+
       </>
 
     );

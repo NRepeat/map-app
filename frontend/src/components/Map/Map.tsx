@@ -12,7 +12,6 @@ import { handlePutMarkerOnClick } from './handlers';
 
 const MapInstance = () => {
   const { state, dispatch } = useMapContext();
-  console.log("🚀 ~ MapInstance ~  state:", state)
   const openRoute = new OpenRoute(dispatch);
 
   const [hoverInfo, setHoverInfo] = useState<{ layerId: string, lat: number, lng: number } | null>();
@@ -41,11 +40,10 @@ const MapInstance = () => {
     }
   }, [state.markers])
   useEffect(() => {
-    if (state.route) {
-      console.log("🚀 ~ useEffect ~ state.route:", state.route)
-      // dispatch({ type: "SET_SELECTED_ROUTE", route: route })
+    if (state.route && state.route[0]) {
+      dispatch({ type: "SET_SELECTED_ROUTE", selectedRouteId: state.route[0].id })
     }
-  }, [state.route])
+  }, [state.route && state.route[0]])
 
   return (
     <div className="w-screen h-screen">
@@ -71,7 +69,7 @@ const MapInstance = () => {
         </Marker>}
         {state.route &&
           state.route.length > 0 &&
-          state.route.slice().reverse().map((route, i) => (
+          state.route.map((route, i) => (
             <RouteSource
               setWaypointsIds={setWaypointsIds}
               hoverInfo={hoverInfo?.layerId}
