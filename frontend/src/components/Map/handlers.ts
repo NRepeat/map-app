@@ -5,9 +5,14 @@ export const handlePutMarkerOnClick = (
   isHoverInfo: string | undefined
 ) => {
   if (isHoverInfo) {
-    const id = isHoverInfo.replace("roadLine-", "");
-    dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: id });
-    return;
+    if (isHoverInfo?.includes("roadLine-")) {
+      const id = isHoverInfo.replace("roadLine-", "");
+      dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: id });
+      return;
+    } else if (isHoverInfo?.includes("roadLine-")) {
+      const id = isHoverInfo.replace("roadLine-", "");
+      dispatch({ type: "SET_SELECTED_WAYPOINT" });
+    }
   }
   if (e.type === "click") {
     if (state.places) {

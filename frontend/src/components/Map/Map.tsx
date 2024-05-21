@@ -36,14 +36,15 @@ const MapInstance = () => {
 
   useEffect(() => {
     if (state.markers && state.markers.length >= 2) {
-      openRoute.getOptimizationRoute(state.markers)
+      openRoute.getOpenRouteRoute(state.markers)
     }
   }, [state.markers])
   useEffect(() => {
-    if (state.route && state.route[0]) {
-      dispatch({ type: "SET_SELECTED_ROUTE", selectedRouteId: state.route[0].id })
+    if (state.route) {
+
+      dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: state.route[0].id })
     }
-  }, [state.route && state.route[0]])
+  }, [state.route])
 
   return (
     <div className="w-screen h-screen">
