@@ -6,7 +6,6 @@ import { updatePlace } from '../../../handlers/place';
 import useDeleteMarker from '../../../hooks/useDeleteMarker';
 import useMapContext from '../../../hooks/useMapContext';
 import useSetMarkers from '../../../hooks/useSetMarkers';
-import { MarkersType } from '../../../types/types';
 import AutocompletePlaceInput from '../../AutocompletePlaceInput /AutocompletePlaceInput';
 const CordList = () => {
 	const { setMark } = useSetMarkers()
@@ -14,28 +13,16 @@ const CordList = () => {
 	const { handleDeleteMark } = useDeleteMarker();
 	const { state, dispatch } = useMapContext();
 	const { markers, placeToUpdate, } = state
-	const test = [
-		{
-			displayName: { text: 'Serhiya Tyulenina St, 11б, Zaporizhzhia, Zaporiz\'ka oblast, Ukraine, 69001' },
-			location: { latitude: 47.8524368, longitude: 35.1051452 },
-			id: 'ChIJXzQc_9Nm3EARNTiNPlD9FiY',
-			start: true
-		},
-		{
-			displayName: { text: 'Pivdennoukrains\'ka St, 19, Zaporizhzhia, Zaporiz\'ka oblast, Ukraine, 69000' },
-			location: { latitude: 47.84469499999999, longitude: 35.118334 },
-			id: 'ChIJ6a6K8Cxn3EARAejSUULQMFM',
-			end: true
-		}
-	]
+
 	const startIcon = <FaMapMarkerAlt className="fill-green-700 sm:min-w-3 sm:min-h-3  min-h-2 min-w-2 " />
 	const endIcon = <FaMapMarkerAlt className="fill-red-600 sm:min-w-3 sm:min-h-3  min-h-3 min-w-3 " />
 
 	useEffect(() => {
 		if (state.isToUpdate) {
 			updatePlace({ dispatch, markers, placeToUpdate, setLoading, setMark })
+			dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: false });
 		}
-	}, [state.isToUpdate === true])
+	}, [state.isToUpdate])
 
 	const handleClick = () => {
 		dispatch({ type: "SET_PLACE_INSTANCE", placeInstance: { displayName: { text: "" }, id: '0', location: { latitude: 0, longitude: 0 }, instance: true } })
@@ -49,16 +36,16 @@ const CordList = () => {
 	}
 	const handleLoad = () => {
 		dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: true })
-		dispatch({ type: "SET_PLACES", places: test })
-		const markers = test.map((place) => {
-			const marker: MarkersType = {
-				coords: [place.location.longitude, place.location.latitude],
-				id: place.id,
-				start: place.start,
-				end: place.end,
-			};
-			return marker
-		})
+		// dispatch({ type: "SET_PLACES", places: test })
+		// const markers = test.map((place) => {
+		// 	const marker: MarkersType = {
+		// 		coords: [place.location.longitude, place.location.latitude],
+		// 		id: place.id,
+		// 		start: place.start,
+		// 		end: place.end,
+		// 	};
+		// 	return marker
+		// })
 
 		dispatch({ type: "SET_MARKERS", markers })
 	}
@@ -66,11 +53,6 @@ const CordList = () => {
 
 	return (
 		<div className="flex flex-col gap-[1rem] ">
-
-			<Button onClick={() => handleClearInputsState()}>
-				Delte
-			</Button>
-
 			{state.places && state.places.map((data, i) => {
 				if (state.places) {
 					const isStart = i === 0;

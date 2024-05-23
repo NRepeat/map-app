@@ -98,21 +98,16 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
 
 
     return (
-      <>
-        <Source id={id} type="geojson" data={geojson} >
-          <Layer    {...layerStyle} />
-          {state.selectedRouteId === id &&
-            <>
-              <Layer {...layerRouteArrowStyle} />
-              <WaypointSource waypoints={waypoints} id={id} setWaypointsIds={setWaypointsIds} />
-            </>
-          }
-
-          {/* <Layer {...highlightLayer} /> */}
-        </Source>
-
-      </>
-
+      <Source id={id} type="geojson" data={geojson} >
+        <Layer    {...layerStyle} />
+        {state.selectedRouteId === id &&
+          <>
+            <Layer {...layerRouteArrowStyle} />
+            <WaypointSource waypoints={waypoints} id={id} setWaypointsIds={setWaypointsIds} />
+          </>
+        }
+        {/* <Layer {...highlightLayer} /> */}
+      </Source>
     );
   }
   return null;

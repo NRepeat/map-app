@@ -7,7 +7,7 @@ const useSetPlace = () => {
 	const setPlace = (place: Place) => {
 
 
-		dispatch({ type: "SET_PLACES", newPlace: place })
+		dispatch({ type: "SET_PLACE", newPlace: place })
 	}
 	const setPlaces = (places: Place[]) => {
 

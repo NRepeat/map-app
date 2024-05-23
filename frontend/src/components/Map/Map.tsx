@@ -1,9 +1,10 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useCallback, useEffect, useState } from "react";
-import Map, { FullscreenControl, GeolocateControl, Marker, NavigationControl, Popup } from "react-map-gl";
+import Map, { FullscreenControl, GeolocateControl, Marker, NavigationControl } from "react-map-gl";
 import { OpenRoute } from "../../handlers/openRoute";
 import useMapContext from "../../hooks/useMapContext";
-import { CoordsType, RouteType } from '../../types/types';
+import { CoordsType, RouteInstruction, RouteType } from '../../types/types';
+import { findWaypointByCoords } from '../../utils/findWaypoints';
 import ControlPanel from "../ControlePanel/ControlePanel";
 import Markers from "../Markers/Markers";
 import PopupCard from '../PopupCard/PopupCard';
@@ -12,13 +13,15 @@ import { handlePutMarkerOnClick } from './handlers';
 
 const MapInstance = () => {
   const { state, dispatch } = useMapContext();
+
   const openRoute = new OpenRoute(dispatch);
 
   const [hoverInfo, setHoverInfo] = useState<{ layerId: string, lat: number, lng: number } | null>();
   const [routeIds, setRouteIds] = useState<string[]>([]);
   const [waypointsIds, setWaypointsIds] = useState<string[]>([]);
   const [isMarkerDrug, setIsMarkerDrug] = useState<boolean>(false)
-  const [route, setRoute] = useState<RouteType>()
+  const [routes, setRoutes] = useState<RouteType[]>()
+  const [routeInstructions, setRouteInstructions] = useState<RouteInstruction[]>()
   const [waypointCoords, setWaypointCoords] = useState<CoordsType>()
 
   const onHover = useCallback((e: mapboxgl.MapLayerMouseEvent) => {
@@ -29,28 +32,53 @@ const MapInstance = () => {
         lat: e.lngLat.lat,
       });
 
+
     } else {
       setHoverInfo(null)
     }
-  }, []);
+  }, [state]);
+
+  useEffect(() => {
+    if (hoverInfo && state.routeInstructions) {
+      if (hoverInfo.layerId.includes("waypoint")) {
+        const coords = [hoverInfo.lng, hoverInfo.lat] as CoordsType
+        const ins = findWaypointByCoords(hoverInfo.layerId, coords, state.routeInstructions)
+        if (ins) {
+          dispatch({ type: "SET_SELECTED_WAYPOINT", selectedWaypoint: { coords, instruction: ins?.instruction } })
+        } else {
+          dispatch({ type: "SET_SELECTED_WAYPOINT", selectedWaypoint: undefined })
+        }
+      } else {
+        dispatch({ type: "SET_SELECTED_WAYPOINT", selectedWaypoint: undefined })
+      }
+    }
+  }, [hoverInfo, state.routeInstructions])
 
   useEffect(() => {
     if (state.markers && state.markers.length >= 2) {
       openRoute.getOpenRouteRoute(state.markers)
     }
   }, [state.markers])
-  useEffect(() => {
-    if (state.route) {
 
+
+  useEffect(() => {
+    if (state.route && state.route.length >= 1) {
       dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: state.route[0].id })
+      setRoutes(state.route)
+      dispatch({ type: "SET_LOADING", loading: false })
+    } else {
+      setRoutes([])
     }
-  }, [state.route])
+    if (state.routeInstructions) {
+      setRouteInstructions(state.routeInstructions)
+    }
+  }, [state.route, state.routeInstructions])
 
   return (
     <div className="w-screen h-screen">
       <Map
 
-        onClick={(e) => handlePutMarkerOnClick(e, state, dispatch, hoverInfo?.layerId)}
+        onClick={(e) => handlePutMarkerOnClick(e, state, dispatch, hoverInfo?.layerId, routes)}
         mapboxAccessToken={import.meta.env.VITE_ACCESS_TOKEN}
         mapLib={import("mapbox-gl")}
         initialViewState={{
@@ -68,9 +96,9 @@ const MapInstance = () => {
           latitude={state.selectedWaypoint.coords[1]}>
           <PopupCard instruction={state.selectedWaypoint.instruction} />
         </Marker>}
-        {state.route &&
-          state.route.length > 0 &&
-          state.route.map((route, i) => (
+        {routes && routeInstructions &&
+          routes.length > 0 &&
+          routes.slice().reverse().map((route, i) => (
             <RouteSource
               setWaypointsIds={setWaypointsIds}
               hoverInfo={hoverInfo?.layerId}
@@ -79,10 +107,10 @@ const MapInstance = () => {
               key={route.id}
               coords={route.coordinates}
               id={route.id}
-              waypoints={state.routeInstructions![i].waypointCoords}
+              waypoints={routeInstructions.slice().reverse()[i].waypointCoords}
             />
           ))}
-        {hoverInfo?.layerId && <Popup
+        {/* {hoverInfo && state.selectedRouteId && !hoverInfo.layerId.includes(state.selectedRouteId) && <Popup
           longitude={hoverInfo.lng}
           latitude={hoverInfo.lat}
           closeButton={false}
@@ -90,7 +118,7 @@ const MapInstance = () => {
           className='text-black '
         >
           {hoverInfo.layerId}
-        </Popup>}
+        </Popup>} */}
 
         <Markers markers={state.markers} setIsMarkerDrug={setIsMarkerDrug} />
         <GeolocateControl />

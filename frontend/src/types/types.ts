@@ -56,6 +56,14 @@ export type InstructionTypes = [
   "Keep left",
   "Keep right",
 ];
+
+export type RouteInstruction = {
+  id: string;
+  steps: Instruction[];
+  waypoints: CoordsType[];
+  waypointCoords: CoordsType[];
+  totalDistance: { distance: number; duration: number };
+};
 export type Instruction = {
   name: string;
   distance: string;
@@ -71,13 +79,7 @@ export type MapStateContextType = {
   marker?: MarkersType;
   mapLoading?: boolean;
   isToUpdate?: boolean;
-  routeInstructions?: {
-    id: string;
-    steps: Instruction[];
-    waypoints: CoordsType[];
-    waypointCoords: CoordsType[];
-    totalDistance: { distance: number; duration: number };
-  }[];
+  routeInstructions?: RouteInstruction[];
   placeToUpdate?: PlaceToUpdateType;
   user?: User;
   placeInstance?: Place;
@@ -89,6 +91,7 @@ export type MapStateContextType = {
   selectedRoute?: RouteType;
   selectedRouteId?: string;
   selectedWaypoint?: { coords: CoordsType; instruction: Instruction };
+  loading?: boolean;
 };
 export interface MapReducerType extends MapStateContextType {
   type: ActionType;
@@ -118,7 +121,8 @@ export type ActionType =
   | "SET_IS_LOAD_FROM_DB"
   | "SET_SELECTED_ROUTE"
   | "SET_SELECTED_ROUTE_ID"
-  | "SET_SELECTED_WAYPOINT";
+  | "SET_SELECTED_WAYPOINT"
+  | "SET_LOADING";
 
 export type MapContextType = {
   state: MapStateContextType;

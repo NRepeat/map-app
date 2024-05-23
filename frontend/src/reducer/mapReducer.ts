@@ -136,6 +136,11 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         draft.selectedWaypoint = action.selectedWaypoint;
       }
       break;
+    case "SET_LOADING":
+      {
+        draft.loading = action.loading;
+      }
+      break;
     default:
       return draft;
   }

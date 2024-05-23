@@ -48,7 +48,7 @@ function ControlPanel() {
               <RouteButtonsMenu />
             </CardHeader>
             <CardBody className=" gap-4   overflow-auto  ">
-              <div className="max-h-[400px]  scrollbar-thin">
+              <div className="max-h-[400px]  scrollbar-thin overflow-y-auto">
                 <CordList />
               </div>
               {state.routeInstructions &&
@@ -57,15 +57,11 @@ function ControlPanel() {
                     state.routeInstructions.map(instruction => <div
                       aria-label="Route instruction" title={`Route  ${instruction.steps[0].name}`} key={instruction.id} className="   scrollbar-thin     scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  ">
                       <TotalRouteInformation steps={instruction} />
-
                       <RouteInstruction steps={instruction} />
                       <Divider />
                     </div>)
-
                   }
                 </>
-
-
               }
             </CardBody>
           </Card>

@@ -1,17 +1,37 @@
+import { RouteType } from "../../types/types";
+
 export const handlePutMarkerOnClick = (
   e: mapboxgl.MapLayerMouseEvent,
   state: any,
   dispatch: any,
-  isHoverInfo: string | undefined
+  isHoverInfo: string | undefined,
+  route: RouteType[] | undefined
 ) => {
   if (isHoverInfo) {
     if (isHoverInfo?.includes("roadLine-")) {
       const id = isHoverInfo.replace("roadLine-", "");
       dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: id });
+      // if (route) {
+      //   const foundRouteIndex = route.findIndex((r) => r.id === id);
+      //   if (foundRouteIndex === -1) {
+      //     console.log("Route not found");
+      //   } else {
+      //     const rtostart = route[foundRouteIndex];
+
+      //     const newRoutes = [
+      //       rtostart,
+      //       ...route.slice(0, foundRouteIndex),
+      //       ...route.slice(foundRouteIndex + 1),
+      //     ];
+
+      //     dispatch({ type: "SET_OPEN_ROUTE_ROUTE", route: newRoutes });
+      //   }
+      // }
       return;
-    } else if (isHoverInfo?.includes("roadLine-")) {
+    } else if (isHoverInfo?.includes("waypoint-")) {
       const id = isHoverInfo.replace("roadLine-", "");
-      dispatch({ type: "SET_SELECTED_WAYPOINT" });
+      // dispatch({ type: "SET_SELECTED_WAYPOINT" });
+      return;
     }
   }
   if (e.type === "click") {

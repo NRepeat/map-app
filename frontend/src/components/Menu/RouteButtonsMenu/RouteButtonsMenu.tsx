@@ -1,4 +1,6 @@
 import { Button, ButtonGroup, Tooltip } from '@nextui-org/react';
+import { BsGearWide } from 'react-icons/bs';
+import { MdRoute } from 'react-icons/md';
 import { OpenRoute } from '../../../handlers/openRoute';
 import useMapContext from '../../../hooks/useMapContext';
 
@@ -9,42 +11,42 @@ const RouteButtonsMenu = () => {
 
 	const { state, dispatch } = useMapContext();
 	const openRoute = new OpenRoute(dispatch);
+	const handleClearInputsState = () => {
+		dispatch({ type: "CLEAR_ROUTE_PLACE_DATA" })
+	}
 
+	const handleGetRoute = () => {
+		dispatch({ type: "SET_LOADING", loading: true });
+		openRoute.getOpenRouteRoute(state.markers!)
+	}
+	const handleGetOptimizedRoute = () => {
+		dispatch({ type: "SET_LOADING", loading: true });
+		openRoute.getOptimizationRoute(state.markers!)
+	}
 	return (
-		<ButtonGroup fullWidth>
 
-
-			{state.markers && state.markers.length >= 2 ? (
-				<Button
-					variant={"solid"}
-					color={"success"}
-					radius="md"
-					onClick={() => openRoute.getOpenRouteRoute(state.markers!)}
-				>
-					Get route
-				</Button>
-
-			) : (
-				<Tooltip color='primary' placement='bottom' content="Place end marker">
+		<>
+			<ButtonGroup fullWidth >
+				<Tooltip color='primary' placement='bottom' content={state.route && state.route.length >= 2 ? "Get route" : "Place marker"}>
 					<Button
-
-						disabled={true}
-						disableAnimation={true}
-						variant={"bordered"}
-						color={"default"}
+						variant={"solid"}
+						color={"success"}
 						radius="md"
-
+						disabled={state.route && state.route.length >= 1 ? false : true}
+						onClick={() => handleGetRoute()}
 					>
-						Get route
+						Get route <MdRoute className={`w-5 h-5 ${state.loading ? "animate-pulse " : ''}`} />
 					</Button>
 				</Tooltip>
 
-			)}
-			<Button color={state.markers && state.markers.length >= 2 ? "secondary" : "default"} disabled={state.markers && state.markers.length < 2} onClick={() => openRoute.getOptimizationRoute(state.markers!)}>
-				Get optimization
-			</Button>
 
-		</ButtonGroup>
+				<Button color={state.markers && state.markers.length >= 2 ? "secondary" : "default"} disabled={state.route && state.route.length >= 1 ? false : true} onClick={() => handleGetOptimizedRoute()}>
+					Get optimization 	<BsGearWide className={`${state.loading ? "animate-spin " : ''}`} />
+				</Button>
+				{state.route && state.route?.length >= 1 && <Button onClick={() => handleClearInputsState()} variant='solid' color='danger'>Clear route</Button >}
+			</ButtonGroup>
+
+		</>
 	)
 }
 
