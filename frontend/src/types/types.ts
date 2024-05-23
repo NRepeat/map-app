@@ -21,9 +21,20 @@ export type PlaceToUpdateType = {
   newCoords: CoordsType;
   fromHandlePutMarkerOnClick?: boolean;
 };
+export type UnitsType = "m" | "km" | "mi";
+export type RouteOptions = {
+  continue_straight?: boolean;
+  language?: { en: boolean; ru: boolean };
+  avoid_features?: ["highways", "tollways", "ferries"];
+  preference?: "fastest" | "shortest" | "recommended";
+  units?: UnitsType;
+  maximum_speed?: number;
+};
+
 export type RouteType = {
   coordinates: CoordsType[];
   properties: {
+    summary: { distance: number; duration: number };
     segments: {
       distance: number;
       duration: number;
@@ -38,6 +49,8 @@ export type RouteType = {
     }[];
   };
   id: string;
+  name?: string;
+  options?: RouteOptions;
 };
 
 export type InstructionTypes = [

@@ -48,6 +48,9 @@ export class OpenRoute {
   }
   async getOpenRouteRoute(markers: MarkersType[]) {
     const data = await getOpenRouteRoute(this.getCoords(markers));
+    if (data.coords.error) {
+      return null;
+    }
     const routeCordsArr = data.coords.map((coord: any) => ({
       coordinates: coord.geometry.coordinates,
       properties: coord.properties,

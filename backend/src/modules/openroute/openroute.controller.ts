@@ -25,7 +25,6 @@ export class OpenRouteController {
       return res.status(500).json({ error: "Internal server error" });
     }
   }
-  // @UseGuards(JwtAuthGuard)
   @Get("optimized-route")
   async getOptimizedRoute(
     @Res() res: Response,

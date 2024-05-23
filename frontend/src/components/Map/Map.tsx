@@ -13,9 +13,7 @@ import { handlePutMarkerOnClick } from './handlers';
 
 const MapInstance = () => {
   const { state, dispatch } = useMapContext();
-
   const openRoute = new OpenRoute(dispatch);
-
   const [hoverInfo, setHoverInfo] = useState<{ layerId: string, lat: number, lng: number } | null>();
   const [routeIds, setRouteIds] = useState<string[]>([]);
   const [waypointsIds, setWaypointsIds] = useState<string[]>([]);

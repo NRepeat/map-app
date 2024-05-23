@@ -37,8 +37,11 @@ export class OpenrouteService {
       );
 
       const data = (await responseOpenRoute.json()) as any;
+      console.log("🚀 ~ OpenrouteService ~ data:", data);
       const coordsOpenRouteData = data.features;
-
+      if (data.error) {
+        return { error: data.error };
+      }
       return coordsOpenRouteData;
     } catch (error) {
       throw new Response("Error", { status: 500 });

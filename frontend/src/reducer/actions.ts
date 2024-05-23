@@ -70,23 +70,15 @@ export const updateMarkersCoord = (
 };
 
 export const deleteMarker = (markers: MarkersType[], id: string) => {
+  console.log("🚀 ~ deleteMarker ~ id:", id);
+  console.log("🚀 ~ deleteMarker ~ markers:", markers);
   const indexToDelete = markers.findIndex((marker) => marker.id === id);
+  console.log("🚀 ~ deleteMarker ~ indexToDelete:", indexToDelete);
 
-  if (indexToDelete !== markers.length - 1 && indexToDelete !== -1) {
+  if (indexToDelete !== -1) {
     const updatedMarkers = markers.filter((marker) => marker.id !== id);
     return updatedMarkers;
-  } else if (indexToDelete !== -1 && markers.length > 1) {
-    const prevMarker = markers[markers.length - 2];
-
-    const updatedPrevMarker = { ...prevMarker, color: "#c21120" };
-    markers[markers.length - 2] = updatedPrevMarker;
-
-    markers.pop();
-    return markers;
-  } else if (indexToDelete !== -1 && markers.length === 1) {
-    markers.pop();
   }
-
   return markers;
 };
 export const deletePlace = (places: Place[], id: string) => {

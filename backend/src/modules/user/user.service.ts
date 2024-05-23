@@ -29,10 +29,10 @@ export class UserService {
       console.log("🚀 ~ UserService ~ createUser ~ error:", error);
     }
   }
-  async findUser(data: User) {
+  async findUser(email: string) {
     try {
       const user = await this.userRepository.findOne({
-        where: { email: data.email },
+        where: { email: email },
       });
 
       return user || null;

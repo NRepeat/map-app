@@ -29,11 +29,10 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 	const [inputValue, setInputValue] = useState<string | undefined>()
 	const [selectedPlace, setSelectedPLace] = useState<Place | undefined>()
 	const { setMark } = useSetMarkers()
-	const { setPlace, setPlaces } = useSetPlace()
+	const { setPlace } = useSetPlace()
 
 	useEffect(() => {
 		if (place) {
-			console.log("🚀 ~ useEffect ~ place:", place)
 			if (place.displayName.text === "Start") {
 				setInputValue('')
 			} else if (place.displayName.text === "Stop") {

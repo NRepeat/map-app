@@ -47,10 +47,7 @@ export class AuthController {
   async localLogin(@Body() body: User, @Res() res: Response) {
     try {
       res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-
-      const user = await this.userService.findUser(body);
-      console.log("🚀 ~ AuthController ~ localLogin ~ user:", user);
-
+      const user = await this.userService.findUser(body.email);
       if (!user) {
         res.send({ error: "Unauthorized" });
       }
@@ -69,7 +66,7 @@ export class AuthController {
     try {
       if (body) {
         res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-        const exitUser = await this.userService.findUser(body);
+        const exitUser = await this.userService.findUser(body.email);
         if (exitUser) {
           res.send({ user: "User already exist" });
         } else {

@@ -1,18 +1,20 @@
 import {
   Button,
+  ButtonGroup,
   Card,
   CardBody,
-  CardHeader,
-  Divider
+  CardHeader
 } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { SlArrowRight } from "react-icons/sl";
 import useMapContext from "../../hooks/useMapContext";
+import { RouteType } from "../../types/types";
 import CordList from "../Menu/CordList/CordList";
 import NavbarMenu from "../Menu/NavBar/Navbar";
 import RouteButtonsMenu from "../Menu/RouteButtonsMenu/RouteButtonsMenu";
-import { RouteInstruction, TotalRouteInformation } from "../RouteInstruction/RouteInstruction";
+import RouteCard from "../RouteCard/RouteCard";
+import Options from "./Options/Options";
 import { buttonVariants, itemVariants } from "./variants";
 // type ControlPanelProps = {
 //   markers: MarkersType[] | undefined;
@@ -23,7 +25,25 @@ import { buttonVariants, itemVariants } from "./variants";
 function ControlPanel() {
   const { state } = useMapContext();
   const [toggleMenu, setToggleMenu] = useState<boolean>(true)
+  const [toggleSort, setToggleSort] = useState<{ distance: boolean, desc: boolean }>({ distance: true, desc: false })
 
+  const sort = (routes: RouteType[]) => {
+    const routesCopy = [...routes];
+
+    if (toggleSort.distance) {
+      routesCopy.sort((a, b) => {
+        const distanceDiff = a.properties.segments[0].distance - b.properties.segments[0].distance;
+        return toggleSort.desc ? -distanceDiff : distanceDiff;
+      });
+    } else {
+      routesCopy.sort((a, b) => {
+        const durationDiff = a.properties.segments[0].duration - b.properties.segments[0].duration;
+        return toggleSort.desc ? -durationDiff : durationDiff;
+      });
+    }
+
+    return routesCopy;
+  };
 
   return (
     <div>
@@ -43,7 +63,7 @@ function ControlPanel() {
         <motion.div className=" rounded-br-sm  overflow-y-auto scrollbar-thin  
           sm:max-h-screen" variants={itemVariants} animate={toggleMenu ? "open" : "closed"}>
           <NavbarMenu />
-          <Card radius="none" className=" flex-col   min-h-full  flex-grow  ">
+          <Card radius="none" className=" flex-col   min-h-full  flex-grow   rounded-br-md">
             <CardHeader className=" flex-col gap-4">
               <RouteButtonsMenu />
             </CardHeader>
@@ -51,16 +71,26 @@ function ControlPanel() {
               <div className="max-h-[400px]  scrollbar-thin overflow-y-auto">
                 <CordList />
               </div>
-              {state.routeInstructions &&
+              <Options />
+              Sort by
+              <ButtonGroup >
+                <Button onClick={() => setToggleSort(prev => ({ desc: prev.desc, distance: !prev.distance }))}>{toggleSort.distance ? "Duration" : "Distance"}</Button>
+                <Button onClick={() => setToggleSort(prev => ({ desc: !prev.desc, distance: prev.distance }))}>{toggleSort.desc ? "Asc" : "Desc"}</Button>
+              </ButtonGroup>
+
+              {state.route &&
                 <>
-                  {
+                  {sort(state.route).map((route, i: number) =>
+                    <RouteCard route={route} i={i} />
+                  )}
+                  {/* {
                     state.routeInstructions.map(instruction => <div
                       aria-label="Route instruction" title={`Route  ${instruction.steps[0].name}`} key={instruction.id} className="   scrollbar-thin     scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  ">
                       <TotalRouteInformation steps={instruction} />
                       <RouteInstruction steps={instruction} />
                       <Divider />
                     </div>)
-                  }
+                  } */}
                 </>
               }
             </CardBody>
