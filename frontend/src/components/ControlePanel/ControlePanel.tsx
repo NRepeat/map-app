@@ -81,7 +81,7 @@ function ControlPanel() {
               {state.route &&
                 <>
                   {sort(state.route).map((route, i: number) =>
-                    <RouteCard route={route} i={i} />
+                    <RouteCard route={route} i={i} key={route.id} />
                   )}
                   {/* {
                     state.routeInstructions.map(instruction => <div
