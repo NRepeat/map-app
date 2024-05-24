@@ -45,18 +45,8 @@ const NavbarMapMenu = () => {
 			</NavbarContent> */}
 				<NavbarContent className="hidden sm:flex gap-4" justify="center">
 					<NavbarItem>
-						<Link color="foreground" href="#" >
-							Openrouteservice
-						</Link>
-					</NavbarItem>
-					<NavbarItem isActive>
-						<Link color="foreground" href="#" aria-current="page">
-							Mapbox
-						</Link>
-					</NavbarItem>
-					<NavbarItem>
-						<Link color="foreground" href="#">
-							OSRM
+						<Link href='/' >
+							<span className='text-xl text-left font-bold text-emerald-700'>NN</span><span className='text-xl text-left font-bold text-white'>MAP</span>
 						</Link>
 					</NavbarItem>
 				</NavbarContent>

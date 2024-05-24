@@ -20,7 +20,6 @@ const MapInstance = () => {
   const [isMarkerDrug, setIsMarkerDrug] = useState<boolean>(false)
   const [routes, setRoutes] = useState<RouteType[]>()
   const [routeInstructions, setRouteInstructions] = useState<RouteInstruction[]>()
-  const [waypointCoords, setWaypointCoords] = useState<CoordsType>()
 
   const onHover = useCallback((e: mapboxgl.MapLayerMouseEvent) => {
     const segment = e.features && e.features[0];
@@ -29,8 +28,6 @@ const MapInstance = () => {
         layerId: segment.properties.id, lng: e.lngLat.lng,
         lat: e.lngLat.lat,
       });
-
-
     } else {
       setHoverInfo(null)
     }
@@ -53,8 +50,9 @@ const MapInstance = () => {
   }, [hoverInfo, state.routeInstructions])
 
   useEffect(() => {
-    if (state.markers && state.markers.length >= 2) {
-      openRoute.getOpenRouteRoute(state.markers)
+    if (state.markers && state.markers.length >= 2 && state.options) {
+      openRoute.getOpenRouteRoute(state.markers, state.options)
+      dispatch({ type: "SET_LOADING", loading: true })
     }
   }, [state.markers])
 

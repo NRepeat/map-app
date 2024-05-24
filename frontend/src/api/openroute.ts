@@ -1,9 +1,14 @@
 import Cookies from "js-cookie";
+import { RouteOptions } from "../types/types";
 import API from "./clients";
-export const getOpenRouteRoute = async (coordinates: string) => {
+export const getOpenRouteRoute = async (
+  coordinates: string,
+  options: RouteOptions
+) => {
   try {
     const params = new URLSearchParams();
     params.append("coordinates", coordinates);
+    params.append("options", JSON.stringify(options));
     const response = await API.get("open-route/route", { params });
     if (response.data) {
       return response.data;

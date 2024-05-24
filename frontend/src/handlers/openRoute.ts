@@ -3,7 +3,7 @@ import {
   getOpenRouteRoute,
   getOptimizedOpenRouteRoute,
 } from "../api/openroute";
-import { MarkersType } from "../types/types";
+import { MarkersType, RouteOptions } from "../types/types";
 import { findWaypoints } from "../utils/findWaypoints";
 
 export class OpenRoute {
@@ -46,8 +46,8 @@ export class OpenRoute {
     });
     this.dispatch({ type: "SET_OPEN_ROUTE_ROUTE", route: routeCordsArr });
   }
-  async getOpenRouteRoute(markers: MarkersType[]) {
-    const data = await getOpenRouteRoute(this.getCoords(markers));
+  async getOpenRouteRoute(markers: MarkersType[], options: RouteOptions) {
+    const data = await getOpenRouteRoute(this.getCoords(markers), options);
     if (data.coords.error) {
       return null;
     }

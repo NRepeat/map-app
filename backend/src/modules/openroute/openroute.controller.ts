@@ -9,12 +9,14 @@ export class OpenRouteController {
   @Get("route")
   async getRoute(
     @Res() res: Response,
-    @Query() query: { coordinates: string }
+    @Query() query: { coordinates: string; options: string }
   ) {
+    console.log("🚀 ~ OpenRouteController ~ query:", query);
     try {
-      const { coordinates } = query;
+      const { coordinates, options } = query;
       const coords = await this.openRouteService.fetchOpenRouteRoute({
         coordinates,
+        options,
       });
       return res.status(200).json({
         message: "Route information retrieved successfully",

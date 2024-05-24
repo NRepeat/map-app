@@ -26,8 +26,8 @@ export type UnitsType = "m" | "km" | "mi";
 export type RouteOptions = {
   continue_straight?: boolean;
   language?: { en: boolean; ru: boolean };
-  avoid_features?: ["highways", "tollways", "ferries"];
-  preference?: "fastest" | "shortest" | "recommended";
+  avoid_features?: string[];
+  preference?: string[];
   units?: UnitsType;
   maximum_speed?: number;
 };
@@ -107,6 +107,8 @@ export type MapStateContextType = {
   selectedWaypoint?: { coords: CoordsType; instruction: Instruction };
   loading?: boolean;
   updateMarkerId?: { id: string; newId: string };
+  isOpenRouteInstruction?: boolean;
+  options?: RouteOptions;
 };
 export interface MapReducerType extends MapStateContextType {
   type: ActionType;
@@ -116,6 +118,8 @@ export interface MapReducerType extends MapStateContextType {
 }
 
 export type ActionType =
+  | "SET_ROUTE_OPTIONS"
+  | "SET_IS_OPEN_ROUTE_INSTRUCTION"
   | "UPDATE_MARKER_ID"
   | "UPDATE_MARKERS_CORDS"
   | "SET_MARKER"

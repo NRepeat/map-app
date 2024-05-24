@@ -161,6 +161,16 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         draft.loading = action.loading;
       }
       break;
+    case "SET_IS_OPEN_ROUTE_INSTRUCTION":
+      {
+        draft.isOpenRouteInstruction = action.isOpenRouteInstruction;
+      }
+      break;
+    case "SET_ROUTE_OPTIONS":
+      {
+        draft.options = action.options;
+      }
+      break;
     default:
       return draft;
   }

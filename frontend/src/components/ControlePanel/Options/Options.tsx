@@ -1,20 +1,33 @@
-import { Button, Card, Input, Listbox, ListboxItem, ListboxSection, Select, SelectItem } from '@nextui-org/react';
+import { Button, Card, Checkbox, Input, Listbox, ListboxItem, ListboxSection, Select, SelectItem } from '@nextui-org/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
-import { UnitsType } from '../../../types/types';
+import { useCallback, useEffect, useState } from 'react';
+import useMapContext from '../../../hooks/useMapContext';
+import { RouteOptions, UnitsType } from '../../../types/types';
 
-const MyComponent = () => {
+const Options = () => {
+	const { dispatch, state } = useMapContext()
+	const { selectedRoute } = state
+	const selectedRouteOptions = selectedRoute && selectedRoute.options
+
 	const [toggleMenu, setToggleMenu] = useState(false);
-	const [selectedAvoidKeys, setSelectedAvoidKeys] = useState<Set<any>>(new Set([]));
-	const [selectedPreferenceKeys, setSelectedPreferenceKeys] = useState<Set<any>>(new Set(['recommended']));
-	const [maximumSpeed, setMaximumSpeed] = useState<string>()
-	const [selectedUnit, setSelectedUnit] = useState<UnitsType>('m')
+	const [selectedAvoidKeys, setSelectedAvoidKeys] = useState<Set<any>>(selectedRouteOptions ? new Set(selectedRouteOptions.avoid_features) : new Set([]));
+	const [selectedPreferenceKeys, setSelectedPreferenceKeys] = useState<Set<any>>(selectedRouteOptions ? new Set(selectedRouteOptions.preference) : new Set(['recommended']));
+	const [maximumSpeed, setMaximumSpeed] = useState<string>(selectedRouteOptions && selectedRouteOptions.maximum_speed ? selectedRouteOptions.maximum_speed.toString() : '')
+	const [selectedUnit, setSelectedUnit] = useState<UnitsType>(selectedRouteOptions ? selectedRouteOptions.units! : 'm')
+	const [continueStraight, setContinueStraight] = useState<boolean>(selectedRouteOptions ? selectedRouteOptions.continue_straight! : false)
 	const units = ['m', 'km', 'mi']
 
-	const selectedValue = useMemo(
-		() => Array.from(selectedAvoidKeys).join(","),
-		[selectedAvoidKeys]
-	);
+	const setCOptions = useCallback(() => {
+		const options: RouteOptions = { avoid_features: Array.from(selectedAvoidKeys), continue_straight: continueStraight, preference: Array.from(selectedPreferenceKeys), units: selectedUnit }
+		if (maximumSpeed) {
+			options.maximum_speed = parseInt(maximumSpeed)
+		}
+		dispatch({ type: "SET_ROUTE_OPTIONS", options })
+	}, [selectedUnit, maximumSpeed, selectedPreferenceKeys, selectedAvoidKeys, continueStraight])
+
+	useEffect(() => {
+		setCOptions()
+	}, [setCOptions, selectedUnit, maximumSpeed, selectedPreferenceKeys, selectedAvoidKeys, continueStraight])
 
 	return (
 		<Card>
@@ -68,6 +81,9 @@ const MyComponent = () => {
 										</SelectItem>
 									))}
 								</Select>
+								<Checkbox checked={continueStraight} onChange={() => setContinueStraight(prev => !prev)} title='Continue' className='pl-5 pb-4 pt-4'>
+									Continue straight
+								</Checkbox>
 							</div>
 
 							<div className='border-r-1 border-r-[#313134]'></div>
@@ -88,16 +104,17 @@ const MyComponent = () => {
 										<ListboxItem key="shortest">Shortest</ListboxItem>
 									</ListboxSection>
 								</Listbox>
-								<Input label='Maximum speed' className='pl-2  pr-2' value={maximumSpeed} onChange={(e) => setMaximumSpeed(e.target.value)} />
+								<Input label='Maximum speed' min={30} max={190} className='pl-2  pr-2' value={maximumSpeed} onChange={(e) => setMaximumSpeed(e.target.value)} />
 							</div>
 						</div>
 
 
 					</motion.div>
 				)}
+
 			</AnimatePresence>
 		</Card>
 	);
 };
 
-export default MyComponent;
+export default Options;

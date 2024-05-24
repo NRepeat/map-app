@@ -15,18 +15,16 @@ import NavbarMenu from "../Menu/NavBar/Navbar";
 import RouteButtonsMenu from "../Menu/RouteButtonsMenu/RouteButtonsMenu";
 import RouteCard from "../RouteCard/RouteCard";
 import Options from "./Options/Options";
+import RouteInstructionsCard from "./RouteInstructionsCard/RouteInstructionsCard";
 import { buttonVariants, itemVariants } from "./variants";
-// type ControlPanelProps = {
-//   markers: MarkersType[] | undefined;
-// };
-//To do. On marker field click navigate to marker with useMap(), onDelete marker, delete route 
-
 
 function ControlPanel() {
   const { state } = useMapContext();
+  console.log("🚀 ~ ControlPanel ~ stare:", state)
+  const { routeInstructions, selectedRouteId, isOpenRouteInstruction, route } = state
   const [toggleMenu, setToggleMenu] = useState<boolean>(true)
   const [toggleSort, setToggleSort] = useState<{ distance: boolean, desc: boolean }>({ distance: true, desc: false })
-
+  const selectedRouteInstruction = routeInstructions && routeInstructions.find(instruction => instruction.id === selectedRouteId)
   const sort = (routes: RouteType[]) => {
     const routesCopy = [...routes];
 
@@ -63,7 +61,7 @@ function ControlPanel() {
         <motion.div className=" rounded-br-sm  overflow-y-auto scrollbar-thin  
           sm:max-h-screen" variants={itemVariants} animate={toggleMenu ? "open" : "closed"}>
           <NavbarMenu />
-          <Card radius="none" className=" flex-col   min-h-full  flex-grow   rounded-br-md">
+          {isOpenRouteInstruction && selectedRouteInstruction ? <RouteInstructionsCard selectedRouteInstruction={selectedRouteInstruction} /> : <Card radius="none" className=" flex-col   min-h-full  flex-grow   rounded-br-md">
             <CardHeader className=" flex-col gap-4">
               <RouteButtonsMenu />
             </CardHeader>
@@ -72,15 +70,19 @@ function ControlPanel() {
                 <CordList />
               </div>
               <Options />
-              Sort by
-              <ButtonGroup >
-                <Button onClick={() => setToggleSort(prev => ({ desc: prev.desc, distance: !prev.distance }))}>{toggleSort.distance ? "Duration" : "Distance"}</Button>
-                <Button onClick={() => setToggleSort(prev => ({ desc: !prev.desc, distance: prev.distance }))}>{toggleSort.desc ? "Asc" : "Desc"}</Button>
-              </ButtonGroup>
+              {route && route.length > 1 &&
+                <>
+                  <ButtonGroup fullWidth>
+                    <Button onClick={() => setToggleSort(prev => ({ desc: prev.desc, distance: !prev.distance }))}>{toggleSort.distance ? "Duration" : "Distance"}</Button>
+                    <Button onClick={() => setToggleSort(prev => ({ desc: !prev.desc, distance: prev.distance }))}>{toggleSort.desc ? "Asc" : "Desc"}</Button>
+                  </ButtonGroup>
+                </>
+              }
+
 
               {state.route &&
                 <>
-                  {sort(state.route).map((route, i: number) =>
+                  {sort(state.route).slice().reverse().map((route, i: number) =>
                     <RouteCard route={route} i={i} key={route.id} />
                   )}
                   {/* {
@@ -94,7 +96,8 @@ function ControlPanel() {
                 </>
               }
             </CardBody>
-          </Card>
+          </Card>}
+
         </motion.div>
       </motion.div>
     </div>

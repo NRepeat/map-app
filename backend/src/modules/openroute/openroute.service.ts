@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { RouteOptions } from "src/utils/types";
 import { headers } from "./headers/headers";
-
-// type CoordsType = [number, number][];
 
 @Injectable()
 export class OpenrouteService {
@@ -9,11 +8,14 @@ export class OpenrouteService {
 
   async fetchOpenRouteRoute({
     coordinates,
+    options,
   }: {
     coordinates: string | [number, number][];
+    options: string;
     body?: any;
   }) {
     try {
+      const optionsData: RouteOptions = JSON.parse(options);
       let coordsOpenRoute;
       if (Array.isArray(coordinates)) {
         coordsOpenRoute = coordinates;
@@ -31,13 +33,12 @@ export class OpenrouteService {
                 share_factor: 0.6,
               },
             });
+
       const responseOpenRoute = await fetch(
         "https://api.openrouteservice.org/v2/directions/driving-car/geojson",
         { headers, method: "POST", body: jsonCoords }
       );
-
       const data = (await responseOpenRoute.json()) as any;
-      console.log("🚀 ~ OpenrouteService ~ data:", data);
       const coordsOpenRouteData = data.features;
       if (data.error) {
         return { error: data.error };
