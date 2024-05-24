@@ -70,10 +70,7 @@ export const updateMarkersCoord = (
 };
 
 export const deleteMarker = (markers: MarkersType[], id: string) => {
-  console.log("🚀 ~ deleteMarker ~ id:", id);
-  console.log("🚀 ~ deleteMarker ~ markers:", markers);
   const indexToDelete = markers.findIndex((marker) => marker.id === id);
-  console.log("🚀 ~ deleteMarker ~ indexToDelete:", indexToDelete);
 
   if (indexToDelete !== -1) {
     const updatedMarkers = markers.filter((marker) => marker.id !== id);

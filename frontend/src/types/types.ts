@@ -19,6 +19,7 @@ export type LatLng = {
 export type PlaceToUpdateType = {
   place: Place;
   newCoords: CoordsType;
+  marker?: MarkersType;
   fromHandlePutMarkerOnClick?: boolean;
 };
 export type UnitsType = "m" | "km" | "mi";
@@ -105,6 +106,7 @@ export type MapStateContextType = {
   selectedRouteId?: string;
   selectedWaypoint?: { coords: CoordsType; instruction: Instruction };
   loading?: boolean;
+  updateMarkerId?: { id: string; newId: string };
 };
 export interface MapReducerType extends MapStateContextType {
   type: ActionType;
@@ -114,6 +116,7 @@ export interface MapReducerType extends MapStateContextType {
 }
 
 export type ActionType =
+  | "UPDATE_MARKER_ID"
   | "UPDATE_MARKERS_CORDS"
   | "SET_MARKER"
   | "SET_MARKERS"

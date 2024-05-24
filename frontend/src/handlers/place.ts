@@ -30,6 +30,13 @@ export const updatePlace = async ({
       },
       id: newPlaceData.results[0].place_id,
     };
+    dispatch({
+      type: "UPDATE_MARKER_ID",
+      updateMarkerId: {
+        id: placeToUpdate.marker?.id,
+        newId: newPlaceData.results[0].place_id,
+      },
+    });
     dispatch({ type: "UPDATE_PLACES", newPlace });
     setMark(newPlace.id, {
       lat: newPlace.location.latitude,
@@ -52,6 +59,14 @@ export const updatePlace = async ({
       id: newPlaceData.results[0].place_id,
     };
     dispatch({ type: "UPDATE_PLACES", newPlace });
+    dispatch({
+      type: "UPDATE_MARKER_ID",
+      updateMarkerId: {
+        id: placeToUpdate.marker?.id,
+        newId: newPlaceData.results[0].place_id,
+      },
+    });
+
     if (!markers) {
       setMark(newPlace.id, {
         lat: newPlace.location.latitude,

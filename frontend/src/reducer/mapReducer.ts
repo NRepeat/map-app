@@ -19,6 +19,26 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
     case "SET_MARKERS":
       draft.markers = action.markers;
       break;
+    case "UPDATE_MARKER_ID":
+      {
+        const data = action.updateMarkerId;
+        const markerToUpdate = draft.markers?.find(
+          (marker) => marker.id === data?.id
+        );
+        if (markerToUpdate && data?.newId && draft.markers) {
+          const newMarker = {
+            ...markerToUpdate,
+            id: data.newId,
+          };
+
+          const newMarkers = draft.markers.map((marker) =>
+            marker.id === data.id ? newMarker : marker
+          );
+
+          draft.markers = newMarkers;
+        }
+      }
+      break;
     case "UPDATE_MARKERS_CORDS":
       {
         if (!draft.markers) {

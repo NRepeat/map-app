@@ -12,7 +12,8 @@ const CordList = () => {
 	const [loading, setLoading] = useState<boolean>(false)
 	const { handleDeleteMark } = useDeleteMarker();
 	const { state, dispatch } = useMapContext();
-	const { markers, placeToUpdate, } = state
+	console.log("🚀 ~ CordList ~ state:", state)
+	const { markers, placeToUpdate } = state
 
 	const startIcon = <FaMapMarkerAlt className="fill-green-700 sm:min-w-3 sm:min-h-3  min-h-2 min-w-2 " />
 	const endIcon = <FaMapMarkerAlt className="fill-red-600 sm:min-w-3 sm:min-h-3  min-h-3 min-w-3 " />
