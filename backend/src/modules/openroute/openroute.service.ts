@@ -43,15 +43,20 @@ export class OpenrouteService {
       if (data.error) {
         return { error: data.error };
       }
-      return coordsOpenRouteData;
+      return { coordsOpenRouteData, optionsData };
     } catch (error) {
       throw new Response("Error", { status: 500 });
     }
   }
-  async fetchOptimizedRoute({ coordinates }: { coordinates: string }) {
+  async fetchOptimizedRoute({
+    coordinates,
+    options,
+  }: {
+    coordinates: string;
+    options: string;
+  }) {
     try {
       const coordsOpenRoute = JSON.parse(coordinates);
-
       const jobs = coordsOpenRoute.map((marker, i) => {
         return {
           id: i,
@@ -88,8 +93,8 @@ export class OpenrouteService {
 
       const optimizedData = await this.fetchOpenRouteRoute({
         coordinates: optimizedRoutesCords,
+        options,
       });
-
       return optimizedData;
     } catch (error) {
       throw new Response("Error", { status: 500 });

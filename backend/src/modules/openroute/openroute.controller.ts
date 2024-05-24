@@ -11,16 +11,17 @@ export class OpenRouteController {
     @Res() res: Response,
     @Query() query: { coordinates: string; options: string }
   ) {
-    console.log("🚀 ~ OpenRouteController ~ query:", query);
     try {
       const { coordinates, options } = query;
-      const coords = await this.openRouteService.fetchOpenRouteRoute({
+      const routeData = await this.openRouteService.fetchOpenRouteRoute({
         coordinates,
         options,
       });
       return res.status(200).json({
         message: "Route information retrieved successfully",
-        coords,
+        coords: routeData.coordsOpenRouteData,
+        error: routeData.error,
+        options: routeData.optionsData,
       });
     } catch (error) {
       console.error("Error fetching route:", error);
@@ -30,16 +31,19 @@ export class OpenRouteController {
   @Get("optimized-route")
   async getOptimizedRoute(
     @Res() res: Response,
-    @Query() query: { coordinates: string }
+    @Query() query: { coordinates: string; options: string }
   ) {
     try {
-      const { coordinates } = query;
-      const coords = await this.openRouteService.fetchOptimizedRoute({
+      const { coordinates, options } = query;
+      const routeData = await this.openRouteService.fetchOptimizedRoute({
         coordinates,
+        options,
       });
       return res.status(200).json({
         message: "Optimized route information retrieved successfully",
-        coords,
+        coords: routeData.coordsOpenRouteData,
+        error: routeData.error,
+        options: routeData.optionsData,
       });
     } catch (error) {
       console.error("Error fetching route:", error);
