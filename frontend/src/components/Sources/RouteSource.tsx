@@ -23,7 +23,6 @@ const getRandomColor = (): string[] => {
 }
 
 const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRouteIds, hoverInfo, waypoints, setWaypointsIds }) => {
-  console.log("🚀 ~ coords:", coords)
   const roadId = `roadLine-${id}`
   const { state } = useMapContext()
   const [lineColor, setLineColor] = useState<string>(
@@ -56,7 +55,7 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
       layout: {
         "symbol-placement": "line",
         "text-field": "▶",
-        "text-size": ["interpolate", ["linear"], ["zoom"], 12, 24, 22, 60],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 6, 12, 12, 30],
         "symbol-spacing": ["interpolate", ["linear"], ["zoom"], 12, 30, 22, 160],
         "text-keep-upright": false,
       },
@@ -103,8 +102,9 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
         <Layer    {...layerStyle} />
         {state.selectedRouteId === id &&
           <>
-            <Layer {...layerRouteArrowStyle} />
             <WaypointSource waypoints={waypoints} id={id} setWaypointsIds={setWaypointsIds} />
+            <Layer {...layerRouteArrowStyle} />
+
           </>
         }
         {/* <Layer {...highlightLayer} /> */}

@@ -18,7 +18,6 @@ const RouteCard = ({ route, i, isLoaded }: { route: RouteType, i: number, isLoad
 		if (isSelected) {
 			return handelOpenRouteInstructions()
 		}
-		console.log("🚀 ~ handleSelectRoute ~ isSelected:", isSelected)
 
 		dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: route.id });
 		dispatch({ type: "SET_SELECTED_ROUTE", selectedRoute: route })
@@ -27,7 +26,7 @@ const RouteCard = ({ route, i, isLoaded }: { route: RouteType, i: number, isLoad
 		dispatch({ type: "SAVE_ROUTE", selectedRouteId: route.id });
 	}
 	return (
-		<div onClick={handleSelectRoute} onMouseOver={() => handleSelectRoute()} className='cursor-pointer'>
+		<div onClick={handleSelectRoute} onMouseOver={() => dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: route.id })} className='cursor-pointer'>
 			<Card className={` border-2 transition-border duration-500 ${isSelected ? 'border-emerald-500' : 'border-gray-300 border-opacity-0'} hover:border-emerald-500 hover:border-2`}>
 				<CardHeader className='justify-between items-center'>
 					<p className='text-lg'>

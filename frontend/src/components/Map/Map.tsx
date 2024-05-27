@@ -54,8 +54,12 @@ const MapInstance = () => {
       openRoute.getOpenRouteRoute(state.markers, state.options)
       dispatch({ type: "SET_LOADING", loading: true })
     } else if (state.selectedRoute) {
+      const routeInstructions = state.routeInstructions?.find(instruction => instruction.id === state.selectedRoute?.id)
       setRoutes([state.selectedRoute])
-      // setRouteInstructions(state.selectedRoute.)
+      if (routeInstructions) {
+        setRouteInstructions([routeInstructions])
+
+      }
     }
   }, [state.markers, state.selectedRoute])
 
