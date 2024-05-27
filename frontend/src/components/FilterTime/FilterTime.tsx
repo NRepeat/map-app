@@ -5,13 +5,13 @@ const FilterTime = ({ time }: { time: number }) => {
 		const { hours, minutes } = parseTime(time)
 		return (
 			<strong>
-				<p>
+				<span>
 					{hours} h. {minutes} min.
-				</p>
+				</span>
 			</strong>
 		);
 	} else {
-		return <strong><p>{time} s</p></strong>;
+		return <strong><span>{time} s</span></strong>;
 	}
 };
 export default FilterTime

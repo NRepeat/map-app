@@ -20,7 +20,6 @@ import { buttonVariants, itemVariants } from "./variants";
 
 function ControlPanel() {
   const { state } = useMapContext();
-  console.log("🚀 ~ ControlPanel ~ stare:", state)
   const { routeInstructions, selectedRouteId, isOpenRouteInstruction, route } = state
   const [toggleMenu, setToggleMenu] = useState<boolean>(true)
   const [toggleSort, setToggleSort] = useState<{ distance: boolean, desc: boolean }>({ distance: true, desc: false })
@@ -53,7 +52,6 @@ function ControlPanel() {
         </Button>
       </motion.div>
       <motion.div
-
         className={`z-20 absolute  scrollbar-thumb-zinc-800 scrollbar-track-zinc-900    w-full sm:max-w-[500px] min-w-[300px]    left-0 top-0  `}
         animate={{ overflowY: "hidden", scrollBehavior: "auto", scrollbarWidth: "thin" }}
         transition={{ duration: 5 }}
@@ -71,28 +69,16 @@ function ControlPanel() {
               </div>
               <Options />
               {route && route.length > 1 &&
-                <>
-                  <ButtonGroup fullWidth>
-                    <Button onClick={() => setToggleSort(prev => ({ desc: prev.desc, distance: !prev.distance }))}>{toggleSort.distance ? "Duration" : "Distance"}</Button>
-                    <Button onClick={() => setToggleSort(prev => ({ desc: !prev.desc, distance: prev.distance }))}>{toggleSort.desc ? "Asc" : "Desc"}</Button>
-                  </ButtonGroup>
-                </>
+                <ButtonGroup fullWidth>
+                  <Button onClick={() => setToggleSort(prev => ({ desc: prev.desc, distance: !prev.distance }))}>{toggleSort.distance ? "Duration" : "Distance"}</Button>
+                  <Button onClick={() => setToggleSort(prev => ({ desc: !prev.desc, distance: prev.distance }))}>{toggleSort.desc ? "Asc" : "Desc"}</Button>
+                </ButtonGroup>
               }
-
-
               {state.route &&
                 <>
                   {sort(state.route).slice().reverse().map((route, i: number) =>
                     <RouteCard route={route} i={i} key={route.id} />
                   )}
-                  {/* {
-                    state.routeInstructions.map(instruction => <div
-                      aria-label="Route instruction" title={`Route  ${instruction.steps[0].name}`} key={instruction.id} className="   scrollbar-thin     scrollbar-thumb-zinc-800 scrollbar-track-zinc-900  ">
-                      <TotalRouteInformation steps={instruction} />
-                      <RouteInstruction steps={instruction} />
-                      <Divider />
-                    </div>)
-                  } */}
                 </>
               }
             </CardBody>

@@ -17,11 +17,11 @@ const RouteButtonsMenu = () => {
 
 	const handleGetRoute = () => {
 		dispatch({ type: "SET_LOADING", loading: true });
-		openRoute.getOpenRouteRoute(state.markers!)
+		openRoute.getOpenRouteRoute(state.markers!, state.options!)
 	}
 	const handleGetOptimizedRoute = () => {
 		dispatch({ type: "SET_LOADING", loading: true });
-		openRoute.getOptimizationRoute(state.markers!)
+		openRoute.getOptimizationRoute(state.markers!, state.options!)
 	}
 	return (
 

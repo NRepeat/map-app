@@ -1,3 +1,4 @@
+import { saveRoute } from "../api/route";
 import { MapReducerType, MapStateContextType } from "../types/types";
 import {
   deleteMarker,
@@ -169,6 +170,25 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
     case "SET_ROUTE_OPTIONS":
       {
         draft.options = action.options;
+      }
+      break;
+    case "SAVE_ROUTE":
+      {
+        const routeToSave = draft.route?.find(
+          (route) => route.id === action.selectedRouteId
+        );
+        if (routeToSave) {
+          const { user, places } = draft;
+          const route = {
+            optimized: true,
+            places: JSON.stringify(places),
+            userEmail: user?.email,
+            ...routeToSave,
+          };
+          saveRoute(route);
+
+          draft.routeToSave = route;
+        }
       }
       break;
     default:

@@ -6,14 +6,12 @@ export type UpdatePlacePropsType = {
   dispatch: any;
   setMark: any;
   markers: MarkersType[] | undefined;
-  setLoading: any;
 };
 export const updatePlace = async ({
   placeToUpdate,
   dispatch,
   setMark,
   markers,
-  setLoading,
 }: UpdatePlacePropsType) => {
   if (!placeToUpdate) {
     throw new Error("Place to update not found");
@@ -46,7 +44,6 @@ export const updatePlace = async ({
     return null;
   }
   if (placeToUpdate) {
-    setLoading(true);
     const newPlaceData = await handelGeocode(placeToUpdate.newCoords);
     const newPlace: Place = {
       displayName: {
@@ -85,7 +82,6 @@ export const updatePlace = async ({
         lng: newPlace.location.longitude,
       });
     }
-    setLoading(false);
     dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: false });
     return null;
   }

@@ -9,6 +9,7 @@ const RouteInstructionsCard = ({ selectedRouteInstruction }: {
 }) => {
 	const { state, dispatch } = useMapContext()
 
+	const selectedRoute = state.route?.find(r => r.id === state.selectedRouteId)
 
 
 	const handelOpenRouteInstructions = () => {
@@ -16,8 +17,14 @@ const RouteInstructionsCard = ({ selectedRouteInstruction }: {
 	}
 	return (
 		<Card radius="none" className=" flex-col   min-h-full  flex-grow   rounded-br-md">
-			<CardHeader className='justify-between'>
-				Route name <Button onClick={handelOpenRouteInstructions} isIconOnly variant='light' color='danger'> <VscChromeClose className='w-5 h-5' /></Button>
+			<CardHeader className=' '>
+				<div className='flex items-center  justify-between w-full'>
+					<p className='text-xl font-bold'>
+						{selectedRoute?.name}
+					</p>
+					<Button onClick={handelOpenRouteInstructions} isIconOnly variant='solid' color='danger'> <VscChromeClose className='w-5 h-5' /></Button>
+				</div>
+
 			</CardHeader>
 			<CardBody>
 				<RouteInstructionSteps steps={selectedRouteInstruction} />

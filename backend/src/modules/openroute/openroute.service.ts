@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { generateRouteName } from "src/utils/generateRouteName";
 import { RouteOptions } from "src/utils/types";
 import { headers } from "./headers/headers";
 
@@ -8,23 +9,29 @@ export class OpenrouteService {
 
   async fetchOpenRouteRoute({
     coordinates,
-    options,
+    routeOptions,
   }: {
     coordinates: string | [number, number][];
-    options: string;
+    routeOptions: string;
     body?: any;
   }) {
     try {
-      const optionsData: RouteOptions = JSON.parse(options);
+      const optionsData: RouteOptions = JSON.parse(routeOptions);
+
       let coordsOpenRoute;
       if (Array.isArray(coordinates)) {
         coordsOpenRoute = coordinates;
       } else {
         coordsOpenRoute = JSON.parse(coordinates);
       }
+      const { avoid_features, ...options } = optionsData;
       const jsonCoords =
         coordsOpenRoute.length > 2
-          ? JSON.stringify({ coordinates: coordsOpenRoute })
+          ? JSON.stringify({
+              coordinates: coordsOpenRoute,
+              options: { avoid_features: avoid_features },
+              ...options,
+            })
           : JSON.stringify({
               coordinates: coordsOpenRoute,
               alternative_routes: {
@@ -32,6 +39,8 @@ export class OpenrouteService {
                 weight_factor: 1.4,
                 share_factor: 0.6,
               },
+              options: { avoid_features: avoid_features },
+              ...options,
             });
 
       const responseOpenRoute = await fetch(
@@ -39,11 +48,14 @@ export class OpenrouteService {
         { headers, method: "POST", body: jsonCoords }
       );
       const data = (await responseOpenRoute.json()) as any;
+
       const coordsOpenRouteData = data.features;
+      const routeName = generateRouteName(coordsOpenRouteData);
+
       if (data.error) {
         return { error: data.error };
       }
-      return { coordsOpenRouteData, optionsData };
+      return { coordsOpenRouteData, optionsData, routeName };
     } catch (error) {
       throw new Response("Error", { status: 500 });
     }
@@ -93,7 +105,7 @@ export class OpenrouteService {
 
       const optimizedData = await this.fetchOpenRouteRoute({
         coordinates: optimizedRoutesCords,
-        options,
+        routeOptions: options,
       });
       return optimizedData;
     } catch (error) {

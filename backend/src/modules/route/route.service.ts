@@ -1,18 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Route } from "src/typeorm/entities/Route";
+import { RouteSaveType } from "src/utils/types";
 import { Repository } from "typeorm";
 import { UserService } from "../user/user.service";
-
-export type RouteResponseType = {
-  id: string;
-  name: string;
-  optimized: boolean;
-  place_data: string;
-  userEmail: string;
-  totalDistance: number;
-  options: string;
-};
 
 @Injectable()
 export class RouteService {
@@ -21,22 +12,43 @@ export class RouteService {
     @InjectRepository(Route) private readonly routeRepository: Repository<Route>
   ) {}
 
-  async createRoute(route: RouteResponseType) {
+  async createRoute(route: RouteSaveType) {
     try {
-      const user = await this.userService.findUser(route.userEmail);
+      const {
+        coordinates,
+        id,
+        properties,
+        name,
+        optimized,
+        options,
+        places,
+        userEmail,
+      } = route;
+
+      const existRoute = await this.routeRepository.findOne({
+        where: {
+          route_id: id,
+        },
+      });
+      if (existRoute) {
+        return existRoute;
+      }
+      const user = await this.userService.findUser(userEmail);
       if (!user) {
         throw new Error("User not found");
       }
-      const createdRoute = this.routeRepository.create({
-        name: route.name,
-        optimized: route.optimized,
-        totalDistance: route.totalDistance,
-        options: route.options,
-        route_place_data: route.place_data,
-        route_id: route.id,
-        user: { email: user.email },
+      const routeDB = this.routeRepository.create({
+        name,
+        optimized,
+        options: JSON.stringify(options),
+        route_id: id,
+        coords: JSON.stringify(coordinates),
+        route_place_data: places,
+        user: { id: user.id },
+        properties: JSON.stringify(properties),
       });
-      const savedRoute = await this.routeRepository.save(createdRoute);
+
+      const savedRoute = await this.routeRepository.save(routeDB);
       if (!savedRoute) {
         throw new Error("Save route error");
       }
@@ -63,7 +75,9 @@ export class RouteService {
           const parsedRoutesData = routes.map((route) => {
             return {
               name: route.name,
-              totalDistance: route.totalDistance,
+              properties: route.properties,
+              options: route.options,
+              route_id: route.route_id,
               optimized: route.optimized,
             };
           });
@@ -85,6 +99,18 @@ export class RouteService {
       return route || null;
     } catch (error) {
       throw new Error("Error find route");
+    }
+  }
+  async saveRoute(routeData: any) {
+    console.log("🚀 ~ RouteService ~ saveRoute ~ routeData:", routeData.body);
+    try {
+      const route = JSON.parse(routeData.body) as RouteSaveType;
+      console.log("🚀 ~ RouteService ~ saveRoute ~ route:", route);
+      const savedRoute = await this.createRoute(route);
+      return savedRoute || null;
+    } catch (error) {
+      console.log("🚀 ~ RouteService ~ saveRoute ~ error:", error);
+      throw new Error("Error save route");
     }
   }
 }

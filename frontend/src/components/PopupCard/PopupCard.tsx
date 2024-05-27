@@ -22,7 +22,6 @@ const PopupCard = ({ instruction }: { instruction: Instruction }) => {
 			</Card>
 			<div className='absolute bottom-[-60px]'>
 				<MdOutlineArrowDropDown className='fill-emerald-500 w-28 h-28' />
-
 			</div>
 		</div>
 

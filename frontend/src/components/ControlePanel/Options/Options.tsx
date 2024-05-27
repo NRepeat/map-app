@@ -18,7 +18,7 @@ const Options = () => {
 	const units = ['m', 'km', 'mi']
 
 	const setCOptions = useCallback(() => {
-		const options: RouteOptions = { avoid_features: Array.from(selectedAvoidKeys), continue_straight: continueStraight, preference: Array.from(selectedPreferenceKeys), units: selectedUnit }
+		const options: RouteOptions = { avoid_features: Array.from(selectedAvoidKeys), continue_straight: continueStraight, preference: Array.from(selectedPreferenceKeys)[0], units: selectedUnit }
 		if (maximumSpeed) {
 			options.maximum_speed = parseInt(maximumSpeed)
 		}

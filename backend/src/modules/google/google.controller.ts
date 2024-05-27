@@ -30,7 +30,6 @@ export class GoogleController {
   }
   @Get("place")
   async place(@Query() query: { place_id: string }) {
-    console.log("🚀 ~ GoogleController ~ place ~ query:", query);
     try {
       const suggestion = query.place_id;
       const placeUrl = `https://places.googleapis.com/v1/places/${suggestion}?fields=id,location,displayName&languageCode=en&key=${apiKey}`;
@@ -48,7 +47,6 @@ export class GoogleController {
   @Post("geocodeLatLng")
   async geocode(@Body() body: { value: [lat: number, lng: number] }) {
     const latlng = body.value.join(",");
-    console.log("🚀 ~ GoogleController ~ geocode ~ latlng:", latlng);
     try {
       const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latlng}&key=${apiKey}&enable_address_descriptor=true`;
 
@@ -57,7 +55,6 @@ export class GoogleController {
         throw new Error("Bad request to geocode");
       }
       const data = await response.json();
-      console.log("🚀 ~ GoogleController ~ geocode ~ data:", data);
 
       return data;
     } catch (error) {

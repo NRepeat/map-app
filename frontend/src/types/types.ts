@@ -27,7 +27,7 @@ export type RouteOptions = {
   continue_straight?: boolean;
   language?: { en: boolean; ru: boolean };
   avoid_features?: string[];
-  preference?: string[];
+  preference?: string;
   units?: UnitsType;
   maximum_speed?: number;
 };
@@ -52,6 +52,9 @@ export type RouteType = {
   id: string;
   name?: string;
   options?: RouteOptions;
+  places?: string;
+  optimized?: boolean;
+  userEmail?: string;
 };
 
 export type InstructionTypes = [
@@ -109,6 +112,7 @@ export type MapStateContextType = {
   updateMarkerId?: { id: string; newId: string };
   isOpenRouteInstruction?: boolean;
   options?: RouteOptions;
+  routeToSave?: RouteType;
 };
 export interface MapReducerType extends MapStateContextType {
   type: ActionType;
@@ -142,7 +146,8 @@ export type ActionType =
   | "SET_SELECTED_ROUTE"
   | "SET_SELECTED_ROUTE_ID"
   | "SET_SELECTED_WAYPOINT"
-  | "SET_LOADING";
+  | "SET_LOADING"
+  | "SAVE_ROUTE";
 
 export type MapContextType = {
   state: MapStateContextType;

@@ -18,10 +18,14 @@ export const getOpenRouteRoute = async (
   }
 };
 
-export const getOptimizedOpenRouteRoute = async (coordinates: string) => {
+export const getOptimizedOpenRouteRoute = async (
+  coordinates: string,
+  options?: RouteOptions | undefined
+) => {
   try {
     const params = new URLSearchParams();
     params.append("coordinates", coordinates);
+    params.append("options", JSON.stringify(options));
     const access_token = Cookies.get("access_token");
     const response = await API.get("open-route/optimized-route", {
       params,

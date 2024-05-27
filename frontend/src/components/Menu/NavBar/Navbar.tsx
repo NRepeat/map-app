@@ -7,7 +7,7 @@ import UserCard from '../../UserCard/UserCard';
 
 const NavbarMapMenu = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const { state } = useMapContext()
+	const { state, dispatch } = useMapContext()
 	const [isLoginIn, setIsLoginIn] = useState<boolean>(false);
 	const { isOpen, onOpenChange, onOpen } = useDisclosure();
 	// if (state.user) {
@@ -45,8 +45,8 @@ const NavbarMapMenu = () => {
 			</NavbarContent> */}
 				<NavbarContent className="hidden sm:flex gap-4" justify="center">
 					<NavbarItem>
-						<Link href='/' >
-							<span className='text-xl text-left font-bold text-emerald-700'>NN</span><span className='text-xl text-left font-bold text-white'>MAP</span>
+						<Link onClick={() => dispatch({ type: "SET_IS_OPEN_ROUTE_INSTRUCTION", isOpenRouteInstruction: false })}>
+							<span className='text-2xl text-left font-bold text-emerald-700'>NN</span><span className='text-xl text-left font-bold text-white'>MAP</span>
 						</Link>
 					</NavbarItem>
 				</NavbarContent>

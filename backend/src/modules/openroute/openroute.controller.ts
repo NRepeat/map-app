@@ -1,11 +1,15 @@
 import { Controller, Get, Query, Res } from "@nestjs/common";
 
 import { Response } from "express";
+import { RouteService } from "../route/route.service";
 import { OpenrouteService } from "./openroute.service";
 
 @Controller("open-route")
 export class OpenRouteController {
-  constructor(private readonly openRouteService: OpenrouteService) {}
+  constructor(
+    private readonly openRouteService: OpenrouteService,
+    private readonly routeService: RouteService
+  ) {}
   @Get("route")
   async getRoute(
     @Res() res: Response,
@@ -15,13 +19,14 @@ export class OpenRouteController {
       const { coordinates, options } = query;
       const routeData = await this.openRouteService.fetchOpenRouteRoute({
         coordinates,
-        options,
+        routeOptions: options,
       });
       return res.status(200).json({
         message: "Route information retrieved successfully",
         coords: routeData.coordsOpenRouteData,
         error: routeData.error,
         options: routeData.optionsData,
+        name: routeData.routeName,
       });
     } catch (error) {
       console.error("Error fetching route:", error);
@@ -44,6 +49,7 @@ export class OpenRouteController {
         coords: routeData.coordsOpenRouteData,
         error: routeData.error,
         options: routeData.optionsData,
+        name: routeData.routeName,
       });
     } catch (error) {
       console.error("Error fetching route:", error);

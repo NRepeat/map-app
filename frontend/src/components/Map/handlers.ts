@@ -11,26 +11,9 @@ export const handlePutMarkerOnClick = (
     if (isHoverInfo?.includes("roadLine-")) {
       const id = isHoverInfo.replace("roadLine-", "");
       dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: id });
-      // if (route) {
-      //   const foundRouteIndex = route.findIndex((r) => r.id === id);
-      //   if (foundRouteIndex === -1) {
-      //     console.log("Route not found");
-      //   } else {
-      //     const rtostart = route[foundRouteIndex];
 
-      //     const newRoutes = [
-      //       rtostart,
-      //       ...route.slice(0, foundRouteIndex),
-      //       ...route.slice(foundRouteIndex + 1),
-      //     ];
-
-      //     dispatch({ type: "SET_OPEN_ROUTE_ROUTE", route: newRoutes });
-      //   }
-      // }
       return;
     } else if (isHoverInfo?.includes("waypoint-")) {
-      const id = isHoverInfo.replace("roadLine-", "");
-      // dispatch({ type: "SET_SELECTED_WAYPOINT" });
       return;
     }
   }

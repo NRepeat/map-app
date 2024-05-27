@@ -1,5 +1,5 @@
 import { Button } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { FaDeleteLeft } from 'react-icons/fa6';
 import { updatePlace } from '../../../handlers/place';
@@ -9,10 +9,8 @@ import useSetMarkers from '../../../hooks/useSetMarkers';
 import AutocompletePlaceInput from '../../AutocompletePlaceInput /AutocompletePlaceInput';
 const CordList = () => {
 	const { setMark } = useSetMarkers()
-	const [loading, setLoading] = useState<boolean>(false)
 	const { handleDeleteMark } = useDeleteMarker();
 	const { state, dispatch } = useMapContext();
-	console.log("🚀 ~ CordList ~ state:", state)
 	const { markers, placeToUpdate } = state
 
 	const startIcon = <FaMapMarkerAlt className="fill-green-700 sm:min-w-3 sm:min-h-3  min-h-2 min-w-2 " />
@@ -20,7 +18,7 @@ const CordList = () => {
 
 	useEffect(() => {
 		if (state.isToUpdate) {
-			updatePlace({ dispatch, markers, placeToUpdate, setLoading, setMark })
+			updatePlace({ dispatch, markers, placeToUpdate, setMark })
 			dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: false });
 		}
 	}, [state.isToUpdate])
@@ -60,7 +58,7 @@ const CordList = () => {
 					const isEnd = state.places.length >= 2 && i === state.places.length - 1;
 					const startContent = isStart ? startIcon : isEnd ? endIcon : i !== 0 && i !== state.places.length - 1 && i;
 					return (<div key={data.id} className='inline-flex gap-2'>
-						<AutocompletePlaceInput startContent={startContent} place={data} start={isStart} end={isEnd} loading={loading} setLoading={setLoading} />
+						<AutocompletePlaceInput startContent={startContent} place={data} start={isStart} end={isEnd} />
 						{!isStart && !isEnd && <Button onClick={() => handleDelete(data.id)} isIconOnly variant='light'>
 							<FaDeleteLeft className='fill-red-500 min-h-6 min-w-6' />
 						</Button>}

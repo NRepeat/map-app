@@ -15,8 +15,10 @@ export class Route {
   route_id: string;
   @Column({ type: "varchar" })
   name: string;
-  @Column({ type: "bigint" })
-  totalDistance: number;
+  @Column({ type: "json", nullable: true })
+  properties: string;
+  @Column({ type: "json", nullable: true })
+  coords: string;
   @Column({ type: "json", nullable: true })
   options: string;
   @Column({ type: "boolean" })

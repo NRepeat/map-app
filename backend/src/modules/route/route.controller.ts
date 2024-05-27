@@ -1,26 +1,15 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Res,
-  UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Res } from "@nestjs/common";
 import { Response } from "express";
-import { JwtAuthGuard } from "../auth/guards/jwt.guard";
-import { RouteResponseType, RouteService } from "./route.service";
+import { RouteService } from "./route.service";
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller("route")
 export class RouteController {
   constructor(private routeService: RouteService) {}
   @Post("save")
-  async saveRoute(@Res() res: Response, @Body() body: { data: string }) {
+  async saveRoute(@Res() res: Response, @Body() body) {
     try {
-      const parsedRouteData = JSON.parse(body.data) as RouteResponseType;
-
-      const savedRoute = await this.routeService.createRoute(parsedRouteData);
+      const savedRoute = await this.routeService.saveRoute(body);
 
       res.send({ route: savedRoute });
     } catch (error) {}
