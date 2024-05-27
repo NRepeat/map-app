@@ -113,6 +113,8 @@ export type MapStateContextType = {
   isOpenRouteInstruction?: boolean;
   options?: RouteOptions;
   routeToSave?: RouteType;
+  isSavedRouteOpen?: boolean;
+  savedRoutes?: RouteType[];
 };
 export interface MapReducerType extends MapStateContextType {
   type: ActionType;
@@ -147,7 +149,9 @@ export type ActionType =
   | "SET_SELECTED_ROUTE_ID"
   | "SET_SELECTED_WAYPOINT"
   | "SET_LOADING"
-  | "SAVE_ROUTE";
+  | "SAVE_ROUTE"
+  | "SET_IS_SAVED_ROUTES"
+  | "SET_SAVED_ROUTES";
 
 export type MapContextType = {
   state: MapStateContextType;
@@ -164,7 +168,7 @@ export type Place = {
 };
 
 export type User = {
-  email?: string;
+  email: string;
   password?: string;
   access_token?: string;
   name?: string;

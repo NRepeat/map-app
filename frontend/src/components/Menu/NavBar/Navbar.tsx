@@ -5,16 +5,12 @@ import useMapContext from '../../../hooks/useMapContext';
 import Auth from '../../../pages/auth';
 import UserCard from '../../UserCard/UserCard';
 
-const NavbarMapMenu = () => {
+const NavbarMapMenu = ({ isPopoverOpen, setIsPopoverOpen }: { isPopoverOpen: boolean, setIsPopoverOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { state, dispatch } = useMapContext()
 	const [isLoginIn, setIsLoginIn] = useState<boolean>(false);
 	const { isOpen, onOpenChange, onOpen } = useDisclosure();
-	// if (state.user) {
-	// 	if (state.user.avatar) {
-	// 		fetch(state.user!.avatar!).then(data => data.json())
-	// 	}
-	// }
+
 	const menuItems = [
 		"Profile",
 		"Dashboard",
@@ -33,6 +29,11 @@ const NavbarMapMenu = () => {
 			setIsLoginIn(true)
 		}
 	}, [state.user])
+	const handleGetBack = () => {
+		dispatch({ type: "SET_IS_OPEN_ROUTE_INSTRUCTION", isOpenRouteInstruction: false })
+		dispatch({ type: "SET_IS_SAVED_ROUTES", isSavedRouteOpen: false })
+		setIsPopoverOpen(false)
+	}
 	return (
 		<>
 			{isOpen && <Auth isOpen={isOpen} onOpenChange={onOpenChange} />}
@@ -45,15 +46,15 @@ const NavbarMapMenu = () => {
 			</NavbarContent> */}
 				<NavbarContent className="hidden sm:flex gap-4" justify="center">
 					<NavbarItem>
-						<Link onClick={() => dispatch({ type: "SET_IS_OPEN_ROUTE_INSTRUCTION", isOpenRouteInstruction: false })}>
+						<Link onClick={handleGetBack}>
 							<span className='text-2xl text-left font-bold text-emerald-700'>NN</span><span className='text-xl text-left font-bold text-white'>MAP</span>
 						</Link>
 					</NavbarItem>
 				</NavbarContent>
 				<NavbarContent justify="end">
 					{isLoginIn && state.user ? <NavbarContent justify="end">
-						<Popover placement="bottom" color='default'>
-							<PopoverTrigger>
+						<Popover placement="bottom" color='default' isOpen={isPopoverOpen}>
+							<PopoverTrigger onClick={() => setIsPopoverOpen(prev => !prev)}>
 								{/* <User
 									name={state.user?.name?.slice(20)}
 									className='max-w-[120px]'
@@ -67,7 +68,7 @@ const NavbarMapMenu = () => {
 								</div>
 							</PopoverTrigger>
 							<PopoverContent className='bg-[#313134] rounded-md'>
-								<UserCard />
+								<UserCard onOpen={setIsPopoverOpen} />
 							</PopoverContent>
 						</Popover>
 					</NavbarContent> : <NavbarItem>

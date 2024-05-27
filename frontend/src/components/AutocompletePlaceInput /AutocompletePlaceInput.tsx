@@ -61,7 +61,7 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 				if (inputValue === inputRef.current?.value) {
 					debouncedSave(inputValue)
 				}
-			}, 1500);
+			}, 1000);
 		}
 	}, [inputValue])
 

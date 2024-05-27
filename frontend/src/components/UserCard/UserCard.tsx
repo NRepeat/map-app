@@ -2,9 +2,13 @@ import { Avatar, Button, Card, CardBody, CardFooter, CardHeader } from '@nextui-
 import { FaCamera } from 'react-icons/fa'
 import { logout } from '../../handlers/auth'
 import useMapContext from '../../hooks/useMapContext'
-const UserCard = () => {
-	const { state } = useMapContext()
+const UserCard = ({ onOpen }: { onOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
+	const { state, dispatch } = useMapContext()
 
+	const handleOpenSavedRoutes = () => {
+		dispatch({ type: "SET_IS_SAVED_ROUTES", isSavedRouteOpen: true })
+		onOpen(false)
+	}
 	return (
 		<Card shadow="none" radius='md' className="max-w-[300px] bg-[#313134]  ">
 			<CardHeader className="justify-between">
@@ -17,7 +21,7 @@ const UserCard = () => {
 			</CardHeader>
 			<CardBody className="px-3 py-0 flex gap-2">
 				<Button size='sm' variant='faded' color='default'>Profile</Button>
-				<Button size='sm' variant='solid' color='success'>Saved</Button>
+				<Button size='sm' variant='solid' color='success' onClick={handleOpenSavedRoutes} >Saved</Button>
 				<Button onClick={logout} size='sm' variant='solid' color='danger'>Logout</Button>
 			</CardBody>
 			<CardFooter className="gap-3">

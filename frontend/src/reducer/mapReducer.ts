@@ -1,5 +1,5 @@
 import { saveRoute } from "../api/route";
-import { MapReducerType, MapStateContextType } from "../types/types";
+import { MapReducerType, MapStateContextType, RouteType } from "../types/types";
 import {
   deleteMarker,
   deletePlace,
@@ -188,6 +188,56 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
           saveRoute(route);
 
           draft.routeToSave = route;
+        }
+      }
+      break;
+    case "SET_IS_SAVED_ROUTES":
+      {
+        draft.isSavedRouteOpen = action.isSavedRouteOpen;
+      }
+      break;
+    case "SET_SAVED_ROUTES":
+      {
+        if (action.savedRoutes) {
+          console.log("🚀 ~ reducer ~ action.savedRoutes:", action.savedRoutes);
+          const savedRoutes: RouteType[] = action.savedRoutes.map((route) => {
+            console.log(
+              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ route:",
+              route
+            );
+            const coordinates = JSON.parse(route.coordinates as any);
+            console.log(
+              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ coordinates:",
+              coordinates
+            );
+            const properties = JSON.parse(route.properties as any);
+            console.log(
+              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ properties:",
+              properties
+            );
+            const options = JSON.parse(route.options as any);
+            console.log(
+              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ options:",
+              options
+            );
+            const places = JSON.parse(route.places as any);
+            console.log(
+              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ places:",
+              places
+            );
+            const savedRoute: RouteType = {
+              coordinates,
+              properties,
+              name: route.name,
+              optimized: route.optimized,
+              options,
+              places,
+              userEmail: route.userEmail,
+              id: route.id,
+            };
+            return savedRoute;
+          });
+          draft.savedRoutes = savedRoutes;
         }
       }
       break;

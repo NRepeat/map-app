@@ -57,7 +57,7 @@ export class RouteService {
       throw new Error("Save route error");
     }
   }
-  async getAllRoutes(pageSize = 10) {
+  async getAllRoutes(pageSize = 10, email: string) {
     try {
       let page = 1;
       let hasMore = true;
@@ -65,6 +65,7 @@ export class RouteService {
 
       while (hasMore) {
         const routes = await this.routeRepository.find({
+          where: { user: { email } },
           skip: (page - 1) * pageSize,
           take: pageSize,
         });
@@ -72,22 +73,24 @@ export class RouteService {
         if (routes.length === 0) {
           hasMore = false;
         } else {
-          const parsedRoutesData = routes.map((route) => {
+          const parsedRoutesData = routes.flatMap((route) => {
             return {
               name: route.name,
               properties: route.properties,
               options: route.options,
               route_id: route.route_id,
               optimized: route.optimized,
+              places: route.route_place_data,
+              coordinates: route.coords,
             };
           });
-          allRoutes.push(parsedRoutesData);
+          allRoutes.push(...parsedRoutesData);
           page++;
         }
       }
-
-      return allRoutes;
+      return JSON.stringify(allRoutes);
     } catch (error) {
+      console.log("🚀 ~ RouteService ~ getAllRoutes ~ error:", error);
       throw new Error("Get all routes error");
     }
   }

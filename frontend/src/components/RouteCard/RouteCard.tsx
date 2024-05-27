@@ -11,7 +11,7 @@ const RouteCard = ({ route, i }: { route: RouteType, i: number }) => {
 	const { selectedRouteId, user } = state
 	const isSelected = selectedRouteId && selectedRouteId === route.id;
 	const options = route.options && route.options
-
+	console.log(route)
 	const handelOpenRouteInstructions = () => {
 		dispatch({ type: "SET_IS_OPEN_ROUTE_INSTRUCTION", isOpenRouteInstruction: true })
 	}

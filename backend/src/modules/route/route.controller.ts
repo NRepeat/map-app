@@ -18,10 +18,16 @@ export class RouteController {
   @Get("all")
   async getAllRouts(
     @Res() res: Response,
-    @Query() query: { pageSize: number }
+    @Query() query: { pageSize: number; email: string }
   ) {
     try {
-      const allRoutes = this.routeService.getAllRoutes(query.pageSize);
+      console.log("🚀 ~ RouteController ~ query:", query);
+
+      const allRoutes = await this.routeService.getAllRoutes(
+        query.pageSize,
+        query.email
+      );
+      console.log("🚀 ~ RouteController ~  allRoutes:", allRoutes);
       res.send({ allRoutes });
     } catch (error) {
       throw new Error("Get all routes error");

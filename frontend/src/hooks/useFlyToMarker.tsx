@@ -17,7 +17,7 @@ const useFlyToMarker = () => {
 				around: marker,
 				duration: 1200,
 				essential: true,
-				zoom: 9
+				zoom: 16
 			})
 		}
 	}
