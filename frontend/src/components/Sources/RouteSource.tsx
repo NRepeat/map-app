@@ -23,6 +23,7 @@ const getRandomColor = (): string[] => {
 }
 
 const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRouteIds, hoverInfo, waypoints, setWaypointsIds }) => {
+  console.log("🚀 ~ coords:", coords)
   const roadId = `roadLine-${id}`
   const { state } = useMapContext()
   const [lineColor, setLineColor] = useState<string>(

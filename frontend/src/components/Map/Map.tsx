@@ -53,8 +53,11 @@ const MapInstance = () => {
     if (state.markers && state.markers.length >= 2 && state.options) {
       openRoute.getOpenRouteRoute(state.markers, state.options)
       dispatch({ type: "SET_LOADING", loading: true })
+    } else if (state.selectedRoute) {
+      setRoutes([state.selectedRoute])
+      // setRouteInstructions(state.selectedRoute.)
     }
-  }, [state.markers])
+  }, [state.markers, state.selectedRoute])
 
 
   useEffect(() => {

@@ -13,7 +13,6 @@ const SavedRoutes = () => {
 		const fetchAllSavedRoutes = async () => {
 			if (user) {
 				const data = await getAllRoutes({ email: user.email, pageSize: 10 })
-				console.log("🚀 ~ fetchAllSavedRoutes ~ data:", data)
 				if (data) {
 
 					dispatch({ type: "SET_SAVED_ROUTES", savedRoutes: JSON.parse(data.allRoutes) })
@@ -27,15 +26,13 @@ const SavedRoutes = () => {
 			<CardHeader className=' '>
 				<ButtonGroup fullWidth>
 					<Button onClick={() => setToggleSort(prev => ({ desc: prev.desc, distance: !prev.distance }))}>{toggleSort.distance ? "Duration" : "Distance"}</Button>
-					<Button onClick={() => setToggleSort(prev => ({ desc: !prev.desc, distance: prev.distance }))}>{toggleSort.desc ? "Asc" : "Desc"}</Button>
+					<Button onClick={() => setToggleSort(prev => ({ desc: !prev.desc, distance: prev.distance }))}>{toggleSort.desc ? "Desc" : "Asc"}</Button>
 				</ButtonGroup>
 			</CardHeader>
-			<CardBody>
-				<>
-					{state.savedRoutes && sort(state.savedRoutes, toggleSort).slice().reverse().map((route, i: number) =>
-						<RouteCard route={route} i={i} key={route.id} />
-					)}
-				</>
+			<CardBody className="gap-2">
+				{state.savedRoutes && sort(state.savedRoutes, toggleSort).slice().reverse().map((route, i: number) =>
+					<RouteCard route={route} i={i} key={i} isLoaded={true} />
+				)}
 			</CardBody>
 		</Card>
 	)

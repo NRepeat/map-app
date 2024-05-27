@@ -90,7 +90,6 @@ export class RouteService {
       }
       return JSON.stringify(allRoutes);
     } catch (error) {
-      console.log("🚀 ~ RouteService ~ getAllRoutes ~ error:", error);
       throw new Error("Get all routes error");
     }
   }
@@ -105,14 +104,11 @@ export class RouteService {
     }
   }
   async saveRoute(routeData: any) {
-    console.log("🚀 ~ RouteService ~ saveRoute ~ routeData:", routeData.body);
     try {
       const route = JSON.parse(routeData.body) as RouteSaveType;
-      console.log("🚀 ~ RouteService ~ saveRoute ~ route:", route);
       const savedRoute = await this.createRoute(route);
       return savedRoute || null;
     } catch (error) {
-      console.log("🚀 ~ RouteService ~ saveRoute ~ error:", error);
       throw new Error("Error save route");
     }
   }

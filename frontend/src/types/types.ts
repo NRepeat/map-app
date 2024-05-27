@@ -55,6 +55,7 @@ export type RouteType = {
   places?: string;
   optimized?: boolean;
   userEmail?: string;
+  route_id?: string;
 };
 
 export type InstructionTypes = [

@@ -1,5 +1,6 @@
 import { saveRoute } from "../api/route";
 import { MapReducerType, MapStateContextType, RouteType } from "../types/types";
+import { findWaypoints } from "../utils/findWaypoints";
 import {
   deleteMarker,
   deletePlace,
@@ -199,32 +200,14 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
     case "SET_SAVED_ROUTES":
       {
         if (action.savedRoutes) {
-          console.log("🚀 ~ reducer ~ action.savedRoutes:", action.savedRoutes);
-          const savedRoutes: RouteType[] = action.savedRoutes.map((route) => {
-            console.log(
-              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ route:",
-              route
-            );
+          const savedRoutes = action.savedRoutes.map((route) => {
             const coordinates = JSON.parse(route.coordinates as any);
-            console.log(
-              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ coordinates:",
-              coordinates
-            );
+
             const properties = JSON.parse(route.properties as any);
-            console.log(
-              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ properties:",
-              properties
-            );
+
             const options = JSON.parse(route.options as any);
-            console.log(
-              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ options:",
-              options
-            );
+
             const places = JSON.parse(route.places as any);
-            console.log(
-              "🚀 ~ constsavedRoutes:RouteType[]=action.savedRoutes.map ~ places:",
-              places
-            );
             const savedRoute: RouteType = {
               coordinates,
               properties,
@@ -232,11 +215,41 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
               optimized: route.optimized,
               options,
               places,
-              userEmail: route.userEmail,
-              id: route.id,
+              userEmail: draft.user!.email,
+              id: route.route_id!,
             };
+
             return savedRoute;
           });
+          const routeData = savedRoutes.map((route: any) => {
+            const totalDistance = {
+              distance: route.properties.summary.distance,
+              duration: route.properties.summary.duration,
+            };
+
+            const steps = route.properties.segments.flatMap(
+              (segment: any) => segment.steps
+            );
+            const options = route.options;
+            const waypoints = steps.map((step: any) => step.way_points);
+            if (waypoints[0][0] === waypoints[1][0]) {
+              waypoints.pop();
+              steps.pop();
+              waypoints.shift();
+              steps.shift();
+            }
+            const waypointCoords = findWaypoints(waypoints, route.coordinates);
+
+            return {
+              id: route.id,
+              steps,
+              waypoints,
+              totalDistance,
+              waypointCoords,
+              options,
+            };
+          });
+          draft.routeInstructions = routeData;
           draft.savedRoutes = savedRoutes;
         }
       }

@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader } from '@nextui-org/react'
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider } from '@nextui-org/react'
 import { FaRoute } from 'react-icons/fa'
 import { VscSave } from 'react-icons/vsc'
 import useMapContext from '../../hooks/useMapContext'
@@ -6,12 +6,11 @@ import { RouteType } from '../../types/types'
 import FilterDistance from '../FilterDistance/FilterDistance'
 import FilterTime from '../FilterTime/FilterTime'
 
-const RouteCard = ({ route, i }: { route: RouteType, i: number }) => {
+const RouteCard = ({ route, i, isLoaded }: { route: RouteType, i: number, isLoaded?: boolean }) => {
 	const { state, dispatch } = useMapContext()
 	const { selectedRouteId, user } = state
 	const isSelected = selectedRouteId && selectedRouteId === route.id;
 	const options = route.options && route.options
-	console.log(route)
 	const handelOpenRouteInstructions = () => {
 		dispatch({ type: "SET_IS_OPEN_ROUTE_INSTRUCTION", isOpenRouteInstruction: true })
 	}
@@ -19,13 +18,16 @@ const RouteCard = ({ route, i }: { route: RouteType, i: number }) => {
 		if (isSelected) {
 			return handelOpenRouteInstructions()
 		}
+		console.log("🚀 ~ handleSelectRoute ~ isSelected:", isSelected)
+
 		dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: route.id });
+		dispatch({ type: "SET_SELECTED_ROUTE", selectedRoute: route })
 	}
 	const handleSaveRoute = () => {
 		dispatch({ type: "SAVE_ROUTE", selectedRouteId: route.id });
 	}
 	return (
-		<div onClick={handleSelectRoute} onMouseOver={() => dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: route.id })} className='cursor-pointer'>
+		<div onClick={handleSelectRoute} onMouseOver={() => handleSelectRoute()} className='cursor-pointer'>
 			<Card className={` border-2 transition-border duration-500 ${isSelected ? 'border-emerald-500' : 'border-gray-300 border-opacity-0'} hover:border-emerald-500 hover:border-2`}>
 				<CardHeader className='justify-between items-center'>
 					<p className='text-lg'>
@@ -35,14 +37,21 @@ const RouteCard = ({ route, i }: { route: RouteType, i: number }) => {
 						</> : `${i + 1}:Route`}
 					</p>
 					<div className='flex items-center min-h-[64px] flex-col-reverse '>
-						{user && isSelected &&
-							<Button className='text-lg' fullWidth color='primary' onClick={handleSaveRoute} variant='light'>Save Route<VscSave className='w-5 h-5' /></Button>}
-						{selectedRouteId && selectedRouteId === route.id &&
-							<Button className='text-lg' fullWidth onClick={handelOpenRouteInstructions} variant='light' color='success'>
-								Route instruction <FaRoute className='w-5 h-5' />
-							</Button>}
+						{isLoaded ? <>
+							{selectedRouteId && selectedRouteId === route.id && <Button> Show route</Button>}
+						</> : <>
+
+							{user && isSelected &&
+								<Button className='text-lg' fullWidth color='primary' onClick={handleSaveRoute} variant='light'>Save Route<VscSave className='w-5 h-5' /></Button>}
+							{selectedRouteId && selectedRouteId === route.id &&
+								<Button className='text-lg' fullWidth onClick={handelOpenRouteInstructions} variant='light' color='success'>
+									Route instruction <FaRoute className='w-5 h-5' />
+								</Button>}
+						</>}
+
 					</div>
 				</CardHeader>
+				<Divider />
 				<CardBody className=''>
 					<p className='text-xl text-purple-400'>Options</p>
 					<div className='flex pt-2 pl-0.5  text-lg  justify-between w-full text-balance'>
@@ -74,6 +83,7 @@ const RouteCard = ({ route, i }: { route: RouteType, i: number }) => {
 						</div>
 					</div>
 				</CardBody>
+				<Divider />
 				<CardFooter className='text-lg flex-row justify-between'>
 					<p className='flex w-full'>
 						Total distance:
