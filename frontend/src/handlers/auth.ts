@@ -6,7 +6,7 @@ import { User } from "../types/types";
 
 export const authHandler = async () => {
   try {
-    const user = await googleAuth();
+    await googleAuth();
   } catch (error) {}
 };
 

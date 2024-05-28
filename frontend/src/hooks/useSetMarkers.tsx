@@ -6,7 +6,6 @@ const useSetMarkers = () => {
   const { dispatch } = useMapContext();
   const map = useMap();
   const handleSetMark = (id: string, coords?: LatLng) => {
-
     if (!map.default) {
       throw new Error("Map not found");
     }
@@ -15,7 +14,6 @@ const useSetMarkers = () => {
       mapCenter: coords,
       markerId: id,
     });
-
   };
   return { setMark: handleSetMark };
 };

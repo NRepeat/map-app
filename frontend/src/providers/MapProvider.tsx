@@ -10,9 +10,20 @@ const initialState: MapContextType = {
     coords: [0, 0],
     markers: undefined,
     mapCenter: undefined,
-    places: [{ displayName: { text: "Start" }, id: 'start-place', location: { latitude: 0, longitude: 0 } }, { displayName: { text: "Stop" }, id: 'end-place', location: { latitude: 0, longitude: 0 } }]
+    places: [
+      {
+        displayName: { text: "Start" },
+        id: "start-place",
+        location: { latitude: 0, longitude: 0 },
+      },
+      {
+        displayName: { text: "Stop" },
+        id: "end-place",
+        location: { latitude: 0, longitude: 0 },
+      },
+    ],
   },
-  dispatch: () => { },
+  dispatch: () => {},
 };
 
 export const MapContext = createContext<MapContextType>(initialState);
@@ -21,7 +32,10 @@ const MapProvider: FC<MapProviderProps> = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await healthCheck();
-      dispatch({ type: "SET_MAP_LOADING", mapLoading: data === "bad" ? false : true })
+      dispatch({
+        type: "SET_MAP_LOADING",
+        mapLoading: data === "bad" ? false : true,
+      });
     };
     const interval = setInterval(() => {
       if (!state.mapLoading) {
@@ -34,11 +48,18 @@ const MapProvider: FC<MapProviderProps> = ({ children }) => {
   useEffect(() => {
     const user = Cookies.get("access_token");
     if (user) {
-      const parsedUser = jwtDecode(user) as any
+      const parsedUser = jwtDecode(user) as any;
 
-      dispatch({ type: "SET_USER", user: { email: parsedUser.email, name: parsedUser.name, avatar: parsedUser.avatar ? parsedUser.avatar : '' } })
+      dispatch({
+        type: "SET_USER",
+        user: {
+          email: parsedUser.email,
+          name: parsedUser.name,
+          avatar: parsedUser.avatar ? parsedUser.avatar : "",
+        },
+      });
     }
-  }, [])
+  }, []);
   if (!state) {
     throw new Error("State not found");
   }

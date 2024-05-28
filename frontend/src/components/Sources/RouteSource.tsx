@@ -1,5 +1,5 @@
 import { FeatureCollection } from "geojson";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { Layer, LineLayer, Source, SymbolLayer } from "react-map-gl";
 import useMapContext from "../../hooks/useMapContext";
 import { CoordsType } from "../../types/types";
@@ -8,31 +8,37 @@ import WaypointSource from "./WaypointSource";
 export interface SourceDataType {
   coords: CoordsType[] | undefined;
   id: string;
-  index: number
+  index: number;
 }
 
 interface RouteSourceProps extends SourceDataType {
-  setSelectedRouteIds: React.Dispatch<React.SetStateAction<string[]>>
-  hoverInfo: string | undefined
-  waypoints: CoordsType[]
-  setWaypointsIds: React.Dispatch<React.SetStateAction<string[]>>
+  setSelectedRouteIds: React.Dispatch<React.SetStateAction<string[]>>;
+  hoverInfo: string | undefined;
+  waypoints: CoordsType[];
+  setWaypointsIds: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const getRandomColor = (): string[] => {
-  return ['#43fa00', '#43fa00', '#43fa00']
-}
+  return ["#43fa00", "#43fa00", "#43fa00"];
+};
 
-const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRouteIds, hoverInfo, waypoints, setWaypointsIds }) => {
-  const roadId = `roadLine-${id}`
-  const { state } = useMapContext()
-  const [lineColor, setLineColor] = useState<string>(
+const RouteSource: FC<RouteSourceProps> = ({
+  coords,
+  id,
+  index,
+  setSelectedRouteIds,
+  hoverInfo,
+  waypoints,
+  setWaypointsIds,
+}) => {
+  const roadId = `roadLine-${id}`;
+  const { state } = useMapContext();
+  const lineColor =
     index === 0 ? "#7fff7f" : getRandomColor()[index]
-  );
+
   useEffect(() => {
-    setSelectedRouteIds(prev => [...prev, roadId])
-
+    setSelectedRouteIds((prev) => [...prev, roadId]);
   }, [id]);
-
 
   if (coords) {
     const geojson: FeatureCollection = {
@@ -56,7 +62,15 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
         "symbol-placement": "line",
         "text-field": "▶",
         "text-size": ["interpolate", ["linear"], ["zoom"], 6, 12, 12, 30],
-        "symbol-spacing": ["interpolate", ["linear"], ["zoom"], 12, 30, 22, 160],
+        "symbol-spacing": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          12,
+          30,
+          22,
+          160,
+        ],
         "text-keep-upright": false,
       },
       paint: {
@@ -71,14 +85,14 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
       layout: {
         "line-join": "round",
         "line-cap": "round",
-
       },
       paint: {
         "line-opacity-transition": { delay: 10, duration: 5 },
         "line-color-transition": { delay: 10, duration: 5 },
         "line-color": lineColor,
 
-        "line-opacity": hoverInfo === roadId || state.selectedRouteId === id ? 1 : 0.2,
+        "line-opacity":
+          hoverInfo === roadId || state.selectedRouteId === id ? 1 : 0.2,
         "line-width": 10,
       },
     };
@@ -98,17 +112,19 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
     // };
     // const filter = ['==', "id", hoverInfo || ""]
 
-
     return (
-      <Source id={id} type="geojson" data={geojson} >
-        <Layer    {...layerStyle} />
-        {state.selectedRouteId === id &&
+      <Source id={id} type="geojson" data={geojson}>
+        <Layer {...layerStyle} />
+        {state.selectedRouteId === id && (
           <>
-            <WaypointSource waypoints={waypoints} id={id} setWaypointsIds={setWaypointsIds} />
+            <WaypointSource
+              waypoints={waypoints}
+              id={id}
+              setWaypointsIds={setWaypointsIds}
+            />
             <Layer {...layerRouteArrowStyle} />
-
           </>
-        }
+        )}
         {/* <Layer {...highlightLayer} /> */}
       </Source>
     );

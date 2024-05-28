@@ -4,7 +4,7 @@ import { Source } from "react-map-gl";
 import OptimizedRouteLayer from "../Layers/OptimizedRouteLayer/OptimizedRouteLayer";
 import { SourceDataType } from "./RouteSource";
 
-interface OptimizedRouteSourceProps extends SourceDataType { }
+interface OptimizedRouteSourceProps extends SourceDataType {}
 
 const OptimizedRouteSource: FC<OptimizedRouteSourceProps> = ({ coords }) => {
   const optimizedGeojson: FeatureCollection = {
