@@ -146,6 +146,7 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
           },
         ];
       }
+      draft.routeInstructions = undefined;
       draft.selectedRoute = undefined;
       break;
     case "SET_SELECTED_ROUTE":
