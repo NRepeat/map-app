@@ -1,12 +1,17 @@
 import { Card, CardBody } from '@nextui-org/react'
 import { MdOutlineArrowDropDown } from 'react-icons/md'
+import useMapContext from '../../hooks/useMapContext'
 import { Instruction } from '../../types/types'
 import { getInstructionByType } from '../../utils/instructionTypes'
 
-const PopupCard = ({ instruction }: { instruction: Instruction }) => {
+const PopupCard = ({ instruction, }: {
+
+	instruction: Instruction,
+}) => {
 	const { Instruction: InstructionIcon, instructionText } = getInstructionByType(instruction.type)
+	const { dispatch } = useMapContext()
 	return (
-		<div className='flex flex-col items-center relative'>
+		<div className='flex flex-col items-center relative' onMouseLeave={() => dispatch({ type: "SET_SELECTED_WAYPOINT", selectedWaypoint: undefined })}>
 			<Card className='min-w-[150px] min-h-[50px] z-40'>
 				<CardBody className='inline-flex flex-row  gap-4 items-center'  >
 					<p className='text-base text-balance max-w-[200px]'>

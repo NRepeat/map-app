@@ -13,6 +13,7 @@ import { handlePutMarkerOnClick } from './handlers';
 
 const MapInstance = () => {
   const { state, dispatch } = useMapContext();
+  console.log("🚀 ~ MapInstance ~ state:", state)
   const openRoute = new OpenRoute(dispatch);
   const [hoverInfo, setHoverInfo] = useState<{ layerId: string, lat: number, lng: number } | null>();
   const [routeIds, setRouteIds] = useState<string[]>([]);
@@ -20,6 +21,9 @@ const MapInstance = () => {
   const [isMarkerDrug, setIsMarkerDrug] = useState<boolean>(false)
   const [routes, setRoutes] = useState<RouteType[]>()
   const [routeInstructions, setRouteInstructions] = useState<RouteInstruction[]>()
+  const [isDoubleClick, setIsDoubleClick] = useState<boolean>(false)
+  const [clickTimeout, setClickTimeout] = useState<NodeJS.Timeout | null>(null);
+
 
   const onHover = useCallback((e: mapboxgl.MapLayerMouseEvent) => {
     const segment = e.features && e.features[0];
@@ -50,15 +54,15 @@ const MapInstance = () => {
   }, [hoverInfo, state.routeInstructions])
 
   useEffect(() => {
-    if (state.markers && state.markers.length >= 2 && state.options) {
+    if (state.markers && state.markers.length >= 2 && state.options && !state.isLoadFromDB) {
       openRoute.getOpenRouteRoute(state.markers, state.options)
       dispatch({ type: "SET_LOADING", loading: true })
+      dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: false })
     } else if (state.selectedRoute) {
       const routeInstructions = state.routeInstructions?.find(instruction => instruction.id === state.selectedRoute?.id)
       setRoutes([state.selectedRoute])
       if (routeInstructions) {
         setRouteInstructions([routeInstructions])
-
       }
     }
   }, [state.markers, state.selectedRoute])
@@ -69,19 +73,45 @@ const MapInstance = () => {
       dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: state.route[0].id })
       setRoutes(state.route)
       dispatch({ type: "SET_LOADING", loading: false })
-    } else {
+    }
+    else if (state.selectedRoute) {
+
+      setRoutes([state.selectedRoute])
+    }
+    else {
       setRoutes([])
     }
     if (state.routeInstructions) {
       setRouteInstructions(state.routeInstructions)
     }
   }, [state.route, state.routeInstructions])
+  const handleClick = useCallback((e: any) => {
+    if (isDoubleClick) {
+      setIsDoubleClick(false);
+      return null;
+    }
+
+    if (clickTimeout) {
+      clearTimeout(clickTimeout);
+    }
+
+    setClickTimeout(setTimeout(() => {
+      handlePutMarkerOnClick(e, state, dispatch, hoverInfo?.layerId);
+      setClickTimeout(null);
+    }, 300));
+  }, [isDoubleClick, clickTimeout, state, dispatch, hoverInfo]);
+  const handleDoubleClick = useCallback(() => {
+    setIsDoubleClick(true);
+    if (clickTimeout) {
+      clearTimeout(clickTimeout);
+    }
+  }, [clickTimeout]);
 
   return (
     <div className="w-screen h-screen">
       <Map
-
-        onClick={(e) => handlePutMarkerOnClick(e, state, dispatch, hoverInfo?.layerId, routes)}
+        onDblClick={handleDoubleClick}
+        onClick={handleClick}
         mapboxAccessToken={import.meta.env.VITE_ACCESS_TOKEN}
         mapLib={import("mapbox-gl")}
         initialViewState={{

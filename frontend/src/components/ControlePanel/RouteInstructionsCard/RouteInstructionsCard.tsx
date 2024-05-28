@@ -9,7 +9,7 @@ const RouteInstructionsCard = ({ selectedRouteInstruction }: {
 }) => {
 	const { state, dispatch } = useMapContext()
 
-	const selectedRoute = state.route?.find(r => r.id === state.selectedRouteId)
+	const selectedRoute = state.route ? state.route.find(r => r.id === state.selectedRouteId) : state.selectedRoute
 
 
 	const handelOpenRouteInstructions = () => {

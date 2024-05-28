@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Input, Listbox, ListboxItem, ListboxSection, Select, SelectItem } from '@nextui-org/react';
+import { Button, Card, Input, Listbox, ListboxItem, ListboxSection, Select, SelectItem } from '@nextui-org/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 import useMapContext from '../../../hooks/useMapContext';
@@ -11,7 +11,7 @@ const Options = () => {
 
 	const [toggleMenu, setToggleMenu] = useState(false);
 	const [selectedAvoidKeys, setSelectedAvoidKeys] = useState<Set<any>>(selectedRouteOptions ? new Set(selectedRouteOptions.avoid_features) : new Set([]));
-	const [selectedPreferenceKeys, setSelectedPreferenceKeys] = useState<Set<any>>(selectedRouteOptions ? new Set(selectedRouteOptions.preference) : new Set(['recommended']));
+	const [selectedPreferenceKeys, setSelectedPreferenceKeys] = useState<Set<any>>(selectedRouteOptions && selectedRouteOptions.preference ? new Set([selectedRouteOptions.preference]) : new Set(['recommended']));
 	const [maximumSpeed, setMaximumSpeed] = useState<string>(selectedRouteOptions && selectedRouteOptions.maximum_speed ? selectedRouteOptions.maximum_speed.toString() : '')
 	const [selectedUnit, setSelectedUnit] = useState<UnitsType>(selectedRouteOptions ? selectedRouteOptions.units! : 'm')
 	const [continueStraight, setContinueStraight] = useState<boolean>(selectedRouteOptions ? selectedRouteOptions.continue_straight! : false)
@@ -81,9 +81,9 @@ const Options = () => {
 										</SelectItem>
 									))}
 								</Select>
-								<Checkbox checked={continueStraight} onChange={() => setContinueStraight(prev => !prev)} title='Continue' className='pl-5 pb-4 pt-4'>
-									Continue straight
-								</Checkbox>
+								{/* <Checkbox checked={continueStraight} onChange={() => setContinueStraight(prev => !prev)} title='Continue' className='pl-5 pb-4 pt-4'>
+									Continue straight (150 km/max)
+								</Checkbox> */}
 							</div>
 
 							<div className='border-r-1 border-r-[#313134]'></div>
@@ -104,11 +104,9 @@ const Options = () => {
 										<ListboxItem key="shortest">Shortest</ListboxItem>
 									</ListboxSection>
 								</Listbox>
-								<Input label='Maximum speed' min={30} max={190} className='pl-2  pr-2' value={maximumSpeed} onChange={(e) => setMaximumSpeed(e.target.value)} />
+								<Input label='Maximum speed' placeholder='Minimum 80 km/h' min={80} max={250} className='pl-2  pr-2' value={maximumSpeed} onChange={(e) => setMaximumSpeed(e.target.value)} />
 							</div>
 						</div>
-
-
 					</motion.div>
 				)}
 

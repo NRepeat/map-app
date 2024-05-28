@@ -28,8 +28,9 @@ const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
         dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: true });
         dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: state.places[index], newCoords: [endPoint[1], endPoint[0]], marker: markers![index] } })
       }
-    },
+      dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: false })
 
+    },
     [markers]
   );
 

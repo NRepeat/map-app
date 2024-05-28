@@ -26,6 +26,7 @@ function ControlPanel() {
   const [toggleMenu, setToggleMenu] = useState<boolean>(true)
   const [toggleSort, setToggleSort] = useState<{ distance: boolean, desc: boolean }>({ distance: true, desc: false })
   const selectedRouteInstruction = routeInstructions && routeInstructions.find(instruction => instruction.id === selectedRouteId)
+  console.log("🚀 ~ ControlPanel ~ selectedRouteInstruction :", selectedRouteInstruction)
 
   const handleToggleMenu = () => {
     setIsPopoverOpen(false)
@@ -65,12 +66,15 @@ function ControlPanel() {
                       <Button onClick={() => setToggleSort(prev => ({ desc: !prev.desc, distance: prev.distance }))}>{toggleSort.desc ? "Asc" : "Desc"}</Button>
                     </ButtonGroup>
                   }
-                  {state.route &&
+                  {state.route ?
                     <>
-                      {sort(state.route, toggleSort).slice().reverse().map((route, i: number) =>
-                        <RouteCard route={route} i={i} key={route.id} />
+
+                      {sort(state.route, toggleSort).slice().reverse().map((route) =>
+                        <RouteCard route={route} key={route.id} />
                       )}
-                    </>
+                    </> : state.selectedRoute && <>      {
+                      <RouteCard route={state.selectedRoute} isLoaded showing />
+                    }</>
                   }
                 </CardBody>
               </Card>}

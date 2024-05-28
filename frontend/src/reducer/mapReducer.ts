@@ -18,9 +18,11 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
         action.mapCenter
       );
       break;
-    case "SET_MARKERS":
+    case "SET_MARKERS": {
       draft.markers = action.markers;
       break;
+    }
+
     case "UPDATE_MARKER_ID":
       {
         const data = action.updateMarkerId;
@@ -252,6 +254,11 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
           draft.routeInstructions = routeData;
           draft.savedRoutes = savedRoutes;
         }
+      }
+      break;
+    case "SET_IS_LOAD_FROM_DB":
+      {
+        draft.isLoadFromDB = action.isLoadFromDB;
       }
       break;
     default:

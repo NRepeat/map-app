@@ -24,28 +24,24 @@ const RouteButtonsMenu = () => {
 		openRoute.getOptimizationRoute(state.markers!, state.options!)
 	}
 	return (
-
 		<>
 			<ButtonGroup fullWidth >
-				<Tooltip color='primary' placement='bottom' content={state.route && state.route.length >= 2 ? "Get route" : "Place marker"}>
+				<Tooltip color='primary' placement='bottom' content={state.markers && state.markers.length >= 2 ? "Get route" : "Place marker"}>
 					<Button
 						variant={"solid"}
 						color={"success"}
 						radius="md"
-						disabled={state.route && state.route.length >= 1 ? false : true}
+						disabled={state.route && state.route.length >= 1 || state.selectedRoute ? false : true}
 						onClick={() => handleGetRoute()}
 					>
 						Get route <MdRoute className={`w-5 h-5 ${state.loading ? "animate-pulse " : ''}`} />
 					</Button>
 				</Tooltip>
-
-
 				<Button color={state.markers && state.markers.length >= 2 ? "secondary" : "default"} disabled={state.route && state.route.length >= 1 ? false : true} onClick={() => handleGetOptimizedRoute()}>
 					Get optimization 	<BsGearWide className={`${state.loading ? "animate-spin " : ''}`} />
 				</Button>
 				{state.route && state.route?.length >= 1 && <Button onClick={() => handleClearInputsState()} variant='solid' color='danger'>Clear route</Button >}
 			</ButtonGroup>
-
 		</>
 	)
 }
