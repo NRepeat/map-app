@@ -17,10 +17,10 @@ type AutocompletePlaceInputType = {
 	label?: string
 	startContent?: React.ReactNode,
 	place?: Place | undefined,
-
+	i: number
 }
 
-const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, label, place, start, end, }) => {
+const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, label, place, start, end, i }) => {
 	const { handleFocusOnMarker } = useFlyToMarker()
 	const { dispatch, state } = useMapContext()
 	const [loading, setLoading] = useState<boolean>(false)
@@ -75,10 +75,14 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 		const place = await handelGetPlace(value as string)
 		if (place) {
 			setSelectedPLace(place)
-
+			dispatch({ type: "UPDATE_PLACES", newPlace: place });
 			const coord: CoordsType = [place.location.longitude, place.location.latitude];
 			handleFocusOnMarker(coord);
-
+			dispatch({
+				type: "UPDATE_MARKERS_CORDS",
+				markerEndPoint: coord,
+				markerIndex: i,
+			});
 			if (start) {
 				setPlace({ start: true, ...place })
 				return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude, start: true });
@@ -91,7 +95,7 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 					setInputValue(existPlace.displayName.text)
 					return console.log("Place exist")
 				}
-				setPlace(place)
+				// setPlace(place)
 				// return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude });
 			}
 		}

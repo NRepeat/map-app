@@ -26,7 +26,7 @@ const SavedRoutes = () => {
 		<Card radius="none" className=" flex-col   sm:max-w-[500px] min-w-[300px]     flex-grow   rounded-br-md">
 			<CardHeader className=' '>
 				<ButtonGroup fullWidth>
-					{state.savedRoutes && <>
+					{state.savedRoutes && state.savedRoutes.length > 0 && <>
 						<Button onClick={() => setToggleSort(prev => ({ desc: prev.desc, distance: !prev.distance }))}>{toggleSort.distance ? "Duration" : "Distance"}</Button>
 						<Button onClick={() => setToggleSort(prev => ({ desc: !prev.desc, distance: prev.distance }))}>{toggleSort.desc ? "Desc" : "Asc"}</Button>
 					</>}
@@ -34,7 +34,7 @@ const SavedRoutes = () => {
 				</ButtonGroup>
 			</CardHeader>
 			<CardBody className="gap-2">
-				{state.savedRoutes ? sort(state.savedRoutes, toggleSort).slice().reverse().map((route, i: number) =>
+				{state.savedRoutes && state.savedRoutes.length > 0 ? sort(state.savedRoutes, toggleSort).slice().reverse().map((route, i: number) =>
 					<RouteCard route={route} key={i} isLoaded={true} />
 				) : <div className="text-center text-2xl text-danger-400">No saved routes</div>}
 			</CardBody>

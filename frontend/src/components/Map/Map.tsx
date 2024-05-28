@@ -55,7 +55,7 @@ const MapInstance = () => {
 
   useEffect(() => {
 
-    if (state.markers && state.markers.length >= 2 && state.options && !state.isLoadFromDB && state.isToUpdate) {
+    if (state.markers && state.markers.length >= 2 && state.options && !state.isLoadFromDB) {
       openRoute.getOpenRouteRoute(state.markers, state.options)
       dispatch({ type: "SET_LOADING", loading: true })
       dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: false });
@@ -67,7 +67,7 @@ const MapInstance = () => {
         setRouteInstructions([routeInstructions])
       }
     }
-  }, [state.isToUpdate, state.selectedRoute])
+  }, [state.markers, state.selectedRoute])
 
 
   useEffect(() => {

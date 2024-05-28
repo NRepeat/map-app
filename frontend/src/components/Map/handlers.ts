@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
-import { LatLng } from "../../types/types";
+import { handelGeocode } from "../../handlers/google";
+import { LatLng, Place } from "../../types/types";
 
 export const handlePutMarkerOnClick = (
   e: mapboxgl.MapLayerMouseEvent,
@@ -18,8 +18,13 @@ export const handlePutMarkerOnClick = (
   }
 
   if (e.type === "click") {
+    dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: false });
     if (state) {
-      const handleClick = () => {
+      console.log(
+        "🚀 ~ handleClick ~ state.places.length:",
+        state.places.length
+      );
+      const handleClick = async () => {
         if (!state.markers) {
           const coords: LatLng = {
             lat: e.lngLat.lat,
@@ -27,11 +32,26 @@ export const handlePutMarkerOnClick = (
             end: false,
             start: true,
           };
+          const newPlaceData = await handelGeocode([coords.lat, coords.lng]);
+          const newPlace: Place = {
+            displayName: {
+              text: newPlaceData.results[0].formatted_address,
+            },
+            location: {
+              latitude: newPlaceData.results[0].geometry.location.lat,
+              longitude: newPlaceData.results[0].geometry.location.lng,
+            },
+            id: newPlaceData.results[0].place_id,
+            start: true,
+          };
+          dispatch({ type: "SET_PLACE", newPlace: newPlace });
+          // dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: true });
           return dispatch({
             type: "SET_MARKER",
             mapCenter: coords,
-            markerId: uuidv4(),
+            markerId: newPlace.id,
           });
+
           // return dispatch({
           //   type: "SET_PLACE_TO_UPDATE",
           //   placeToUpdate: {
@@ -40,17 +60,35 @@ export const handlePutMarkerOnClick = (
           //     fromHandlePutMarkerOnClick: true,
           //   },
           // });
-        } else if (state.markers.length <= 1) {
+        } else if (state.markers.length === 1) {
+          console.log(
+            "🚀 ~ handleClick ~ state.markers.length:",
+            state.markers.length
+          );
           const coords: LatLng = {
             lat: e.lngLat.lat,
             lng: e.lngLat.lng,
             end: true,
             start: false,
           };
+          const newPlaceData = await handelGeocode([coords.lat, coords.lng]);
+          const newPlace: Place = {
+            displayName: {
+              text: newPlaceData.results[0].formatted_address,
+            },
+            location: {
+              latitude: newPlaceData.results[0].geometry.location.lat,
+              longitude: newPlaceData.results[0].geometry.location.lng,
+            },
+            id: newPlaceData.results[0].place_id,
+            end: true,
+          };
+          dispatch({ type: "SET_PLACE", newPlace: newPlace });
+
           return dispatch({
             type: "SET_MARKER",
             mapCenter: coords,
-            markerId: uuidv4(),
+            markerId: newPlace.id,
           });
           // return dispatch({
           //   type: "SET_PLACE_TO_UPDATE",
@@ -69,11 +107,28 @@ export const handlePutMarkerOnClick = (
           const coords: LatLng = {
             lat: e.lngLat.lat,
             lng: e.lngLat.lng,
+            end: false,
+            start: false,
           };
+          const newPlaceData = await handelGeocode([coords.lat, coords.lng]);
+          const newPlace: Place = {
+            displayName: {
+              text: newPlaceData.results[0].formatted_address,
+            },
+            location: {
+              latitude: newPlaceData.results[0].geometry.location.lat,
+              longitude: newPlaceData.results[0].geometry.location.lng,
+            },
+            id: newPlaceData.results[0].place_id,
+          };
+          dispatch({ type: "SET_PLACE", newPlace: newPlace });
+
+          console.log("🚀 ~ handleClick ~ newPlace:", newPlace);
+
           return dispatch({
             type: "SET_MARKER",
             mapCenter: coords,
-            markerId: uuidv4(),
+            markerId: newPlace.id,
           });
         }
       };

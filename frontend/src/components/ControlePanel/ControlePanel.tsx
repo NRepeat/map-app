@@ -26,7 +26,7 @@ function ControlPanel() {
   const [toggleMenu, setToggleMenu] = useState<boolean>(true)
   const [toggleSort, setToggleSort] = useState<{ distance: boolean, desc: boolean }>({ distance: true, desc: false })
   const selectedRouteInstruction = routeInstructions && routeInstructions.find(instruction => instruction.id === selectedRouteId)
-  console.log("🚀 ~ ControlPanel ~ selectedRouteInstruction :", selectedRouteInstruction)
+
 
   const handleToggleMenu = () => {
     setIsPopoverOpen(false)

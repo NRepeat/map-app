@@ -8,6 +8,7 @@ export const updateMarkers = (
 ) => {
   if (markers) {
     const existMarker = markers.find((data) => data.id === id);
+    console.log("🚀 ~ existMarker:", existMarker);
     if (existMarker) {
       return markers;
     }
@@ -17,6 +18,7 @@ export const updateMarkers = (
       start: coords?.start,
       end: coords?.end,
     };
+    console.log("🚀 ~ marker:", marker);
     if (coords?.start) {
       const start = markers.find((data) => data.start === true);
       if (!start) {
@@ -25,7 +27,7 @@ export const updateMarkers = (
         markers[0] = marker;
         return markers;
       }
-    } else if (coords!.end) {
+    } else if (coords?.end) {
       const end = markers.find((data) => data.end === true);
       if (end) {
         markers[markers.length - 1] = marker;
@@ -35,11 +37,15 @@ export const updateMarkers = (
         return markers;
       }
       return [...markers, marker];
+    } else {
+      const lastMarker = markers[markers.length - 1];
+      console.log("🚀 ~ lastMarker:", lastMarker);
+      markers[markers.length - 1] = marker;
+      markers.push(lastMarker);
+      console.log("🚀 ~ markers:", markers);
+
+      return markers;
     }
-    const lastMarker = markers[markers.length - 1];
-    markers[markers.length - 1] = marker;
-    markers.push(lastMarker);
-    return markers;
   } else {
     const marker: MarkersType = {
       coords: [coords!.lng, coords!.lat],

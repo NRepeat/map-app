@@ -26,6 +26,7 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
     case "UPDATE_MARKER_ID":
       {
         const data = action.updateMarkerId;
+        const place = action.newPlace;
         const markerToUpdate = draft.markers?.find(
           (marker) => marker.id === data?.id
         );
@@ -33,6 +34,7 @@ export const reducer = (draft: MapStateContextType, action: MapReducerType) => {
           const newMarker = {
             ...markerToUpdate,
             id: data.newId,
+            place,
           };
 
           const newMarkers = draft.markers.map((marker) =>

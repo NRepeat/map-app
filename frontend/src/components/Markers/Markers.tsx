@@ -2,8 +2,9 @@ import { Badge } from "@nextui-org/react";
 import { useCallback, type FC } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Marker, type MarkerDragEvent } from "react-map-gl";
+import { handelGeocode } from "../../handlers/google";
 import useMapContext from "../../hooks/useMapContext";
-import { CoordsType, MarkersType } from "../../types/types";
+import { CoordsType, MarkersType, Place } from "../../types/types";
 
 type MarkersProps = {
   markers: MarkersType[] | undefined;
@@ -16,7 +17,7 @@ const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
     dispatch({ type: "SET_IS_SAVED_ROUTES", isSavedRouteOpen: false })
   }
   const onMarkerDragEnd = useCallback(
-    (event: MarkerDragEvent, index: number) => {
+    async (event: MarkerDragEvent, index: number) => {
       setIsMarkerDrug(false)
       const endCords = event.lngLat;
       const endPoint = Object.keys(endCords).map(
@@ -27,8 +28,29 @@ const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
         markerEndPoint: endPoint,
         markerIndex: index,
       });
+      const newPlaceData = await handelGeocode([endPoint[1], endPoint[0]]);
+
+      const newPlace: Place = {
+        displayName: {
+          text: newPlaceData.results[0].formatted_address,
+        },
+        location: {
+          latitude: newPlaceData.results[0].geometry.location.lat,
+          longitude: newPlaceData.results[0].geometry.location.lng,
+        },
+        id: newPlaceData.results[0].place_id,
+      };
+      // if (markers) {
+      //   const markerId = markers[index].id
+      //   dispatch({ type: "UPDATE_MARKER_ID", updateMarkerId: { id: markerId, newId: newPlace.id }, newPlace: newPlace })
+
+      // }
+
       if (state.places) {
-        return dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: state.places[index], newCoords: [endPoint[1], endPoint[0]], marker: markers![index] } })
+
+        dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: state.places[index], newCoords: [endPoint[1], endPoint[0]], marker: markers![index] } })
+        dispatch({ type: "UPDATE_PLACES", newPlace: newPlace });
+
       }
       dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: false })
       handleGetBack()
