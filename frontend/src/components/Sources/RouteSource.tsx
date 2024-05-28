@@ -74,8 +74,10 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index, setSelectedRoute
 
       },
       paint: {
-        "line-color-transition": { delay: 1, duration: 3 },
+        "line-opacity-transition": { delay: 10, duration: 5 },
+        "line-color-transition": { delay: 10, duration: 5 },
         "line-color": lineColor,
+
         "line-opacity": hoverInfo === roadId || state.selectedRouteId === id ? 1 : 0.2,
         "line-width": 10,
       },

@@ -74,10 +74,19 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 		}
 		const place = await handelGetPlace(value as string)
 		if (place) {
-			setSelectedPLace(place)
-			dispatch({ type: "UPDATE_PLACES", newPlace: place });
 			const coord: CoordsType = [place.location.longitude, place.location.latitude];
+			setSelectedPLace(place)
+			dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: state.places![i], newCoords: coord, marker: state.markers![i] } })
+			dispatch({ type: "UPDATE_PLACES", newPlace: place });
+
 			handleFocusOnMarker(coord);
+			dispatch({
+				type: "UPDATE_MARKER_ID",
+				updateMarkerId: {
+					id: state.markers![i].id,
+					newId: place.id,
+				},
+			});
 			dispatch({
 				type: "UPDATE_MARKERS_CORDS",
 				markerEndPoint: coord,
@@ -102,12 +111,14 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 
 	}
 	const handelInputClick = () => {
-		if (state.markers && selectedPlace) {
-			const start = selectedPlace.location.longitude === 0 && selectedPlace.location.latitude === 0
-			if (!start) {
-				const coord: CoordsType = [selectedPlace.location.longitude, selectedPlace.location.latitude]
-				handleFocusOnMarker(coord)
-			}
+
+		if (state.markers) {
+			const martker = state.markers[i]
+
+
+			const coord: CoordsType = martker.coords
+			handleFocusOnMarker(coord)
+
 		}
 	}
 	return (

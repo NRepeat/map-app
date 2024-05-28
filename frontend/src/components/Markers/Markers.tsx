@@ -23,6 +23,7 @@ const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
       const endPoint = Object.keys(endCords).map(
         (coord) => (endCords as any)[coord]
       ) as CoordsType;
+
       dispatch({
         type: "UPDATE_MARKERS_CORDS",
         markerEndPoint: endPoint,
@@ -40,11 +41,6 @@ const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
         },
         id: newPlaceData.results[0].place_id,
       };
-      // if (markers) {
-      //   const markerId = markers[index].id
-      //   dispatch({ type: "UPDATE_MARKER_ID", updateMarkerId: { id: markerId, newId: newPlace.id }, newPlace: newPlace })
-
-      // }
 
       if (state.places) {
 
@@ -55,7 +51,7 @@ const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
       dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: false })
       handleGetBack()
     },
-    [markers]
+    [markers, state.markers]
   );
 
 
@@ -78,7 +74,7 @@ const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
               onDragStart={() => setIsMarkerDrug(true)}
               onDragEnd={(e) => onMarkerDragEnd(e, i)}
             >
-              {isFirstMarker || isLastMarker ? markerIcon : <Badge content={`${i}`} color="secondary">{markerIcon}</Badge>}
+              {isFirstMarker || isLastMarker ? markerIcon : <Badge className="" content={`${i}`} color="secondary">{markerIcon}</Badge>}
             </Marker>
           );
         })}

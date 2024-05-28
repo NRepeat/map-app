@@ -53,6 +53,7 @@ export class OpenRoute {
       routeInstructions: routeData,
     });
     this.dispatch({ type: "SET_OPEN_ROUTE_ROUTE", route: routeCordsArr });
+    this.dispatch({ type: "SET_LOADING", loading: false });
   }
   async getOpenRouteRoute(markers: MarkersType[], options: RouteOptions) {
     const data = await getOpenRouteRoute(this.getCoords(markers), options);

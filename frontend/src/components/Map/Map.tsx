@@ -56,10 +56,11 @@ const MapInstance = () => {
   useEffect(() => {
 
     if (state.markers && state.markers.length >= 2 && state.options && !state.isLoadFromDB) {
+
       openRoute.getOpenRouteRoute(state.markers, state.options)
       dispatch({ type: "SET_LOADING", loading: true })
-      dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: false });
-      dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: false })
+      // dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: false });
+      // dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: false })
     } else if (state.selectedRoute) {
       const routeInstructions = state.routeInstructions?.find(instruction => instruction.id === state.selectedRoute?.id)
       setRoutes([state.selectedRoute])
@@ -67,14 +68,14 @@ const MapInstance = () => {
         setRouteInstructions([routeInstructions])
       }
     }
-  }, [state.markers, state.selectedRoute])
+  }, [state.markers, state.selectedRoute, state.isLoadFromDB])
 
 
   useEffect(() => {
-    if (state.route && state.route.length >= 1) {
+    if (state.route && state.route.length >= 1 && !state.loading) {
       dispatch({ type: "SET_SELECTED_ROUTE_ID", selectedRouteId: state.route[0].id })
       setRoutes(state.route)
-      dispatch({ type: "SET_LOADING", loading: false })
+      // dispatch({ type: "SET_LOADING", loading: false })
     }
     else if (state.selectedRoute) {
 
@@ -86,7 +87,7 @@ const MapInstance = () => {
     if (state.routeInstructions) {
       setRouteInstructions(state.routeInstructions)
     }
-  }, [state.route, state.routeInstructions])
+  }, [state.route, state.routeInstructions, state.loading])
   const handleClick = useCallback((e: any) => {
 
     if (isDoubleClick) {
@@ -133,7 +134,7 @@ const MapInstance = () => {
           latitude={state.selectedWaypoint.coords[1]}>
           <PopupCard instruction={state.selectedWaypoint.instruction} />
         </Marker>}
-        {routes && routeInstructions &&
+        {routes && routeInstructions && !state.loading &&
           routes.length > 0 &&
           routes.slice().reverse().map((route, i) => (
             <RouteSource

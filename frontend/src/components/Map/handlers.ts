@@ -61,10 +61,6 @@ export const handlePutMarkerOnClick = (
           //   },
           // });
         } else if (state.markers.length === 1) {
-          console.log(
-            "🚀 ~ handleClick ~ state.markers.length:",
-            state.markers.length
-          );
           const coords: LatLng = {
             lat: e.lngLat.lat,
             lng: e.lngLat.lng,
@@ -122,9 +118,6 @@ export const handlePutMarkerOnClick = (
             id: newPlaceData.results[0].place_id,
           };
           dispatch({ type: "SET_PLACE", newPlace: newPlace });
-
-          console.log("🚀 ~ handleClick ~ newPlace:", newPlace);
-
           return dispatch({
             type: "SET_MARKER",
             mapCenter: coords,
