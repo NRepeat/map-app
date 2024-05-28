@@ -11,7 +11,10 @@ type MarkersProps = {
 };
 const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
   const { dispatch, state } = useMapContext();
-
+  const handleGetBack = () => {
+    dispatch({ type: "SET_IS_OPEN_ROUTE_INSTRUCTION", isOpenRouteInstruction: false })
+    dispatch({ type: "SET_IS_SAVED_ROUTES", isSavedRouteOpen: false })
+  }
   const onMarkerDragEnd = useCallback(
     (event: MarkerDragEvent, index: number) => {
       setIsMarkerDrug(false)
@@ -25,11 +28,10 @@ const Markers: FC<MarkersProps> = ({ markers, setIsMarkerDrug }) => {
         markerIndex: index,
       });
       if (state.places) {
-        dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: true });
-        dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: state.places[index], newCoords: [endPoint[1], endPoint[0]], marker: markers![index] } })
+        return dispatch({ type: "SET_PLACE_TO_UPDATE", placeToUpdate: { place: state.places[index], newCoords: [endPoint[1], endPoint[0]], marker: markers![index] } })
       }
       dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: false })
-
+      handleGetBack()
     },
     [markers]
   );

@@ -1,3 +1,6 @@
+import { v4 as uuidv4 } from "uuid";
+import { LatLng } from "../../types/types";
+
 export const handlePutMarkerOnClick = (
   e: mapboxgl.MapLayerMouseEvent,
   state: any,
@@ -15,54 +18,62 @@ export const handlePutMarkerOnClick = (
   }
 
   if (e.type === "click") {
-    if (state.places) {
+    if (state) {
       const handleClick = () => {
-        const start = state.places[0].id === "start-place" && state.places[0];
-        const end = state.places[1].id === "end-place" && state.places[1];
-
-        if (start) {
-          dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: true });
+        if (!state.markers) {
+          const coords: LatLng = {
+            lat: e.lngLat.lat,
+            lng: e.lngLat.lng,
+            end: false,
+            start: true,
+          };
           return dispatch({
-            type: "SET_PLACE_TO_UPDATE",
-            placeToUpdate: {
-              place: start,
-              newCoords: [e.lngLat.lat, e.lngLat.lng],
-              fromHandlePutMarkerOnClick: true,
-            },
+            type: "SET_MARKER",
+            mapCenter: coords,
+            markerId: uuidv4(),
           });
-        } else if (end) {
-          dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: true });
+          // return dispatch({
+          //   type: "SET_PLACE_TO_UPDATE",
+          //   placeToUpdate: {
+          //     place: start ? start : end,
+          //     newCoords: [e.lngLat.lat, e.lngLat.lng],
+          //     fromHandlePutMarkerOnClick: true,
+          //   },
+          // });
+        } else if (state.markers.length <= 1) {
+          const coords: LatLng = {
+            lat: e.lngLat.lat,
+            lng: e.lngLat.lng,
+            end: true,
+            start: false,
+          };
           return dispatch({
-            type: "SET_PLACE_TO_UPDATE",
-            placeToUpdate: {
-              place: end,
-              newCoords: [e.lngLat.lat, e.lngLat.lng],
-              fromHandlePutMarkerOnClick: true,
-            },
+            type: "SET_MARKER",
+            mapCenter: coords,
+            markerId: uuidv4(),
           });
+          // return dispatch({
+          //   type: "SET_PLACE_TO_UPDATE",
+          //   placeToUpdate: {
+          //     place: {
+          //       displayName: { text: "" },
+          //       id: "instance-place",
+          //       location: { latitude: 0, longitude: 0 },
+          //       instance: true,
+          //     },
+          //     newCoords: [e.lngLat.lat, e.lngLat.lng],
+          //     fromHandlePutMarkerOnClick: true,
+          //   },
+          // });
         } else {
-          dispatch({
-            type: "SET_PLACE_INSTANCE",
-            placeInstance: {
-              displayName: { text: "" },
-              id: "instance-place",
-              location: { latitude: 0, longitude: 0 },
-              instance: true,
-            },
-          });
-          dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: true });
+          const coords: LatLng = {
+            lat: e.lngLat.lat,
+            lng: e.lngLat.lng,
+          };
           return dispatch({
-            type: "SET_PLACE_TO_UPDATE",
-            placeToUpdate: {
-              place: {
-                displayName: { text: "" },
-                id: "instance-place",
-                location: { latitude: 0, longitude: 0 },
-                instance: true,
-              },
-              newCoords: [e.lngLat.lat, e.lngLat.lng],
-              fromHandlePutMarkerOnClick: true,
-            },
+            type: "SET_MARKER",
+            mapCenter: coords,
+            markerId: uuidv4(),
           });
         }
       };

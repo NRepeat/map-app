@@ -73,7 +73,6 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 			return null
 		}
 		const place = await handelGetPlace(value as string)
-		dispatch({ type: "SET_MAP_LOADING", mapLoading: true })
 		if (place) {
 			setSelectedPLace(place)
 
@@ -89,12 +88,11 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 			} else {
 				const existPlace = state.places?.find(data => data.id === place.id)
 				if (existPlace) {
-
 					setInputValue(existPlace.displayName.text)
 					return console.log("Place exist")
 				}
 				setPlace(place)
-				return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude });
+				// return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude });
 			}
 		}
 
@@ -128,7 +126,6 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, 
 			onSelectionChange={(e) => handelSelectionChange(e)}
 			onInputChange={(e) => updateValue(e)}
 			disableSelectorIconRotation
-			// autoFocus
 			selectorIcon={<IoIosSearch />}
 		>
 			{((option) => (

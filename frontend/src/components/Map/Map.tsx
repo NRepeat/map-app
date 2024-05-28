@@ -54,9 +54,11 @@ const MapInstance = () => {
   }, [hoverInfo, state.routeInstructions])
 
   useEffect(() => {
-    if (state.markers && state.markers.length >= 2 && state.options && !state.isLoadFromDB) {
+
+    if (state.markers && state.markers.length >= 2 && state.options && !state.isLoadFromDB && state.isToUpdate) {
       openRoute.getOpenRouteRoute(state.markers, state.options)
       dispatch({ type: "SET_LOADING", loading: true })
+      dispatch({ type: "SET_IS_TO_UPDATE", isToUpdate: false });
       dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: false })
     } else if (state.selectedRoute) {
       const routeInstructions = state.routeInstructions?.find(instruction => instruction.id === state.selectedRoute?.id)
@@ -65,7 +67,7 @@ const MapInstance = () => {
         setRouteInstructions([routeInstructions])
       }
     }
-  }, [state.markers, state.selectedRoute])
+  }, [state.isToUpdate, state.selectedRoute])
 
 
   useEffect(() => {
@@ -86,15 +88,17 @@ const MapInstance = () => {
     }
   }, [state.route, state.routeInstructions])
   const handleClick = useCallback((e: any) => {
+
     if (isDoubleClick) {
       setIsDoubleClick(false);
       return null;
     }
-
     if (clickTimeout) {
       clearTimeout(clickTimeout);
     }
-
+    if (state.isSavedRouteOpen) {
+      return null
+    }
     setClickTimeout(setTimeout(() => {
       handlePutMarkerOnClick(e, state, dispatch, hoverInfo?.layerId);
       setClickTimeout(null);

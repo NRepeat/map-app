@@ -101,6 +101,7 @@ export const getWaypointsCoords = (
 };
 
 export const setPlaces = (places?: Place[], place?: Place) => {
+  console.log("🚀 ~ setPlaces ~ place:", place);
   if (!places) {
     throw new Error("Places not found");
   }

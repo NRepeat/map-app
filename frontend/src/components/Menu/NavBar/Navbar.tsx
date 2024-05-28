@@ -46,8 +46,8 @@ const NavbarMapMenu = ({ isPopoverOpen, setIsPopoverOpen }: { isPopoverOpen: boo
 			</NavbarContent> */}
 				<NavbarContent className="hidden sm:flex gap-4" justify="center">
 					<NavbarItem>
-						<Link onClick={handleGetBack}>
-							<span className='text-2xl text-left font-bold text-emerald-700'>NN</span><span className='text-xl text-left font-bold text-white'>MAP</span>
+						<Link onClick={handleGetBack} className='cursor-pointer'>
+							<span className='text-2xl text-left font-bold text-emerald-700 underline'>NN</span><span className='text-xl text-left font-bold text-white'>MAP</span>
 						</Link>
 					</NavbarItem>
 				</NavbarContent>

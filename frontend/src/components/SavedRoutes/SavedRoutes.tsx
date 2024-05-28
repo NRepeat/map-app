@@ -13,7 +13,7 @@ const SavedRoutes = () => {
 		const fetchAllSavedRoutes = async () => {
 			if (user) {
 				const data = await getAllRoutes({ email: user.email, pageSize: 10 })
-				if (data && data.savedRoutes.length >= 1) {
+				if (data && data.allRoutes) {
 					dispatch({ type: "SET_IS_LOAD_FROM_DB", isLoadFromDB: true })
 
 					dispatch({ type: "SET_SAVED_ROUTES", savedRoutes: JSON.parse(data.allRoutes) })

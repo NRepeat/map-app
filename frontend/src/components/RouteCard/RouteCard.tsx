@@ -12,8 +12,12 @@ const RouteCard = ({ route, isLoaded, showing }: { route: RouteType, isLoaded?: 
 	const isSelected = selectedRouteId && selectedRouteId === route.id;
 	const options = route.options && route.options
 	const handelOpenRouteInstructions = () => {
+		if (isLoaded && selectedRouteId && state.isSavedRouteOpen) {
+			return handleLoad()
+		}
 		dispatch({ type: "SET_IS_OPEN_ROUTE_INSTRUCTION", isOpenRouteInstruction: true })
 	}
+
 	const handleGetBack = () => {
 		dispatch({ type: "SET_IS_OPEN_ROUTE_INSTRUCTION", isOpenRouteInstruction: false })
 		dispatch({ type: "SET_IS_SAVED_ROUTES", isSavedRouteOpen: false })
