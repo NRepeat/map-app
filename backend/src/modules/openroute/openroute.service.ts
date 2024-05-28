@@ -27,7 +27,7 @@ export class OpenrouteService {
       const { avoid_features, ...options } = optionsData;
       const jsonCoords = JSON.stringify({
         coordinates: coordsOpenRoute,
-        options: { avoid_features: avoid_features },
+        options: { avoid_features },
         ...options,
       });
       // : JSON.stringify({
