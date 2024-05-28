@@ -40,7 +40,7 @@ const RouteButtonsMenu = () => {
 				<Button color={state.markers && state.markers.length >= 2 ? "secondary" : "default"} disabled={state.route && state.route.length >= 1 ? false : true} onClick={() => handleGetOptimizedRoute()}>
 					Get optimization 	<BsGearWide className={`${state.loading ? "animate-spin " : ''}`} />
 				</Button>
-				{state.route && state.route?.length >= 1 && <Button onClick={() => handleClearInputsState()} variant='solid' color='danger'>Clear route</Button >}
+				{state.route && state.route?.length >= 1 || state.selectedRoute && <Button onClick={() => handleClearInputsState()} variant='solid' color='danger'>Clear route</Button >}
 			</ButtonGroup>
 		</>
 	)
