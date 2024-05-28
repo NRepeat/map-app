@@ -55,7 +55,7 @@ const RouteCard = ({
       };
       return marker;
     });
-    dispatch({ type: "SET_OPEN_ROUTE_ROUTE", route: undefined });
+    dispatch({ type: "CLEAR_ROUTE_PLACE_DATA" });
     dispatch({ type: "SET_SELECTED_ROUTE", selectedRoute: route });
     dispatch({ type: "SET_ROUTE_OPTIONS", options: route.options });
     dispatch({ type: "SET_MARKERS", markers });
