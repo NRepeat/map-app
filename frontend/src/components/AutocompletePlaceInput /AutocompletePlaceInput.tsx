@@ -51,10 +51,15 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({
     if (word) {
       setLoading(true);
       const predictions = await handelAutocomplete(word);
-      setOptions(predictions);
+      console.log("🚀 ~ getSuggestions ~ predictions :", predictions)
+      if (predictions) {
+        setOptions(predictions);
+
+      }
       setLoading(false);
     } else {
       setOptions([]);
+      setLoading(false);
     }
   };
   const debouncedSave = debounce(
@@ -84,30 +89,37 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({
       const coord: CoordsType = [
         place.location.longitude,
         place.location.latitude,
-      ];``
-      dispatch({
-        type: "SET_PLACE_TO_UPDATE",
-        placeToUpdate: {
-          place: state.places![i],
-          newCoords: coord,
-          marker: state.markers![i],
-        },
-      });
+      ];
+      if (state.markers) {
+        if (state.markers.length >= 2) {
+          dispatch({
+            type: "SET_PLACE_TO_UPDATE",
+            placeToUpdate: {
+              place: state.places![i],
+              newCoords: coord,
+              marker: state.markers![i],
+            },
+          });
+          dispatch({
+            type: "UPDATE_MARKER_ID",
+            updateMarkerId: {
+              id: state.markers![i].id,
+              newId: place.id,
+            },
+          });
+          dispatch({
+            type: "UPDATE_MARKERS_CORDS",
+            markerEndPoint: coord,
+            markerIndex: i,
+          });
+        }
+
+      }
+
       dispatch({ type: "UPDATE_PLACES", newPlace: place });
 
       handleFocusOnMarker(coord);
-      dispatch({
-        type: "UPDATE_MARKER_ID",
-        updateMarkerId: {
-          id: state.markers![i].id,
-          newId: place.id,
-        },
-      });
-      dispatch({
-        type: "UPDATE_MARKERS_CORDS",
-        markerEndPoint: coord,
-        markerIndex: i,
-      });
+
       if (start) {
         setPlace({ start: true, ...place });
         return setMark(place.id, {

@@ -6,6 +6,7 @@ export class GoogleController {
   @Post("autocomplete")
   // @UseGuards(JwtAuthGuard)
   async placeAutocomplete(@Body() body: { value: string }) {
+    console.log("🚀 ~ GoogleController ~ placeAutocomplete ~ body:", body);
     try {
       const url = `https://places.googleapis.com/v1/places:autocomplete`;
       const requestBody = {
@@ -22,6 +23,7 @@ export class GoogleController {
       });
 
       const data = await response.json();
+      console.log("🚀 ~ GoogleController ~ placeAutocomplete ~ data:", data);
 
       return data.suggestions;
     } catch (error) {
