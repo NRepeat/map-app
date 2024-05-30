@@ -1,9 +1,9 @@
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import * as bodyParser from "body-parser";
 import * as session from "express-session";
 import * as passport from "passport";
 import { AppModule } from "./app.module";
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.enableCors({
@@ -17,14 +17,16 @@ async function bootstrap() {
   app.setGlobalPrefix("/api");
   app.use(
     session({
-      secret: "asdasdasdasd",
+      secret: "asdasd",
       saveUninitialized: false,
       resave: false,
       cookie: {
-        maxAge: 60000,
+        maxAge: 600000,
       },
     })
   );
+  app.use(bodyParser.json({ limit: "50mb" }));
+  app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
   app.use(passport.initialize());
   app.use(passport.session());
   const config = new DocumentBuilder()

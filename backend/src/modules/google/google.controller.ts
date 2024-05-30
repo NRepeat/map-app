@@ -6,7 +6,6 @@ export class GoogleController {
   @Post("autocomplete")
   // @UseGuards(JwtAuthGuard)
   async placeAutocomplete(@Body() body: { value: string }) {
-    console.log("🚀 ~ GoogleController ~ placeAutocomplete ~ body:", body);
     try {
       const url = `https://places.googleapis.com/v1/places:autocomplete`;
       const requestBody = {
@@ -23,7 +22,6 @@ export class GoogleController {
       });
 
       const data = await response.json();
-      console.log("🚀 ~ GoogleController ~ placeAutocomplete ~ data:", data);
 
       return data.suggestions;
     } catch (error) {
@@ -43,7 +41,7 @@ export class GoogleController {
 
       return placeData;
     } catch (error) {
-      console.log("🚀 ~ GoogleController ~ place ~ (error:", error);
+      // return res.status(500).json({ error: "Internal server error" });
     }
   }
   @Post("geocodeLatLng")
@@ -59,8 +57,6 @@ export class GoogleController {
       const data = await response.json();
 
       return data;
-    } catch (error) {
-      console.log("🚀 ~ GoogleController ~ geocode ~ error:", error);
-    }
+    } catch (error) {}
   }
 }

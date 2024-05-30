@@ -44,7 +44,7 @@ const CordList = () => {
 	};
 
 	return (
-		<div className="flex flex-col gap-[1rem] ">
+		<div className="flex flex-col gap-[1rem]   max-h-[400px]  scrollbar-thin overflow-y-auto" >
 			{state.places &&
 				state.places.map((data, i) => {
 					if (state.places) {

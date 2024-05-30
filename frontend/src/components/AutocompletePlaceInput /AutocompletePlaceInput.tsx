@@ -28,6 +28,7 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({
 }) => {
   const { handleFocusOnMarker } = useFlyToMarker();
   const { dispatch, state } = useMapContext();
+  // console.log("🚀 ~  state:", state)
   const [loading, setLoading] = useState<boolean>(false);
 
   const [options, setOptions] = useState<PlacePrediction[]>([]);
@@ -51,7 +52,6 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({
     if (word) {
       setLoading(true);
       const predictions = await handelAutocomplete(word);
-      console.log("🚀 ~ getSuggestions ~ predictions :", predictions)
       if (predictions) {
         setOptions(predictions);
 
@@ -81,29 +81,31 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({
     setInputValue(newValue);
   };
   const handelSelectionChange = async (value: Key) => {
+    console.log("🚀 ~ handelSelectionChange ~ value:", value)
     if (!value) {
       return null;
     }
     const place = await handelGetPlace(value as string);
+    console.log("🚀 ~ handelSelectionChange ~ place :", place)
     if (place) {
       const coord: CoordsType = [
         place.location.longitude,
         place.location.latitude,
       ];
-      if (state.markers) {
+      if (state.markers && state.places) {
         if (state.markers.length >= 2) {
           dispatch({
             type: "SET_PLACE_TO_UPDATE",
             placeToUpdate: {
-              place: state.places![i],
+              place: state.places[i],
               newCoords: coord,
-              marker: state.markers![i],
+              marker: state.markers[i],
             },
           });
           dispatch({
             type: "UPDATE_MARKER_ID",
             updateMarkerId: {
-              id: state.markers![i].id,
+              id: state.markers[i].id,
               newId: place.id,
             },
           });
@@ -113,14 +115,15 @@ const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({
             markerIndex: i,
           });
         }
-
+        dispatch({ type: "UPDATE_PLACES", newPlace: place });
       }
 
-      dispatch({ type: "UPDATE_PLACES", newPlace: place });
+
 
       handleFocusOnMarker(coord);
-
+      console.log("🚀 ~ handelSelectionChange ~ start:", start)
       if (start) {
+
         setPlace({ start: true, ...place });
         return setMark(place.id, {
           lat: place.location.latitude,

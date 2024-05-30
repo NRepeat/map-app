@@ -30,17 +30,6 @@ export class OpenrouteService {
         options: { avoid_features },
         ...options,
       });
-      // : JSON.stringify({
-      //     coordinates: coordsOpenRoute,
-      //     alternative_routes: {
-      //       target_count: 3,
-      //       weight_factor: 1.4,
-      //       share_factor: 0.6,
-      //     },
-      //     options: { avoid_features: avoid_features },
-      //     ...options,
-      //   });
-
       const responseOpenRoute = await fetch(
         "https://api.openrouteservice.org/v2/directions/driving-car/geojson",
         { headers, method: "POST", body: jsonCoords }

@@ -1,15 +1,12 @@
 import createHttpError from "http-errors";
 import API from "./clients";
 export const autocomplete = async (body: { value: string }) => {
-  console.log("🚀 ~ autocomplete ~ body:", body);
   try {
     const { data } = await API.post("google/autocomplete", {
       ...body,
     });
-    console.log("🚀 ~ autocomplete ~ data:", data);
     return data;
   } catch (error) {
-    console.log("🚀 ~ autocomplete ~ error:", error);
     return createHttpError(500, "Error fetch google autocomplete");
   }
 };
