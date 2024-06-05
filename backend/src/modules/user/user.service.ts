@@ -21,7 +21,7 @@ export class UserService {
           displayName: data.displayName ? data.displayName : data.email,
           password: data.password ? data.password : "",
         });
-        await this.userRepository.save(newUser);
+        return this.userRepository.save(newUser);
       } else {
         return existUser;
       }
@@ -29,10 +29,10 @@ export class UserService {
       console.log("🚀 ~ UserService ~ createUser ~ error:", error);
     }
   }
-  async findUser(data: User) {
+  async findUser(email: string) {
     try {
       const user = await this.userRepository.findOne({
-        where: { email: data.email },
+        where: { email: email },
       });
 
       return user || null;

@@ -1,8 +1,5 @@
-
 const useFindPlace = () => {
+  return {};
+};
 
-
-	return {}
-}
-
-export default useFindPlace
+export default useFindPlace;

@@ -8,6 +8,7 @@ export const updateMarkers = (
 ) => {
   if (markers) {
     const existMarker = markers.find((data) => data.id === id);
+    console.log("🚀 ~ existMarker:", existMarker);
     if (existMarker) {
       return markers;
     }
@@ -17,17 +18,16 @@ export const updateMarkers = (
       start: coords?.start,
       end: coords?.end,
     };
+    console.log("🚀 ~ marker:", marker);
     if (coords?.start) {
       const start = markers.find((data) => data.start === true);
       if (!start) {
         return [marker, ...markers];
       } else {
-        // markers.shift();
         markers[0] = marker;
         return markers;
       }
-    } else if (coords!.end) {
-      console.log("🚀 ~ coords:", coords);
+    } else if (coords?.end) {
       const end = markers.find((data) => data.end === true);
       if (end) {
         markers[markers.length - 1] = marker;
@@ -37,11 +37,15 @@ export const updateMarkers = (
         return markers;
       }
       return [...markers, marker];
+    } else {
+      const lastMarker = markers[markers.length - 1];
+      console.log("🚀 ~ lastMarker:", lastMarker);
+      markers[markers.length - 1] = marker;
+      markers.push(lastMarker);
+      console.log("🚀 ~ markers:", markers);
+
+      return markers;
     }
-    const lastMarker = markers[markers.length - 1];
-    markers[markers.length - 1] = marker;
-    markers.push(lastMarker);
-    return markers;
   } else {
     const marker: MarkersType = {
       coords: [coords!.lng, coords!.lat],
@@ -73,28 +77,15 @@ export const updateMarkersCoord = (
 
 export const deleteMarker = (markers: MarkersType[], id: string) => {
   const indexToDelete = markers.findIndex((marker) => marker.id === id);
-  console.log("🚀 ~ deleteMarker ~ indexToDelete:", indexToDelete);
 
-  if (indexToDelete !== markers.length - 1 && indexToDelete !== -1) {
+  if (indexToDelete !== -1) {
     const updatedMarkers = markers.filter((marker) => marker.id !== id);
     return updatedMarkers;
-  } else if (indexToDelete !== -1 && markers.length > 1) {
-    const prevMarker = markers[markers.length - 2];
-
-    const updatedPrevMarker = { ...prevMarker, color: "#c21120" };
-    markers[markers.length - 2] = updatedPrevMarker;
-
-    markers.pop();
-    return markers;
-  } else if (indexToDelete !== -1 && markers.length === 1) {
-    markers.pop();
   }
-
   return markers;
 };
 export const deletePlace = (places: Place[], id: string) => {
   const indexToDelete = places.findIndex((place) => place.id === id);
-  console.log("🚀 ~ deletePlace ~ indexToDelete:", indexToDelete);
   if (indexToDelete !== -1) {
     const updatedPlaces = places.filter((place) => place.id !== id);
     return updatedPlaces;

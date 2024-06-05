@@ -1,18 +1,18 @@
 .sample-drag-bar {
-	flex-shrink: 0;
-	width: 7px;
-	background-color: #0f895c;
-	cursor: col-resize;
-	transition: background-color 0.15s 0.15s ease-in-out;
+  flex-shrink: 0;
+  width: 7px;
+  background-color: #0f895c;
+  cursor: col-resize;
+  transition: background-color 0.15s 0.15s ease-in-out;
 }
 
 .sample-drag-bar.sample-drag-bar--dragging,
 .sample-drag-bar:hover {
-	background-color: rgb(167 243 208);
+  background-color: rgb(167 243 208);
 }
 
 .sample-drag-bar.sample-drag-bar--horizontal {
-	height: 5px;
-	width: 100%;
-	cursor: row-resize;
+  height: 5px;
+  width: 100%;
+  cursor: row-resize;
 }

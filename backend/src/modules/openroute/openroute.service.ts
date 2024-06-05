@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
+import { generateRouteName } from "src/utils/generateRouteName";
+import { RouteOptions } from "src/utils/types";
 import { headers } from "./headers/headers";
-
-// type CoordsType = [number, number][];
 
 @Injectable()
 export class OpenrouteService {
@@ -9,46 +9,53 @@ export class OpenrouteService {
 
   async fetchOpenRouteRoute({
     coordinates,
+    routeOptions,
   }: {
     coordinates: string | [number, number][];
+    routeOptions: string;
     body?: any;
   }) {
     try {
+      const optionsData: RouteOptions = JSON.parse(routeOptions);
+
       let coordsOpenRoute;
       if (Array.isArray(coordinates)) {
         coordsOpenRoute = coordinates;
       } else {
         coordsOpenRoute = JSON.parse(coordinates);
       }
-      const jsonCoords =
-        coordsOpenRoute.length > 2
-          ? JSON.stringify({ coordinates: coordsOpenRoute })
-          : JSON.stringify({
-              coordinates: coordsOpenRoute,
-              alternative_routes: {
-                target_count: 3,
-                weight_factor: 1.4,
-                share_factor: 0.6,
-              },
-            });
+      const { avoid_features, ...options } = optionsData;
+      const jsonCoords = JSON.stringify({
+        coordinates: coordsOpenRoute,
+        options: { avoid_features },
+        ...options,
+      });
       const responseOpenRoute = await fetch(
         "https://api.openrouteservice.org/v2/directions/driving-car/geojson",
         { headers, method: "POST", body: jsonCoords }
       );
-
       const data = (await responseOpenRoute.json()) as any;
-      console.log("🚀 ~ OpenrouteService ~ data :", data);
-      const coordsOpenRouteData = data.features;
 
-      return coordsOpenRouteData;
+      const coordsOpenRouteData = data.features;
+      const routeName = generateRouteName(coordsOpenRouteData);
+
+      if (data.error) {
+        return { error: data.error };
+      }
+      return { coordsOpenRouteData, optionsData, routeName };
     } catch (error) {
       throw new Response("Error", { status: 500 });
     }
   }
-  async fetchOptimizedRoute({ coordinates }: { coordinates: string }) {
+  async fetchOptimizedRoute({
+    coordinates,
+    options,
+  }: {
+    coordinates: string;
+    options: string;
+  }) {
     try {
       const coordsOpenRoute = JSON.parse(coordinates);
-
       const jobs = coordsOpenRoute.map((marker, i) => {
         return {
           id: i,
@@ -67,6 +74,7 @@ export class OpenrouteService {
         },
       ];
       const bodyOPEN_ROUTE_OPT = JSON.stringify({ jobs, vehicles });
+
       const responseOPEN_ROUTE_OPT = await fetch(
         "https://api.openrouteservice.org/optimization",
         {
@@ -75,11 +83,8 @@ export class OpenrouteService {
           body: bodyOPEN_ROUTE_OPT,
         }
       );
+
       const optimizedRoutesData = await responseOPEN_ROUTE_OPT.json();
-      console.log(
-        "🚀 ~ OpenrouteService ~ fetchOptimizedRoute ~ optimizedRoutesData:",
-        optimizedRoutesData
-      );
 
       const optimizedRoutesCords = optimizedRoutesData.routes[0].steps.map(
         (step: any) => step.location
@@ -87,12 +92,8 @@ export class OpenrouteService {
 
       const optimizedData = await this.fetchOpenRouteRoute({
         coordinates: optimizedRoutesCords,
+        routeOptions: options,
       });
-      console.log(
-        "🚀 ~ OpenrouteService ~ fetchOptimizedRoute ~ optimizedData:",
-        optimizedData
-      );
-
       return optimizedData;
     } catch (error) {
       throw new Response("Error", { status: 500 });

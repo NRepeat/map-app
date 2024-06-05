@@ -1,16 +1,17 @@
-import { Place } from '../types/types';
-import useMapContext from './useMapContext';
+import { Place } from "../types/types";
+import useMapContext from "./useMapContext";
 
 const useSetPlace = () => {
-	const { dispatch } = useMapContext();
+  const { dispatch } = useMapContext();
 
-	const setPlace = (place: Place) => {
+  const setPlace = (place: Place) => {
+    dispatch({ type: "SET_PLACE", newPlace: place });
+  };
+  const setPlaces = (places: Place[]) => {
+    dispatch({ type: "SET_PLACES", places: places });
+  };
 
+  return { setPlace, setPlaces };
+};
 
-		dispatch({ type: "SET_PLACES", newPlace: place })
-	}
-
-	return { setPlace }
-}
-
-export default useSetPlace
+export default useSetPlace;

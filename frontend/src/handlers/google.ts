@@ -4,7 +4,10 @@ import { Place, PlacePrediction } from "../types/types";
 export const handelAutocomplete = async (value: string) => {
   try {
     const data = await autocomplete({ value });
-
+    console.log("🚀 ~ handelAutocomplete ~ data:", data);
+    if (!data) {
+      return null;
+    }
     const predictions: PlacePrediction[] = data.map((prediction: any) => {
       const typedPrediction = {
         place: prediction.placePrediction.place,
@@ -23,7 +26,6 @@ export const handelAutocomplete = async (value: string) => {
 export const handelGeocode = async (value: [lat: number, lng: number]) => {
   try {
     const data = await geocode({ value });
-    console.log("🚀 ~ handelGeocode ~ data :", data);
     return data;
   } catch (error) {}
 };

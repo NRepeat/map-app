@@ -15,10 +15,15 @@ export const googleAuth = async () => {
 
 export const jwtAuthRegistration = async (data: User) => {
   try {
-    const response = await API.post("auth/registration", {
-      email: data.email,
-      password: data.password,
-    });
+    const response = await API.post(
+      "auth/registration",
+      {
+        email: data.email,
+        password: data.password,
+      },
+      { withCredentials: true }
+    );
+    return response.data;
   } catch (error) {}
 };
 

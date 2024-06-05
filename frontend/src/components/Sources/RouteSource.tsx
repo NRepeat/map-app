@@ -1,29 +1,43 @@
 import { FeatureCollection } from "geojson";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { Layer, LineLayer, Source, SymbolLayer } from "react-map-gl";
+import useMapContext from "../../hooks/useMapContext";
 import { CoordsType } from "../../types/types";
+import WaypointSource from "./WaypointSource";
 
 export interface SourceDataType {
   coords: CoordsType[] | undefined;
   id: string;
-  index: number
+  index: number;
 }
 
-interface RouteSourceProps extends SourceDataType { }
-
-const getRandomColor = (): string => {
-  return '#' + Math.floor(Math.random() * 16777215).toString(16);
+interface RouteSourceProps extends SourceDataType {
+  setSelectedRouteIds: React.Dispatch<React.SetStateAction<string[]>>;
+  hoverInfo: string | undefined;
+  waypoints: CoordsType[];
+  setWaypointsIds: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const RouteSource: FC<RouteSourceProps> = ({ coords, id, index }) => {
-  const [lineColor, setLineColor] = useState<string>(
-    index === 0 ? "#0000FF" : getRandomColor()
-  );
+const getRandomColor = (): string[] => {
+  return ["#43fa00", "#43fa00", "#43fa00"];
+};
+
+const RouteSource: FC<RouteSourceProps> = ({
+  coords,
+  id,
+  index,
+  setSelectedRouteIds,
+  hoverInfo,
+  waypoints,
+  setWaypointsIds,
+}) => {
+  const roadId = `roadLine-${id}`;
+  const { state } = useMapContext();
+  const lineColor =
+    index === 0 ? "#7fff7f" : getRandomColor()[index]
 
   useEffect(() => {
-    if (index !== 0) {
-      setLineColor(getRandomColor());
-    }
+    setSelectedRouteIds((prev) => [...prev, roadId]);
   }, [id]);
 
   if (coords) {
@@ -31,7 +45,7 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index }) => {
       type: "FeatureCollection",
       features: [
         {
-          properties: [],
+          properties: { id: roadId },
           type: "Feature",
           geometry: {
             type: "LineString",
@@ -41,13 +55,22 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index }) => {
       ],
     };
     const layerRouteArrowStyle: SymbolLayer = {
-      id: `routearrows-${id}`,
+      id: `routeArrows-${id}`,
       type: "symbol",
+      source: id,
       layout: {
         "symbol-placement": "line",
         "text-field": "▶",
-        "text-size": ["interpolate", ["linear"], ["zoom"], 12, 24, 22, 60],
-        "symbol-spacing": ["interpolate", ["linear"], ["zoom"], 12, 30, 22, 160],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 6, 12, 12, 30],
+        "symbol-spacing": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          12,
+          30,
+          22,
+          160,
+        ],
         "text-keep-upright": false,
       },
       paint: {
@@ -64,16 +87,45 @@ const RouteSource: FC<RouteSourceProps> = ({ coords, id, index }) => {
         "line-cap": "round",
       },
       paint: {
+        "line-opacity-transition": { delay: 10, duration: 5 },
+        "line-color-transition": { delay: 10, duration: 5 },
         "line-color": lineColor,
-        "line-opacity": 0.8,
-        "line-width": 4,
+
+        "line-opacity":
+          hoverInfo === roadId || state.selectedRouteId === id ? 1 : 0.2,
+        "line-width": 10,
       },
     };
+    // const highlightLayer: LineLayer = {
+    //   id: `counties-highlighted-${id}`,
+    //   type: 'line',
+    //   layout: {
+    //     "line-join": "round",
+    //     "line-cap": "round",
+    //   },
+    //   paint: {
+    //     "line-color-transition": { delay: 1, duration: 3 },
+    //     'line-color': '#7fff7f',
+    //     "line-opacity": hoverInfo === roadId || index === 0 ? 1 : 0.1,
+    //     "line-width": 10,
+    //   }
+    // };
+    // const filter = ['==', "id", hoverInfo || ""]
 
     return (
       <Source id={id} type="geojson" data={geojson}>
         <Layer {...layerStyle} />
-        <Layer {...layerRouteArrowStyle} />
+        {state.selectedRouteId === id && (
+          <>
+            <WaypointSource
+              waypoints={waypoints}
+              id={id}
+              setWaypointsIds={setWaypointsIds}
+            />
+            <Layer {...layerRouteArrowStyle} />
+          </>
+        )}
+        {/* <Layer {...highlightLayer} /> */}
       </Source>
     );
   }

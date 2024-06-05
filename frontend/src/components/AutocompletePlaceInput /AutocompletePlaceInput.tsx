@@ -1,148 +1,190 @@
-import { Autocomplete, AutocompleteItem } from '@nextui-org/react';
-import debounce from 'lodash.debounce';
-import React, { FC, Key, useEffect, useRef, useState } from 'react';
-import { IoIosSearch } from 'react-icons/io';
-import { handelAutocomplete, handelGetPlace } from '../../handlers/google';
-import useFlyToMarker from '../../hooks/useFlyToMarker';
-import useMapContext from '../../hooks/useMapContext';
-import useSetMarkers from '../../hooks/useSetMarkers';
-import useSetPlace from '../../hooks/useSetPlace';
-import { CoordsType, Place, PlacePrediction } from '../../types/types';
-
-
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import debounce from "lodash.debounce";
+import React, { FC, Key, useEffect, useRef, useState } from "react";
+import { IoIosSearch } from "react-icons/io";
+import { handelAutocomplete, handelGetPlace } from "../../handlers/google";
+import useFlyToMarker from "../../hooks/useFlyToMarker";
+import useMapContext from "../../hooks/useMapContext";
+import useSetMarkers from "../../hooks/useSetMarkers";
+import useSetPlace from "../../hooks/useSetPlace";
+import { CoordsType, Place, PlacePrediction } from "../../types/types";
 
 type AutocompletePlaceInputType = {
-	start?: boolean,
-	end?: boolean
-	label?: string
-	startContent?: React.ReactNode,
-	place?: Place | undefined
-}
+  start?: boolean;
+  end?: boolean;
+  label?: string;
+  startContent?: React.ReactNode;
+  place?: Place | undefined;
+  i: number;
+};
 
-const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({ startContent, label, place, start, end }) => {
-	const { handleFocusOnMarker } = useFlyToMarker()
-	const { dispatch, state } = useMapContext()
-	const [options, setOptions] = useState<PlacePrediction[]>([]);
-	const [loading, setLoading] = useState(false);
-	const inputRef = useRef<HTMLInputElement | null>(null)
-	const [inputValue, setInputValue] = useState<string | undefined>()
-	const [selectedPlace, setSelectedPLace] = useState<Place | undefined>(place)
-	const { setMark } = useSetMarkers()
-	const { setPlace } = useSetPlace()
-	const requestInProgress = useRef(false);
+const AutocompletePlaceInput: FC<AutocompletePlaceInputType> = ({
+  startContent,
+  label,
+  place,
+  start,
+  end,
+  i,
+}) => {
+  const { handleFocusOnMarker } = useFlyToMarker();
+  const { dispatch, state } = useMapContext();
+  // console.log("🚀 ~  state:", state)
+  const [loading, setLoading] = useState<boolean>(false);
 
-	useEffect(() => {
+  const [options, setOptions] = useState<PlacePrediction[]>([]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [inputValue, setInputValue] = useState<string | undefined>();
+  const { setMark } = useSetMarkers();
+  const { setPlace } = useSetPlace();
+
+  useEffect(() => {
+    if (place) {
+      if (place.displayName.text === "Start") {
+        setInputValue("");
+      } else if (place.displayName.text === "Stop") {
+        setInputValue("");
+      } else {
+        setInputValue(place.displayName.text);
+      }
+    }
+  }, [place]);
+  const getSuggestions = async (word: string) => {
+    if (word) {
+      setLoading(true);
+      const predictions = await handelAutocomplete(word);
+      if (predictions) {
+        setOptions(predictions);
+
+      }
+      setLoading(false);
+    } else {
+      setOptions([]);
+      setLoading(false);
+    }
+  };
+  const debouncedSave = debounce(
+    (newValue: string) => getSuggestions(newValue),
+    500
+  );
+  useEffect(() => {
+    if (inputRef && inputRef.current && inputValue) {
+      inputRef.current.value = inputValue;
+      setTimeout(() => {
+        if (inputValue === inputRef.current?.value) {
+          debouncedSave(inputValue);
+        }
+      }, 1000);
+    }
+  }, [inputValue]);
+
+  const updateValue = (newValue: string) => {
+    setInputValue(newValue);
+  };
+  const handelSelectionChange = async (value: Key) => {
+    console.log("🚀 ~ handelSelectionChange ~ value:", value)
+    if (!value) {
+      return null;
+    }
+    const place = await handelGetPlace(value as string);
+    console.log("🚀 ~ handelSelectionChange ~ place :", place)
+    if (place) {
+      const coord: CoordsType = [
+        place.location.longitude,
+        place.location.latitude,
+      ];
+      if (state.markers && state.places) {
+        if (state.markers.length >= 2) {
+          dispatch({
+            type: "SET_PLACE_TO_UPDATE",
+            placeToUpdate: {
+              place: state.places[i],
+              newCoords: coord,
+              marker: state.markers[i],
+            },
+          });
+          dispatch({
+            type: "UPDATE_MARKER_ID",
+            updateMarkerId: {
+              id: state.markers[i].id,
+              newId: place.id,
+            },
+          });
+          dispatch({
+            type: "UPDATE_MARKERS_CORDS",
+            markerEndPoint: coord,
+            markerIndex: i,
+          });
+        }
+        dispatch({ type: "UPDATE_PLACES", newPlace: place });
+      }
 
 
-		updatePlace();
-	}, [state.placeToUpdate]);
 
-	useEffect(() => {
-		if (place) {
-			if (place.displayName.text === "Start") {
-				setInputValue('')
-			} else if (place.displayName.text === "Stop") {
-				setInputValue('')
-			} else {
-				setInputValue(place.displayName.text)
-			}
-		}
-	}, [place])
-	const getSuggestions = async (word: string) => {
-		if (word) {
-			setLoading(true);
-			const predictions = await handelAutocomplete(word);
-			setOptions(predictions);
-			setLoading(false);
-		} else {
-			setOptions([]);
-		}
-	};
-	const debouncedSave = debounce((newValue: string) => getSuggestions(newValue), 500);
-	useEffect(() => {
-		if (inputRef && inputRef.current && inputValue) {
-			inputRef.current.value = inputValue;
-			setTimeout(() => {
-				if (inputValue === inputRef.current?.value) {
-					debouncedSave(inputValue)
-				}
-			}, 1500);
-		}
-	}, [inputValue])
+      handleFocusOnMarker(coord);
+      console.log("🚀 ~ handelSelectionChange ~ start:", start)
+      if (start) {
 
-	const updateValue = (newValue: string) => {
-		setInputValue(newValue)
-	};
-	const handelSelectionChange = async (value: Key) => {
-		if (!value) {
-			return null
-		}
-		const place = await handelGetPlace(value as string)
-		dispatch({ type: "SET_MAP_LOADING", mapLoading: true })
-		if (place) {
-			setSelectedPLace(place)
+        setPlace({ start: true, ...place });
+        return setMark(place.id, {
+          lat: place.location.latitude,
+          lng: place.location.longitude,
+          start: true,
+        });
+      } else if (end) {
+        setPlace({ end: true, ...place });
+        return setMark(place.id, {
+          lat: place.location.latitude,
+          lng: place.location.longitude,
+          end: true,
+        });
+      } else {
+        const existPlace = state.places?.find((data) => data.id === place.id);
+        if (existPlace) {
+          setInputValue(existPlace.displayName.text);
+          return console.log("Place exist");
+        }
+        // setPlace(place)
+        // return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude });
+      }
+    }
+  };
+  const handelInputClick = () => {
+    if (state.markers) {
+      const martker = state.markers[i];
 
-			const coord: CoordsType = [place.location.longitude, place.location.latitude];
-			handleFocusOnMarker(coord);
-
-			if (start) {
-				setPlace({ start: true, ...place })
-				return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude, start: true });
-			} else if (end) {
-				setPlace({ end: true, ...place })
-				return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude, end: true });
-			} else {
-				const existPlace = state.places?.find(data => data.id === place.id)
-				if (existPlace) {
-
-					setInputValue(existPlace.displayName.text)
-					return console.log("Place exist")
-				}
-				setPlace(place)
-				return setMark(place.id, { lat: place.location.latitude, lng: place.location.longitude });
-			}
-		}
-
-	}
-	const handelInputClick = () => {
-		if (state.markers && selectedPlace) {
-			const start = selectedPlace.location.longitude === 0 && selectedPlace.location.latitude === 0
-			if (!start) {
-				const coord: CoordsType = [selectedPlace.location.longitude, selectedPlace.location.latitude]
-				handleFocusOnMarker(coord)
-			}
-		}
-	}
-	return (
-		<Autocomplete
-			ref={inputRef}
-			startContent={startContent}
-			color="default"
-			label={label}
-			fullWidth={true}
-			variant="bordered"
-			isLoading={loading}
-			allowsCustomValue
-			defaultItems={[]}
-			items={options}
-			aria-label='autocomplete'
-			inputValue={inputValue}
-			onClick={handelInputClick}
-			listboxProps={{ color: "secondary" }}
-			popoverProps={{ color: "primary" }}
-			onSelectionChange={(e) => handelSelectionChange(e)}
-			onInputChange={(e) => updateValue(e)}
-			disableSelectorIconRotation
-			// autoFocus
-			selectorIcon={<IoIosSearch />}
-		>
-			{((option) => (
-				<AutocompleteItem variant="faded" color="default" key={option.placeId}>
-					{option.text}
-				</AutocompleteItem>
-			))}
-		</Autocomplete>
-	);
+      const coord: CoordsType = martker.coords;
+      handleFocusOnMarker(coord);
+    }
+  };
+  return (
+    <Autocomplete
+      ref={inputRef}
+      startContent={startContent}
+      color="default"
+      label={label}
+      fullWidth={true}
+      variant="bordered"
+      isLoading={loading}
+      allowsCustomValue
+      defaultItems={[]}
+      items={options}
+      aria-label="autocomplete"
+      inputValue={inputValue}
+      onClick={handelInputClick}
+      listboxProps={{ color: "secondary" }}
+      popoverProps={{ color: "primary" }}
+      onSelectionChange={(e) => handelSelectionChange(e)}
+      onInputChange={(e) => updateValue(e)}
+      disableSelectorIconRotation
+      selectorIcon={<IoIosSearch />}
+    >
+      {(option) => (
+        <AutocompleteItem variant="faded" color="default" key={option.placeId}>
+          {option.text}
+        </AutocompleteItem>
+      )}
+    </Autocomplete>
+  );
 };
 
 export default AutocompletePlaceInput;

@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { Route } from "src/typeorm/entities/Route";
 import { User } from "src/typeorm/entities/User";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -40,7 +41,7 @@ class ConfigService {
       password: this.getValue("POSTGRES_PASSWORD"),
       database: this.getValue("POSTGRES_DATABASE"),
       synchronize: true,
-      entities: [User],
+      entities: [User, Route],
 
       // migrationsTableName: "migration",
 
