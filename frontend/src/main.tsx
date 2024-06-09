@@ -19,7 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <NextUIProvider>
       <ReactMapGLProvider>
         <MapProvider>
-          <main className="dark  text-foreground bg-background">
+          <main className="dark   text-foreground bg-background">
             <RouterProvider router={router} />
           </main>
         </MapProvider>

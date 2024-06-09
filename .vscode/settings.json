@@ -1,3 +1,11 @@
 {
-  "cSpell.words": ["mapbox", "uuidv"]
+  "cSpell.words": [
+    "mapbox",
+    "uuidv"
+  ],
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#143419",
+    "titleBar.activeBackground": "#1C4923",
+    "titleBar.activeForeground": "#F5FBF6"
+  }
 }
